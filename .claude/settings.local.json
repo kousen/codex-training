@@ -6,7 +6,13 @@
       "WebFetch(domain:github.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
       "Bash(git init:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Read(//Users/kennethkousen/.codex/**)",
+      "Bash(codex mcp:*)",
+      "Bash(claude mcp:*)",
+      "Bash(timeout 2 codex mcp serve:*)",
+      "Bash(codex:*)",
+      "mcp__codex__codex"
     ],
     "deny": [],
     "ask": []

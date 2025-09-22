@@ -716,8 +716,7 @@ The `codex mcp` command exposes Codex as a tool:
 
 ```bash
 # Add Codex as MCP server in Claude Code
-claude mcp add codex -- codex mcp \
-  --config ~/.codex/config.toml
+claude mcp add codex -- codex mcp
 
 # List MCP servers
 claude mcp list
@@ -1752,6 +1751,11 @@ Use GPT-5-Codex for complex, long-running tasks:
 
 ```bash
 codex -m gpt-5-codex -c model_reasoning_effort='high'
+```
+
+Or configure in TOML:
+```toml
+model_reasoning_effort = "high"  # minimal/low/medium/high
 ```
 
 ---
