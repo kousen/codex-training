@@ -12,7 +12,8 @@
       "Bash(claude mcp:*)",
       "Bash(timeout 2 codex mcp serve:*)",
       "Bash(codex:*)",
-      "mcp__codex__codex"
+      "mcp__codex__codex",
+      "Bash(chmod:*)"
     ],
     "deny": [],
     "ask": []

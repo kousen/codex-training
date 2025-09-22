@@ -251,8 +251,8 @@ codex
 # With initial prompt
 codex "explain this codebase"
 
-# Non-interactive mode
-codex -n "generate a README"
+# Execute and exit mode
+codex exec "generate a README"
 ```
 
 ---
@@ -276,12 +276,31 @@ codex -n "generate a README"
 <v-clicks>
 
 - `/status` - Show session info & token usage
+- `/diff` - Review all pending changes
 - `/clear` - Clear conversation history
 - `/save` - Save current session
 - `/help` - Show available commands
 - `/settings` - Adjust runtime settings
 
 </v-clicks>
+
+---
+
+# /diff Command - Review Changes
+
+```diff
+--- a/src/main.py
++++ b/src/main.py
+@@ -10,7 +10,9 @@ def process_data(input_file):
+-    data = json.load(f)
++    with open(input_file, 'r') as f:
++        data = json.load(f)
+     return data
+
+3 files changed, 47 insertions(+), 12 deletions(-)
+```
+
+Review line-by-line before approving!
 
 ---
 
@@ -378,10 +397,24 @@ backgroundSize: cover
 
 # Sandbox Modes
 
+```mermaid
+graph LR
+    A[Read Only] -->|More Permissive| B[Auto]
+    B -->|More Permissive| C[Full Access]
+
+    A:::safe
+    B:::default
+    C:::danger
+
+    classDef safe fill:#90EE90,stroke:#333,stroke-width:2px,color:#000
+    classDef default fill:#87CEEB,stroke:#333,stroke-width:2px,color:#000
+    classDef danger fill:#FFB6C1,stroke:#333,stroke-width:2px,color:#000
+```
+
 <v-clicks>
 
-- **Auto** (default) - Smart restrictions
 - **Read Only** - No file modifications
+- **Auto** (default) - Smart restrictions
 - **Full Access** - Unrestricted (use carefully!)
 
 </v-clicks>
@@ -458,18 +491,23 @@ Working on payment integration with Stripe
 
 # Hierarchical AGENTS.md (v0.39+)
 
-Create cascading context with folder-specific rules:
+```mermaid
+graph TD
+    A[Root AGENTS.md<br/>Global Rules] --> B[frontend/AGENTS.md<br/>React Conventions]
+    A --> C[backend/AGENTS.md<br/>API Patterns]
+    A --> D[services/]
+    D --> E[payments/AGENTS.md<br/>Payment Logic]
+    D --> F[auth/AGENTS.md<br/>Auth Rules]
 
+    style A fill:#FFE5CC,stroke:#333,stroke-width:2px,color:#000
+    style B fill:#CCE5FF,stroke:#333,stroke-width:2px,color:#000
+    style C fill:#E5CCFF,stroke:#333,stroke-width:2px,color:#000
+    style D fill:#FFF,stroke:#333,stroke-width:2px,color:#000
+    style E fill:#CCFFE5,stroke:#333,stroke-width:2px,color:#000
+    style F fill:#FFCCCC,stroke:#333,stroke-width:2px,color:#000
 ```
-repo/
-├── AGENTS.md                    # Global rules
-├── frontend/
-│   └── AGENTS.md                # React conventions
-├── backend/
-│   └── AGENTS.md                # API patterns
-└── services/payments/
-    └── AGENTS.md                # Payment-specific
-```
+
+Rules cascade: Subfolder overrides parent
 
 ---
 
@@ -513,13 +551,139 @@ Refactor the selected code following these principles:
 
 ---
 
+# Prompt Template: Security Audit
+
+```markdown
+# ~/.codex/prompts/security-audit.md
+Perform a comprehensive security audit:
+
+1. Check for SQL injection vulnerabilities
+2. Identify hardcoded secrets or API keys
+3. Review authentication/authorization logic
+4. Scan for XSS vulnerabilities
+5. Check for insecure dependencies
+6. Review encryption and hashing methods
+
+For each issue found:
+- Explain the vulnerability
+- Show how to fix it
+- Rate severity (Critical/High/Medium/Low)
+```
+
+---
+
+# Prompt Template: Test Generator
+
+```markdown
+# ~/.codex/prompts/test-gen.md
+Generate comprehensive tests for the current code:
+
+1. Unit tests for all public methods
+2. Edge cases and error conditions
+3. Mock external dependencies
+4. Use appropriate assertions
+5. Follow AAA pattern (Arrange, Act, Assert)
+6. Include performance tests if applicable
+
+Use the project's existing test framework.
+Coverage target: 80% minimum
+```
+
+---
+
+# Prompt Template: PR Review
+
+```markdown
+# ~/.codex/prompts/pr-review.md
+Review this code as a senior engineer would:
+
+## Check for:
+- Bugs and logic errors
+- Performance issues
+- Security vulnerabilities
+- Code style violations
+- Missing tests
+
+## Provide:
+- Line-by-line feedback
+- Suggested improvements
+- Overall assessment
+```
+
+---
+
+# Prompt Template: API Upgrade
+
+```markdown
+# ~/.codex/prompts/api-upgrade.md
+Migrate this code to use the latest API version:
+
+1. Identify all deprecated method calls
+2. Replace with modern equivalents
+3. Update import statements
+4. Adjust types/interfaces as needed
+5. Maintain backward compatibility
+6. Add migration notes as comments
+7. Update tests to match new API
+
+Show a diff of all changes.
+```
+
+---
+
+# Prompt Template: Performance Fix
+
+```markdown
+# ~/.codex/prompts/perf-fix.md
+Analyze and optimize performance:
+
+1. Identify bottlenecks (O(n²) loops, etc.)
+2. Suggest algorithmic improvements
+3. Add caching where appropriate
+4. Optimize database queries
+5. Reduce memory allocations
+6. Consider async/parallel processing
+
+Target: 50% performance improvement
+```
+
+---
+
 # Using Custom Prompts
 
 ```bash
 /refactor
-/test-generator
-/security-review
+/security-audit
+/test-gen
+/pr-review
+/api-upgrade
+/perf-fix
 ```
+
+---
+
+# Prompt Arguments Workaround
+
+Codex doesn't support `$ARGUMENTS` like Claude Code, but you can use shell scripts:
+
+```bash
+#!/bin/bash
+# ~/.codex/scripts/review-file.sh
+
+FILE=$1
+FOCUS=$2
+
+cat > /tmp/review-prompt.md << EOF
+Review the file ${FILE} focusing on ${FOCUS}:
+- Check for bugs and errors
+- Suggest improvements
+- Rate code quality
+EOF
+
+codex exec "$(cat /tmp/review-prompt.md)"
+```
+
+Usage: `./review-file.sh UserService.java security`
 
 ---
 
@@ -565,6 +729,23 @@ codex --resume-session abc123
 
 ---
 
+# Session Lifecycle
+
+```mermaid
+stateDiagram-v2
+    direction LR
+    [*] --> New: codex
+    New --> Active: Start
+    Active --> Suspended: Exit
+    Suspended --> Active: Resume
+    Active --> Done: Complete
+    Done --> [*]
+```
+
+**Commands**: `codex`, `codex --resume`, `codex --list-sessions`
+
+---
+
 # Session Commands
 
 ```bash
@@ -581,10 +762,10 @@ codex --clear-sessions
 
 ```bash
 # Run in CI/CD pipeline
-codex -n "update dependencies and fix breaking changes"
+codex exec "update dependencies and fix breaking changes"
 
-# Resume non-interactive session
-codex -n --resume "continue the upgrade"
+# Note: For resuming, use regular resume
+codex --resume
 ```
 
 ---
@@ -680,6 +861,31 @@ codex mcp --config ~/.codex/config.toml
 
 # Legacy approach
 codex serve --port 8080
+```
+
+---
+
+# MCP Architecture
+
+```mermaid
+flowchart TB
+    CC[Claude Code] --> CM[Codex MCP Server]
+    IDE[IDE Extensions] --> CM
+    CI[CI/CD Pipeline] --> CM
+
+    CM --> FC[Firecrawl]
+    CM --> GA[Gemini Analyzer]
+    CM --> PW[Playwright]
+    CM --> C7[Context7]
+
+    style CC fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#000
+    style CM fill:#4ECDC4,stroke:#333,stroke-width:2px,color:#000
+    style IDE fill:#FFA500,stroke:#333,stroke-width:2px,color:#000
+    style CI fill:#FFD700,stroke:#333,stroke-width:2px,color:#000
+    style FC fill:#95E1D3,stroke:#333,stroke-width:2px,color:#000
+    style GA fill:#95E1D3,stroke:#333,stroke-width:2px,color:#000
+    style PW fill:#95E1D3,stroke:#333,stroke-width:2px,color:#000
+    style C7 fill:#95E1D3,stroke:#333,stroke-width:2px,color:#000
 ```
 
 ---
@@ -876,9 +1082,145 @@ steps:
 ```yaml
 - name: Review Code
   run: |
-    codex -n "Review this PR for bugs,
-              performance issues, and best practices"
+    codex exec "Review this PR for bugs,
+                performance issues, and best practices"
 ```
+
+---
+
+# Scheduled Code Maintenance
+
+Use `codex exec` with cron for automated maintenance:
+
+```bash
+# Weekly security check (crontab)
+0 2 * * 1 cd /path/to/repo && \
+  codex exec "identify and fix any security \
+  vulnerabilities or deprecated API usage"
+```
+
+---
+
+# Ambitious: Nightly Dependency Updates
+
+```bash
+# Sunday 3am: Auto-update all dependencies
+0 3 * * 0 cd /path/to/repo && \
+  git pull && \
+  codex exec "update all dependencies to their \
+              latest versions and resolve any \
+              breaking changes" && \
+  git commit -am "Auto-update dependencies" && \
+  git push
+```
+
+**Wake up to a ready-to-review PR!** 🌅
+
+---
+
+# Nightly Update Safeguards
+
+<v-clicks>
+
+- Push to a **separate branch**, not main
+- Use **--dry-run** first to test
+- Set up **notifications** for failures
+- Run **comprehensive tests** before push
+- Consider **semantic versioning** limits
+
+</v-clicks>
+
+```bash
+# Safer version with branch
+git checkout -b auto-update-$(date +%Y%m%d) && \
+codex exec "update dependencies" && \
+npm test && \
+git push origin HEAD
+```
+
+---
+
+# Maintenance Automation Examples
+
+```bash
+# Daily dependency check
+codex exec "check for outdated dependencies \
+            and update to latest stable versions"
+
+# Weekly security audit
+codex exec "scan for insecure crypto usage, \
+            SQL injection risks, or exposed secrets"
+
+# Monthly code cleanup
+codex exec "identify dead code, unused imports, \
+            and refactor for better performance"
+```
+
+---
+
+# Automated Maintenance Best Practices
+
+<v-clicks>
+
+- Always review changes before merging
+- Use sandbox mode for safety
+- Create separate branch for fixes
+- Set up notifications for runs
+- Keep audit logs of changes
+
+</v-clicks>
+
+**Remember:** Codex drafts solutions, you review and approve
+
+---
+
+# Chain Commands with &&
+
+Create fail-fast pipelines using `&&`:
+
+```bash
+# Only proceed if each step succeeds
+git pull && \
+codex exec "migrate database schema to latest version" && \
+npm test
+```
+
+If any step fails, execution stops immediately
+
+---
+
+# Command Chaining Examples
+
+```bash
+# Update, migrate, test
+git pull && \
+codex exec "update dependencies to fix vulnerabilities" && \
+codex exec "migrate breaking changes" && \
+npm test && \
+git commit -am "Update dependencies"
+
+# Build pipeline
+npm install && \
+codex exec "fix any TypeScript errors" && \
+npm run build && \
+npm test
+```
+
+---
+
+# Why Use && Chaining?
+
+<v-clicks>
+
+- **Fail-fast behavior** - Stop on first error
+- **Dependency ordering** - Each step needs the previous
+- **Atomic operations** - All succeed or nothing commits
+- **CI/CD friendly** - Clear success/failure signal
+- **Prevents partial updates** - No broken states
+
+</v-clicks>
+
+**Alternative:** Use `||` for fallback commands
 
 ---
 
@@ -1334,7 +1676,7 @@ jobs:
 ```yaml
 - name: Review Changes
   run: |
-    codex -n --profile review \
+    codex exec --profile review \
       "Review for: security issues,
        performance problems, best practices"
 ```
@@ -1394,6 +1736,25 @@ backgroundSize: cover
     Enterprise-ready patterns
   </p>
 </div>
+
+---
+
+# Review Changes Before Approving
+
+<v-clicks>
+
+- Codex displays unified diffs automatically
+- Use `/diff` to see all pending changes
+- Review line-by-line for unintended edits
+- Check file statistics (insertions/deletions)
+- Catch mistakes before they land in codebase
+
+</v-clicks>
+
+**Pro tip:** Always review diffs for:
+- Accidental deletions
+- Unrelated file changes
+- Security implications
 
 ---
 
@@ -1572,7 +1933,7 @@ RUST_LOG=trace codex
   "tasks": [{
     "label": "Codex Review",
     "type": "shell",
-    "command": "codex -n 'Review ${file} for issues'"
+    "command": "codex exec 'Review ${file} for issues'"
   }]
 }
 ```
@@ -1594,10 +1955,10 @@ codex -n --profile review \
 
 ```makefile
 review:
-	codex -n "Review all changes since last commit"
+	codex exec "Review all changes since last commit"
 
 generate-tests:
-	codex -n "Generate missing unit tests"
+	codex exec "Generate missing unit tests"
 ```
 
 ---
@@ -1884,7 +2245,7 @@ in v0.36+ (check release notes)
 ```bash
 # Basic usage
 codex                          # Interactive mode
-codex -n "prompt"             # Non-interactive
+codex exec "prompt"           # Execute task & exit
 codex --resume                # Resume session
 codex --search "text"         # Search codebase
 ```
@@ -1979,6 +2340,39 @@ Every Thursday at 2 PM PST
 - Integration guides
 
 </v-clicks>
+
+---
+
+# References & Credits
+
+## Newsletter Sources
+
+**MLearning.ai Art** on Substack by @mlearning
+- [100 OpenAI Codex CLI Tricks and Tips](https://mlearning.substack.com/p/100-openai-codex-cli-tricks-and-tips)
+- [30 Codex CLI Tips v0.30-0.39](https://mlearning.substack.com/p/30-codex-cli-tips-and-tricks-v30-version-0-39)
+
+Many advanced tips including:
+- Command chaining with `&&`
+- Scheduled maintenance automation
+- Network allowlists
+- High reasoning mode
+
+---
+
+# Additional Resources
+
+## Official Sources
+- [Codex GitHub Repository](https://github.com/openai/codex)
+- [Codex Documentation](https://github.com/openai/codex/tree/main/docs)
+- [Model Context Protocol](https://modelcontextprotocol.io)
+
+## Community
+- [Codex Discussions](https://github.com/openai/codex/discussions)
+- [MCP Registry](https://modelcontextprotocol.io/registry)
+
+## Related Training
+- [Claude Code Training](https://github.com/anthropics/claude-code)
+- [Junie Training Materials](https://github.com/kousen/junie-training)
 
 ---
 
