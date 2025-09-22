@@ -14,7 +14,7 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@slidev/cli": "^0.47.0",
+    "@slidev/cli": "^52.2.4",
     "@slidev/theme-seriph": "^0.25.0"
   },
   "devDependencies": {
