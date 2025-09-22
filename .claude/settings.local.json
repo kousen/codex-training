@@ -13,7 +13,11 @@
       "Bash(timeout 2 codex mcp serve:*)",
       "Bash(codex:*)",
       "mcp__codex__codex",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(npx slidev export:*)",
+      "Bash(npm install:*)",
+      "Bash(grep:*)",
+      "Bash(git config:*)"
     ],
     "deny": [],
     "ask": []

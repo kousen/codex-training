@@ -321,18 +321,18 @@ Time elapsed: 12m 34s
 # Search Your Codebase
 
 ```bash
-# Search for text in your project
-codex --search "TODO"
-codex --search "authenticate"
-codex --search "database connection"
+# Fast text search with ripgrep
+rg "TODO"
+rg "authenticate"
+rg "database connection"
 ```
 
 <v-clicks>
 
-- Fast semantic search across all files
-- Understands code context
-- Shows relevant snippets
-- Great for exploration and debugging
+- Respects .gitignore and runs fast on large repos
+- Pipe matches into Codex for follow-up analysis
+- Keep the agent focused by sharing only relevant snippets
+- Great starting point for exploration and debugging
 
 </v-clicks>
 
@@ -399,8 +399,8 @@ backgroundSize: cover
 
 ```mermaid
 graph LR
-    A[Read Only] -->|More Permissive| B[Auto]
-    B -->|More Permissive| C[Full Access]
+    A[read-only] -->|More Permissive| B[workspace-write]
+    B -->|More Permissive| C[danger-full-access]
 
     A:::safe
     B:::default
@@ -413,9 +413,9 @@ graph LR
 
 <v-clicks>
 
-- **Read Only** - No file modifications
-- **Auto** (default) - Smart restrictions
-- **Full Access** - Unrestricted (use carefully!)
+- **read-only** - No file modifications
+- **workspace-write** - Default; writes limited to the workspace
+- **danger-full-access** - No sandboxing (use carefully!)
 
 </v-clicks>
 
@@ -425,9 +425,10 @@ graph LR
 
 <v-clicks>
 
+- **untrusted** - Run only trusted commands without prompting
 - **on-request** - Approve risky actions
-- **never** - No approval prompts
 - **on-failure** - Approve only on failures
+- **never** - No approval prompts
 
 </v-clicks>
 
@@ -437,10 +438,10 @@ graph LR
 
 ```bash
 # Set sandbox mode
-codex --sandbox-mode read-only
+codex --sandbox read-only
 
 # Set approval policy
-codex --approval-policy never
+codex --ask-for-approval on-request
 
 # Bypass all safety (dangerous!)
 codex --dangerously-bypass-approvals-and-sandbox
@@ -551,105 +552,24 @@ Refactor the selected code following these principles:
 
 ---
 
-# Prompt Template: Security Audit
+# Prompt Library Highlights
 
-```markdown
-# ~/.codex/prompts/security-audit.md
-Perform a comprehensive security audit:
+<v-clicks>
 
-1. Check for SQL injection vulnerabilities
-2. Identify hardcoded secrets or API keys
-3. Review authentication/authorization logic
-4. Scan for XSS vulnerabilities
-5. Check for insecure dependencies
-6. Review encryption and hashing methods
+- Prebuilt prompts live in `~/.codex/prompts/` (see repo `prompts/README.md`)
+- Core templates: `refactor`, `security-audit`, `test-gen`, `pr-review`, `api-upgrade`, `perf-fix`
+- Customize or fork them for your team’s workflow and slash commands
 
-For each issue found:
-- Explain the vulnerability
-- Show how to fix it
-- Rate severity (Critical/High/Medium/Low)
+</v-clicks>
+
+```bash
+/refactor
+/security-audit
+/test-gen
+/pr-review
+/api-upgrade
+/perf-fix
 ```
-
----
-
-# Prompt Template: Test Generator
-
-```markdown
-# ~/.codex/prompts/test-gen.md
-Generate comprehensive tests for the current code:
-
-1. Unit tests for all public methods
-2. Edge cases and error conditions
-3. Mock external dependencies
-4. Use appropriate assertions
-5. Follow AAA pattern (Arrange, Act, Assert)
-6. Include performance tests if applicable
-
-Use the project's existing test framework.
-Coverage target: 80% minimum
-```
-
----
-
-# Prompt Template: PR Review
-
-```markdown
-# ~/.codex/prompts/pr-review.md
-Review this code as a senior engineer would:
-
-## Check for:
-- Bugs and logic errors
-- Performance issues
-- Security vulnerabilities
-- Code style violations
-- Missing tests
-
-## Provide:
-- Line-by-line feedback
-- Suggested improvements
-- Overall assessment
-```
-
----
-
-# Prompt Template: API Upgrade
-
-```markdown
-# ~/.codex/prompts/api-upgrade.md
-Migrate this code to use the latest API version:
-
-1. Identify all deprecated method calls
-2. Replace with modern equivalents
-3. Update import statements
-4. Adjust types/interfaces as needed
-5. Maintain backward compatibility
-6. Add migration notes as comments
-7. Update tests to match new API
-
-Show a diff of all changes.
-```
-
----
-
-# Prompt Template: Performance Fix
-
-```markdown
-# ~/.codex/prompts/perf-fix.md
-Analyze and optimize performance:
-
-1. Identify bottlenecks (O(n²) loops, etc.)
-2. Suggest algorithmic improvements
-3. Add caching where appropriate
-4. Optimize database queries
-5. Reduce memory allocations
-6. Consider async/parallel processing
-
-Target: 50% performance improvement
-```
-
----
-
-# Using Custom Prompts
 
 ```bash
 /refactor
@@ -697,12 +617,12 @@ Usage: `./review-file.sh UserService.java security`
 [profiles.production]
 model = "gpt-4"
 approval_policy = "on-request"
-sandbox_mode = "auto"
+sandbox_mode = "workspace-write"
 
 [profiles.development]
 model = "gpt-4o-mini"
 approval_policy = "never"
-sandbox_mode = "full-access"
+sandbox_mode = "danger-full-access"
 ```
 
 ---
@@ -720,11 +640,14 @@ codex --profile testing
 # Resume Previous Sessions
 
 ```bash
-# Resume most recent session
-codex --resume
+# Open picker to choose a session
+codex resume
 
-# Resume specific session
-codex --resume-session abc123
+# Resume the most recent session automatically
+codex resume --last
+
+# Resume a specific session by id
+codex resume SESSION_ID
 ```
 
 ---
@@ -742,18 +665,21 @@ stateDiagram-v2
     Done --> [*]
 ```
 
-**Commands**: `codex`, `codex --resume`, `codex --list-sessions`
+**Commands**: `codex`, `codex resume`, `codex apply`
 
 ---
 
 # Session Commands
 
 ```bash
-# List available sessions
-codex --list-sessions
+# Interactive session picker
+codex resume
 
-# Clear old sessions
-codex --clear-sessions
+# Jump straight to the most recent session
+codex resume --last
+
+# Apply the last diff from the active session
+codex apply
 ```
 
 ---
@@ -764,8 +690,8 @@ codex --clear-sessions
 # Run in CI/CD pipeline
 codex exec "update dependencies and fix breaking changes"
 
-# Note: For resuming, use regular resume
-codex --resume
+# Note: For resuming, use the regular command
+codex resume
 ```
 
 ---
@@ -1043,184 +969,32 @@ file = "/path/to/custom.log"
 
 ---
 
-# CI/CD Integration
-
-## GitHub Actions Example
-
----
-
-# GitHub Actions Setup
-
-```yaml
-name: AI Code Review
-on: [pull_request]
-
-jobs:
-  review:
-    runs-on: ubuntu-latest
-```
-
----
-
-# Install and Authenticate
-
-```yaml
-steps:
-  - uses: actions/checkout@v3
-  - name: Install Codex
-    run: npm install -g @openai/codex
-  - name: Login to Codex
-    run: codex login --headless
-    env:
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-```
-
----
-
-# Run Code Review
-
-```yaml
-- name: Review Code
-  run: |
-    codex exec "Review this PR for bugs,
-                performance issues, and best practices"
-```
-
----
-
-# Scheduled Code Maintenance
-
-Use `codex exec` with cron for automated maintenance:
-
-```bash
-# Weekly security check (crontab)
-0 2 * * 1 cd /path/to/repo && \
-  codex exec "identify and fix any security \
-  vulnerabilities or deprecated API usage"
-```
-
----
-
-# Ambitious: Nightly Dependency Updates
-
-```bash
-# Sunday 3am: Auto-update all dependencies
-0 3 * * 0 cd /path/to/repo && \
-  git pull && \
-  codex exec "update all dependencies to their \
-              latest versions and resolve any \
-              breaking changes" && \
-  git commit -am "Auto-update dependencies" && \
-  git push
-```
-
-**Wake up to a ready-to-review PR!** 🌅
-
----
-
-# Nightly Update Safeguards
+# CI/CD & Automation
 
 <v-clicks>
 
-- Push to a **separate branch**, not main
-- Use **--dry-run** first to test
-- Set up **notifications** for failures
-- Run **comprehensive tests** before push
-- Consider **semantic versioning** limits
+- GitHub Actions skeleton lives in repo (`automation/github-actions.yml`)
+- Typical steps: checkout → install Codex → authenticate → `codex exec` tasks → upload artifacts
+- Cron ideas: weekly security sweep, dependency refresh, monthly cleanup (scripts provided)
+- Guardrails: run on branches, review PRs before merge, notify on failures
 
 </v-clicks>
 
 ```bash
-# Safer version with branch
-git checkout -b auto-update-$(date +%Y%m%d) && \
-codex exec "update dependencies" && \
-npm test && \
-git push origin HEAD
-```
-
----
-
-# Maintenance Automation Examples
-
-```bash
-# Daily dependency check
-codex exec "check for outdated dependencies \
-            and update to latest stable versions"
-
-# Weekly security audit
-codex exec "scan for insecure crypto usage, \
-            SQL injection risks, or exposed secrets"
-
-# Monthly code cleanup
-codex exec "identify dead code, unused imports, \
-            and refactor for better performance"
-```
-
----
-
-# Automated Maintenance Best Practices
-
-<v-clicks>
-
-- Always review changes before merging
-- Use sandbox mode for safety
-- Create separate branch for fixes
-- Set up notifications for runs
-- Keep audit logs of changes
-
-</v-clicks>
-
-**Remember:** Codex drafts solutions, you review and approve
-
----
-
-# Chain Commands with &&
-
-Create fail-fast pipelines using `&&`:
-
-```bash
-# Only proceed if each step succeeds
+# Fail-fast pipeline
 git pull && \
-codex exec "migrate database schema to latest version" && \
+codex exec "migrate database schema" && \
 npm test
-```
 
-If any step fails, execution stops immediately
+# Weekly cron example
+0 2 * * 1 cd /path/to/repo && \
+  codex exec "weekly security audit"
 
----
-
-# Command Chaining Examples
-
-```bash
-# Update, migrate, test
-git pull && \
-codex exec "update dependencies to fix vulnerabilities" && \
-codex exec "migrate breaking changes" && \
-npm test && \
-git commit -am "Update dependencies"
-
-# Build pipeline
+# Chain commands to stop on failure
 npm install && \
 codex exec "fix any TypeScript errors" && \
-npm run build && \
-npm test
+npm run build
 ```
-
----
-
-# Why Use && Chaining?
-
-<v-clicks>
-
-- **Fail-fast behavior** - Stop on first error
-- **Dependency ordering** - Each step needs the previous
-- **Atomic operations** - All succeed or nothing commits
-- **CI/CD friendly** - Clear success/failure signal
-- **Prevents partial updates** - No broken states
-
-</v-clicks>
-
-**Alternative:** Use `||` for fallback commands
 
 ---
 
@@ -1231,7 +1005,7 @@ npm test
 model = "gpt-4o"
 model_provider = "openai"
 approval_policy = "on-request"
-sandbox_mode = "auto"
+sandbox_mode = "workspace-write"
 
 [tools]
 web_search = true
@@ -1300,49 +1074,13 @@ LANG = "en_US.UTF-8"
 
 ---
 
-# Notification System
-
-## Configure External Notifications
-
----
-
-# macOS Notifications
-
-```toml
-[notification]
-program = "osascript"
-args = ["-e", "display notification \"Task complete\" with title \"Codex\""]
-```
-
----
-
-# Linux Notifications
-
-```toml
-[notification]
-program = "notify-send"
-args = ["Codex", "Task completed"]
-```
-
----
-
-# Webhook Notifications
-
-```toml
-[notification]
-program = "curl"
-args = ["-X", "POST", "https://hooks.slack.com/...", "-d", "{\"text\":\"Done\"}"]
-```
-
----
-
-# Notification Triggers
+# Notification Options
 
 <v-clicks>
 
-- On task completion
-- On approval required
-- On errors (configurable)
+- Notifications live in `[notification]` (see repo for full examples)
+- macOS: `program="osascript"`, Linux: `program="notify-send"`, Webhook: `program="curl"`
+- Triggers: task completion, approval prompts, error conditions (configurable)
 
 </v-clicks>
 
@@ -1422,177 +1160,51 @@ backgroundSize: cover
 
 # Lab 1: Spring Boot API
 
-## Build a Complete REST API
+<v-clicks>
 
----
+- Objective: Build a Spring Boot 3 task-management REST API end-to-end
+- Timebox: 60–90 minutes
+- Workspace: `exercises/java-spring-boot`
+- Instructions: open `exercises/java-spring-boot/README.md`
 
-# Spring Boot Requirements
-
-```markdown
-1. REST endpoints for CRUD operations
-2. H2 in-memory database
-3. Input validation
-4. Exception handling
-5. OpenAPI documentation
-6. Comprehensive tests
-```
-
----
-
-# Starting Prompts
-
-```bash
-# Start with project structure
-codex "Generate a Spring Boot 3.2 project
-       structure for a task management API"
-```
-
----
-
-# Build the API
-
-```bash
-# Add domain model
-codex "Create JPA entities for Task"
-
-# Generate complete API
-codex "Implement REST controllers with
-       proper error handling and validation"
-```
+</v-clicks>
 
 ---
 
 # Lab 2: Python Refactoring
 
-## Transform Legacy Code
-
----
-
-# Starting Legacy Code
-
-```python
-# calculator.py - needs refactoring
-def calc(x,y,op):
-    if op=="add": return x+y
-    elif op=="sub": return x-y
-    elif op=="mul": return x*y
-    elif op=="div": return x/y
-```
-
----
-
-# Refactoring Goals
-
 <v-clicks>
 
-- Add type hints
-- Proper error handling
-- Strategy pattern
-- Comprehensive docstrings
-- pytest test suite with 100% coverage
+- Objective: Modernize legacy Python code with clean architecture and tests
+- Timebox: 45–60 minutes
+- Workspace: `exercises/python-refactoring`
+- Instructions: open `exercises/python-refactoring/README.md`
 
 </v-clicks>
-
----
-
-# Codex Refactoring
-
-```bash
-codex "Refactor this calculator to use
-       modern Python best practices"
-```
 
 ---
 
 # Lab 3: React TypeScript Forms
 
-## Build a Registration System
-
----
-
-# Form Requirements
-
 <v-clicks>
 
-- Email/password validation using Zod
-- React Hook Form integration
-- Accessibility (ARIA) compliance
-- Jest + React Testing Library tests
-- Responsive Tailwind CSS styling
+- Objective: Ship a production-ready registration flow with React, TypeScript, and Zod
+- Timebox: 45–60 minutes
+- Workspace: `exercises/react-forms`
+- Instructions: open `exercises/react-forms/README.md`
 
 </v-clicks>
-
----
-
-# Progressive Enhancement
-
-<v-clicks>
-
-1. Start with basic form
-2. Add validation
-3. Implement testing
-4. Add accessibility
-5. Optimize performance
-
-</v-clicks>
-
----
-
-# Generate the Form
-
-```bash
-codex "Create a React TypeScript
-       registration form with Zod validation
-       and full test coverage"
-```
 
 ---
 
 # Lab 4: Microservices
 
-## Multi-Service Architecture
-
----
-
-# Configure Project Context
-
-```bash
-echo "# Microservices Project
-Tech: Node.js, Python, Go
-Pattern: Event-driven with RabbitMQ
-Deploy: Docker Compose" > AGENTS.md
-```
-
----
-
-# Service Components
-
 <v-clicks>
 
-- Auth Service (Node.js) - JWT authentication
-- Order Service (Python FastAPI) - Order processing
-- Notification Service (Go) - Email/SMS alerts
-
-</v-clicks>
-
----
-
-# Generate Services
-
-```bash
-codex "Create microservices architecture with
-       Docker setup and message queue integration"
-```
-
----
-
-# Key Learning Points
-
-<v-clicks>
-
-- Cross-language generation
-- Service communication
-- Container orchestration
+- Objective: Build an event-driven multi-language microservices system
+- Timebox: 90–120 minutes
+- Workspace: `exercises/microservices`
+- Instructions: open `exercises/microservices/README.md`
 
 </v-clicks>
 
@@ -1600,40 +1212,12 @@ codex "Create microservices architecture with
 
 # Lab 5: Database Migration
 
-## Modernize Legacy Database
-
----
-
-# Setup Database MCP
-
-```bash
-codex "Configure MCP server for PostgreSQL connection"
-```
-
----
-
-# Migration Steps
-
-```bash
-# Analyze schema
-codex "Analyze database schema"
-
-# Create migration plan
-codex "Create migration to normalized structure"
-
-# Generate scripts
-codex "Generate Flyway migration scripts"
-```
-
----
-
-# Skills Practiced
-
 <v-clicks>
 
-- MCP integration
-- Database analysis
-- Safe migrations
+- Objective: Use Codex + MCP tools to modernize a legacy PostgreSQL schema
+- Timebox: 60–75 minutes
+- Workspace: Bring an existing service repo or the sample DB provided in class
+- Instructions: follow the facilitator handout for the Database Migration lab
 
 </v-clicks>
 
@@ -1641,84 +1225,27 @@ codex "Generate Flyway migration scripts"
 
 # Lab 6: AI Code Review
 
-## Automated PR Reviews
+<v-clicks>
+
+- Objective: Automate pull-request reviews with Codex in CI/CD
+- Timebox: 45 minutes
+- Workspace: Use any Git repo with open PRs (sample repo provided during workshop)
+- Instructions: follow the AI Code Review lab handout / `ai-review` workflow template
+
+</v-clicks>
 
 ---
 
-# Workflow Configuration
+# Advanced Exercise: Full-Stack E-Commerce
 
-```yaml
-# .github/workflows/ai-review.yml
-name: Codex Review
-on: [pull_request]
+<v-clicks>
 
-jobs:
-  ai-review:
-    runs-on: ubuntu-latest
-```
+- Objective: Combine backend, frontend, and DevOps workflows into a production-style storefront
+- Suggested scope: Spring Boot API + React storefront + CI/CD automation
+- Workspace: Remix outputs from Labs 1–4 or start fresh from the provided capstone brief
+- Instructions: follow the capstone handout distributed during the workshop
 
----
-
-# Setup Review Profile
-
-```yaml
-- name: Configure Codex
-  run: |
-    echo "[profiles.review]
-    sandbox_mode = \"read-only\"
-    approval_policy = \"never\"" > ~/.codex/config.toml
-```
-
----
-
-# Run Review
-
-```yaml
-- name: Review Changes
-  run: |
-    codex exec --profile review \
-      "Review for: security issues,
-       performance problems, best practices"
-```
-
----
-
-# Advanced Exercise
-
-## Full-Stack E-Commerce
-
----
-
-# Phase 1: Backend
-
-```bash
-codex "Create Spring Boot backend with:
-- Product catalog management
-- User authentication (JWT)
-- Order processing workflow
-- PostgreSQL with Liquibase"
-```
-
----
-
-# Phase 2: Frontend
-
-```bash
-codex "Create React frontend with:
-- Product browsing with filters
-- Shopping cart (Redux)
-- Checkout process
-- Admin dashboard"
-```
-
----
-
-# Phase 3: DevOps
-
-```bash
-codex "Add Docker Compose setup with
-       nginx, monitoring, and CI/CD pipeline"
-```
+</v-clicks>
 
 ---
 layout: image-right
@@ -1768,7 +1295,7 @@ backgroundSize: cover
 
 ```toml
 [profiles.dev]
-sandbox_mode = "full-access"
+sandbox_mode = "danger-full-access"
 approval_policy = "never"
 ```
 
@@ -1778,7 +1305,7 @@ approval_policy = "never"
 
 ```toml
 [profiles.staging]
-sandbox_mode = "auto"
+sandbox_mode = "workspace-write"
 approval_policy = "on-request"
 ```
 
@@ -1905,8 +1432,8 @@ codex login --headless
 # Sandbox Errors
 
 ```bash
-# Check sandbox support
-codex doctor
+# Confirm sandbox configuration
+grep sandbox_mode ~/.codex/config.toml
 
 # Bypass for Docker environments
 codex --dangerously-bypass-approvals-and-sandbox
@@ -2246,8 +1773,8 @@ in v0.36+ (check release notes)
 # Basic usage
 codex                          # Interactive mode
 codex exec "prompt"           # Execute task & exit
-codex --resume                # Resume session
-codex --search "text"         # Search codebase
+codex resume                  # Resume session
+codex apply                   # Apply last diff
 ```
 
 ---
@@ -2255,9 +1782,9 @@ codex --search "text"         # Search codebase
 # Configuration Commands
 
 ```bash
-codex --profile production    # Use profile
-codex --sandbox-mode auto     # Set sandbox
-codex --approval-policy never # Set approval
+codex --profile production            # Use profile
+codex --sandbox read-only             # Set sandbox
+codex --ask-for-approval on-request   # Set approval
 ```
 
 ---
@@ -2265,9 +1792,9 @@ codex --approval-policy never # Set approval
 # Advanced Commands
 
 ```bash
-codex mcp                      # MCP server mode (v0.37+)
-codex doctor                  # Diagnostics
-codex --list-sessions         # Show sessions
+codex mcp --config ~/.codex/config.toml  # MCP server mode (v0.37+)
+codex apply                              # Apply last diff
+codex resume --last                      # Resume most recent session
 ```
 
 ---
