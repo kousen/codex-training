@@ -1,0 +1,43 @@
+{
+  "name": "codex-training",
+  "version": "1.0.0",
+  "private": true,
+  "description": "OpenAI Codex CLI Training Course",
+  "author": "Kenneth Kousen <ken.kousen@kousenit.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "slidev slides.md --open",
+    "build": "slidev build slides.md",
+    "export": "slidev export slides.md",
+    "export-pdf": "slidev export slides.md --format pdf",
+    "preview": "slidev preview",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@slidev/cli": "^0.47.0",
+    "@slidev/theme-seriph": "^0.25.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.1.0",
+    "playwright-chromium": "^1.40.0"
+  },
+  "slidev": {
+    "colorSchema": "auto",
+    "exportFilename": "codex-training-slides",
+    "selectable": true,
+    "record": true,
+    "wakeLock": true,
+    "contextMenu": true
+  },
+  "keywords": [
+    "openai",
+    "codex",
+    "cli",
+    "ai",
+    "training",
+    "coding",
+    "assistant",
+    "terminal",
+    "development"
+  ]
+}

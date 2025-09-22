@@ -1,0 +1,179 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Slidev
+.slidev/
+dist/
+dist-ssr/
+*.local
+
+# Build outputs
+*.pdf
+build/
+out/
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+.vscode-test/
+*.sublime-project
+*.sublime-workspace
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+*.egg-info/
+dist/
+wheels/
+
+# Java/Spring Boot
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+bin/
+*.log
+hs_err_pid*
+.springBeans
+.sts4-cache
+
+# React/TypeScript
+*.tsbuildinfo
+.next/
+.nuxt/
+.cache/
+.parcel-cache/
+.docusaurus/
+.serverless/
+.fusebox/
+.dynamodb/
+.tern-port
+.vercel
+*.pid
+*.seed
+*.pid.lock
+
+# Testing
+coverage/
+*.lcov
+.nyc_output/
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Codex/AI specific
+.codex/
+*.codex.log
+AGENTS-local.md
+.mcp.json
+mcp-servers-local.toml
+
+# Docker
+docker-compose.override.yml
+.dockerignore
+*.dockerfile.local
+
+# Database
+*.sqlite
+*.sqlite3
+*.db
+data/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+
+# Security - never commit these
+*.key
+*.pem
+*.crt
+*.p12
+*.pfx
+secrets/
+credentials/
+private/
+
+# Exercise solutions (if you want to exclude them)
+# exercises/*/solution/
+
+# Generated documentation
+docs/_build/
+site/
+api-docs/
+
+# Package files
+*.tar.gz
+*.zip
+*.rar
+*.7z
+
+# Lock files (keep these for reproducible builds)
+# Uncomment if you want to exclude them
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+# Gemfile.lock
+# poetry.lock
+
+# Misc
+.cache
+.temp
+.history
+.ionide

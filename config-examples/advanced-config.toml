@@ -1,0 +1,141 @@
+# OpenAI Codex CLI - Advanced Configuration Example
+# Location: ~/.codex/config.toml
+
+# Model Configuration
+model = "gpt-4o"
+model_provider = "openai"
+
+# Alternative model providers
+# model_provider = "anthropic"
+# model = "claude-3-opus-20240229"
+
+# model_provider = "ollama"
+# model = "codellama"
+
+# Security & Sandbox Settings
+approval_policy = "on-request"  # Options: on-request, never, on-failure
+sandbox_mode = "auto"           # Options: auto, read-only, full-access
+
+# Project Documentation
+project_doc_max_bytes = 32768   # Maximum bytes to read from AGENTS.md
+
+# Shell Environment
+shell_environment_policy = "inherit"  # Options: inherit, explicit, minimal
+
+[shell_environment]
+# Add custom environment variables here
+NODE_ENV = "development"
+PYTHONPATH = "/usr/local/lib/python3.11/site-packages"
+RUST_LOG = "debug"
+
+# Notification Configuration
+[notification]
+program = "notify-send"
+args = ["Codex", "Task completed: {task}"]
+
+# macOS alternative:
+# program = "osascript"
+# args = ["-e", "display notification \"Task completed\" with title \"Codex\""]
+
+# Slack webhook alternative:
+# program = "curl"
+# args = ["-X", "POST", "https://hooks.slack.com/services/YOUR/WEBHOOK/URL", "-d", "{\"text\":\"Codex task completed\"}"]
+
+# Logging Configuration
+[logging]
+level = "info"  # Options: trace, debug, info, warn, error
+file = "~/.codex/log/codex-custom.log"
+format = "json"  # Options: json, pretty
+
+# Profiles for Different Environments
+[profiles.development]
+model = "gpt-4o-mini"
+approval_policy = "never"
+sandbox_mode = "full-access"
+shell_environment_policy = "inherit"
+
+[profiles.production]
+model = "gpt-4"
+approval_policy = "on-request"
+sandbox_mode = "read-only"
+shell_environment_policy = "explicit"
+
+[profiles.testing]
+model = "gpt-3.5-turbo"
+approval_policy = "on-request"
+sandbox_mode = "auto"
+project_doc_max_bytes = 16384
+
+# Model Context Protocol (MCP) Servers
+[mcp_servers.github]
+command = "npx"
+args = ["@modelcontextprotocol/server-github"]
+env = { GITHUB_TOKEN = "${GITHUB_TOKEN}" }
+
+[mcp_servers.postgres]
+command = "npx"
+args = ["@modelcontextprotocol/server-postgres"]
+env = { CONNECTION_STRING = "${DATABASE_URL}" }
+
+[mcp_servers.filesystem]
+command = "npx"
+args = ["@modelcontextprotocol/server-filesystem", "--root", "/workspace"]
+
+[mcp_servers.slack]
+command = "npx"
+args = ["@modelcontextprotocol/server-slack"]
+env = { SLACK_TOKEN = "${SLACK_TOKEN}" }
+
+[mcp_servers.web]
+command = "npx"
+args = ["@modelcontextprotocol/server-web"]
+
+# Custom MCP server
+[mcp_servers.custom]
+command = "node"
+args = ["./custom-mcp-server.js"]
+env = { API_KEY = "${CUSTOM_API_KEY}" }
+
+# Alternative Model Providers
+[providers.anthropic]
+type = "anthropic"
+api_key = "${ANTHROPIC_API_KEY}"
+model = "claude-3-opus-20240229"
+max_tokens = 4096
+
+[providers.ollama]
+type = "ollama"
+base_url = "http://localhost:11434"
+model = "codellama:34b"
+temperature = 0.7
+
+[providers.azure]
+type = "azure-openai"
+api_key = "${AZURE_OPENAI_API_KEY}"
+endpoint = "https://myinstance.openai.azure.com"
+deployment = "gpt-4"
+api_version = "2024-02-01"
+
+# Rate Limiting (for API usage)
+[rate_limiting]
+max_requests_per_minute = 60
+max_tokens_per_minute = 90000
+
+# Advanced Options
+[advanced]
+auto_resume = true                    # Automatically resume last session
+max_conversation_turns = 50           # Maximum turns before forcing new session
+context_window_buffer = 1000         # Reserve tokens for system messages
+stream_responses = true               # Stream responses as they generate
+verify_ssl = true                    # Verify SSL certificates
+timeout_seconds = 120                 # Request timeout
+retry_attempts = 3                    # Number of retry attempts on failure
+retry_delay_ms = 1000                # Delay between retries
+
+# Custom Commands (aliases for common operations)
+[aliases]
+review = "Review this code for bugs, performance issues, and best practices"
+test = "Generate comprehensive tests with at least 90% coverage"
+doc = "Add documentation comments to all public functions and classes"
+refactor = "Refactor this code following SOLID principles and clean code practices"
+security = "Check for security vulnerabilities and suggest fixes"
