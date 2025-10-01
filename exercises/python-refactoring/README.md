@@ -1,182 +1,115 @@
-# Lab 2: Python Code Refactoring
+# Refactored Python Application
 
-## Objective
-Use Codex to refactor legacy Python code into modern, maintainable, and well-tested code.
+This project modernises the original legacy calculator and data processing script. The refactor embraces clean architecture principles, type safety, and comprehensive testing in line with the project brief.
 
-## Starting Code
+## Key Capabilities
+- Strategy + Factory patterns for calculator operations with validation and logging decorators
+- Chain of Responsibility pipeline for employee data, including statistics aggregation and reporting helpers
+- Context-managed file readers and writers to eliminate resource leaks
+- Configurable numeric data processor that replaces legacy global state with safe caching
+- Temperature conversion utilities with exhaustive unit coverage
+- Automated logging configuration and reusable validation helpers
 
-The `legacy_code.py` file contains poorly written calculator and data processing code that needs significant improvement.
+## Project Layout
+```
+src/
+├── calculator/
+│   ├── calculator.py
+│   ├── operations.py
+│   └── validators.py
+├── data_processing/
+│   ├── models.py
+│   ├── numeric.py
+│   ├── processors.py
+│   ├── readers.py
+│   ├── service.py
+│   └── writers.py
+├── exceptions/
+│   └── custom.py
+├── temperature/
+│   └── converter.py
+└── utils/
+    ├── logging.py
+    └── validators.py
+```
 
-## Refactoring Goals
+Tests live under `tests/` and are split into unit, integration, and property-based suites. Documentation sources reside in `docs/` with Sphinx configured for API generation.
 
-1. **Type Hints**
-   - Add comprehensive type hints using Python 3.10+ syntax
-   - Use typing module features (Optional, Union, List, Dict, etc.)
-   - Add mypy configuration
+## Getting Started
+1. Install dependencies (Poetry recommended):
+   ```bash
+   poetry install --with dev
+   ```
+2. Run the full quality gate:
+   ```bash
+   make all
+   ```
+3. Execute individual checks as needed:
+   ```bash
+   make format   # Apply black + isort
+   make lint     # flake8 + pylint
+   make type-check
+   make coverage
+   ```
 
-2. **Code Structure**
-   - Apply SOLID principles
-   - Use design patterns where appropriate
-   - Separate concerns into modules
-
-3. **Error Handling**
-   - Replace generic exceptions with specific ones
-   - Add proper error messages
-   - Implement logging
-
-4. **Modern Python Features**
-   - Use dataclasses or Pydantic models
-   - Apply decorators for cross-cutting concerns
-   - Use context managers for resource handling
-
-5. **Testing**
-   - Create pytest test suite
-   - Achieve 100% code coverage
-   - Add property-based tests with Hypothesis
-   - Include fixtures and parameterized tests
-
-6. **Documentation**
-   - Add comprehensive docstrings (Google style)
-   - Create README with usage examples
-   - Generate API documentation with Sphinx
-
-7. **Code Quality**
-   - Configure and pass: black, isort, flake8, pylint
-   - Add pre-commit hooks
-   - Create Makefile for common tasks
-
-## Codex Prompts Progression
-
-### Step 1: Analyze Current Code
+Launch the graphical calculator UI:
 ```bash
-codex "Analyze legacy_code.py and create a refactoring plan identifying all issues and improvements needed"
+PYTHONPATH=src python -m ui.calculator_app
 ```
 
-### Step 2: Add Type Hints
+## Usage Examples
+```python
+from calculator.calculator import Calculator
+
+calculator = Calculator()
+result = calculator.calculate("mul", 6, 7)
+print(result)  # 42.0
+```
+
+```python
+from ui.calculator_app import launch
+
+launch()
+```
+
+```python
+from pathlib import Path
+
+from data_processing.service import EmployeeDataService
+from data_processing.writers import EmployeeReportWriter
+
+service = EmployeeDataService.from_file("sample_data.csv")
+payload = service.generate_report_payload(maximum_age=40)
+
+with EmployeeReportWriter(Path("report.txt")) as writer:
+    writer.write(payload)
+```
+
+```python
+from temperature.converter import convert_temperature
+
+fahrenheit = convert_temperature(21.5, "C", "F")
+```
+
+## Quality Tooling
+- `black`, `isort` formatting (line length 88)
+- `flake8`, `pylint`, `mypy` linting/type checks
+- `pytest`, `pytest-cov`, `hypothesis` for testing with 100% coverage target
+- Sphinx documentation with Google-style docstrings
+- Pre-commit hooks wired for all quality gates
+
+## Documentation
+Generate HTML docs with:
 ```bash
-codex "Add comprehensive type hints to all functions and classes using modern Python 3.10+ syntax"
+make docs
 ```
+Output is produced under `docs/_build`.
 
-### Step 3: Restructure with Design Patterns
-```bash
-codex "Refactor the calculator using the Strategy pattern and the data processor using Chain of Responsibility"
-```
+## Contribution Guidelines
+- Add type hints and Google-style docstrings to new public APIs
+- Prefer pathlib for filesystem access and always use context managers
+- Raise specific exceptions, never bare `except`
+- Keep cyclomatic complexity under 10 and favour pure functions when practical
+- Expand the test suite alongside feature changes to preserve coverage
 
-### Step 4: Improve Error Handling
-```bash
-codex "Replace all generic exceptions with custom exceptions and add proper error handling with logging"
-```
-
-### Step 5: Modernize Code
-```bash
-codex "Convert to use dataclasses, add decorators for validation, and implement context managers for file operations"
-```
-
-### Step 6: Create Test Suite
-```bash
-codex "Create comprehensive pytest test suite with fixtures, parameterized tests, and property-based tests using Hypothesis"
-```
-
-### Step 7: Add Documentation
-```bash
-codex "Add Google-style docstrings to all functions and classes, create usage examples"
-```
-
-### Step 8: Setup Code Quality Tools
-```bash
-codex "Configure black, isort, flake8, pylint, and mypy with appropriate settings. Add pre-commit hooks"
-```
-
-### Step 9: Create Build System
-```bash
-codex "Create a Makefile with targets for format, lint, test, coverage, and docs"
-```
-
-### Step 10: Package for Distribution
-```bash
-codex "Create setup.py and pyproject.toml for proper Python packaging with all dependencies"
-```
-
-## Legacy Code Issues to Fix
-
-1. No type hints
-2. Poor naming conventions
-3. No error handling
-4. Tightly coupled code
-5. No tests
-6. Magic numbers and strings
-7. No documentation
-8. Mixed responsibilities
-9. No input validation
-10. Resource leaks
-
-## Success Criteria
-
-- [ ] All functions have type hints
-- [ ] 100% test coverage
-- [ ] All linting tools pass
-- [ ] Documentation generated
-- [ ] Code follows PEP 8
-- [ ] No code smells
-- [ ] Performance improved
-- [ ] Memory leaks fixed
-
-## Advanced Challenges
-
-1. Add async/await support
-2. Implement caching with functools
-3. Add CLI with Click or Typer
-4. Create REST API with FastAPI
-5. Add performance profiling
-
-## Testing Your Refactored Code
-
-```bash
-# Run tests
-pytest -v
-
-# Check coverage
-pytest --cov=src --cov-report=html
-
-# Run type checking
-mypy src/
-
-# Run linting
-flake8 src/
-pylint src/
-
-# Format code
-black src/
-isort src/
-
-# Run all checks
-make all
-```
-
-## Configuration Files to Create
-
-### pyproject.toml
-```toml
-[tool.black]
-line-length = 88
-target-version = ['py310']
-
-[tool.isort]
-profile = "black"
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-```
-
-### .pre-commit-config.yaml
-```yaml
-repos:
-  - repo: https://github.com/psf/black
-    rev: 23.1.0
-    hooks:
-      - id: black
-  - repo: https://github.com/pycqa/isort
-    rev: 5.12.0
-    hooks:
-      - id: isort
-```
+Enjoy the modernised, maintainable codebase!

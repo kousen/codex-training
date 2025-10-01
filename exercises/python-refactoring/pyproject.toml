@@ -1,0 +1,77 @@
+[build-system]
+requires = ["setuptools>=67", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "python-refactoring"
+version = "0.1.0"
+description = "Refactored calculator and data processing toolkit"
+authors = [{name = "Refactoring Team"}]
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "black>=23.1",
+    "flake8>=6.0",
+    "hypothesis>=6.0",
+    "isort>=5.12",
+    "mypy>=1.0",
+    "pylint>=2.17",
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "sphinx>=7.0",
+]
+
+[tool.black]
+line-length = 88
+target-version = ["py310"]
+
+[tool.isort]
+profile = "black"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.coverage.run]
+branch = true
+source = ["src"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+packages = ["src"]
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203"]
+
+[tool.pylint.main]
+load-plugins = ["pylint.extensions.docstyle"]
+
+[tool.pylint.messages_control]
+disable = [
+    "missing-module-docstring",
+    "missing-class-docstring",
+    "missing-function-docstring",
+]
+
+[tool.pylint.format]
+max-line-length = 88
+
+[tool.pylint.design]
+max-args = 10
+max-attributes = 10
+
+[tool.pylint.similarities]
+ignore-comments = true
+ignore-docstrings = true
+
