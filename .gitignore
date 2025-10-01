@@ -121,6 +121,7 @@ lerna-debug.log*
 AGENTS-local.md
 .mcp.json
 mcp-servers-local.toml
+.claude/settings.local.json
 
 # Docker
 docker-compose.override.yml
