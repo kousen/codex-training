@@ -8,45 +8,49 @@ Use Codex to build a complete REST API for task management with Spring Boot.
 Build a Spring Boot application that includes:
 
 1. **Domain Model**
-   - Task entity with fields: id, title, description, status, priority, dueDate, createdAt, updatedAt
+   - Task entity with fields: id, title, description, status, priority, dueDate, createdAt, updatedAt (with auditing callbacks)
    - Status enum: TODO, IN_PROGRESS, DONE
    - Priority enum: LOW, MEDIUM, HIGH
 
 2. **REST Endpoints**
-   - GET /api/tasks - List all tasks (with pagination)
-   - GET /api/tasks/{id} - Get single task
-   - POST /api/tasks - Create new task
-   - PUT /api/tasks/{id} - Update task
-   - DELETE /api/tasks/{id} - Delete task
-   - GET /api/tasks/search - Search by title or description
+   - GET /api/v1/tasks - List tasks with pagination (default size 20, max 100)
+   - GET /api/v1/tasks/{id} - Retrieve a single task
+   - POST /api/v1/tasks - Create a new task
+   - PUT /api/v1/tasks/{id} - Update an existing task
+   - DELETE /api/v1/tasks/{id} - Delete a task
 
 3. **Data Layer**
-   - H2 in-memory database
-   - Spring Data JPA repositories
-   - Database initialization with sample data
+   - H2 in-memory database (schema/data managed by `schema.sql` and `data.sql`)
+   - Spring Data JPA repository with title uniqueness lookups
+   - Database initialization script pre-populating sample tasks
 
 4. **Business Logic**
-   - Service layer with business rules
-   - Task cannot be deleted if status is IN_PROGRESS
+   - Service layer with strict business rules
+   - Task title must be unique (case-insensitive)
+   - Default status TODO and priority MEDIUM on create
+   - Future-dated due dates only
+   - Cannot delete tasks in progress
+   - Cannot transition DONE tasks back to TODO
    - Automatic timestamp management
 
 5. **Validation & Error Handling**
-   - Input validation using Bean Validation
-   - Global exception handler
-   - Meaningful error responses
+   - Input validation using Bean Validation annotations on record DTOs
+   - Global exception handler producing structured error payloads
+   - Meaningful error responses covering validation, conflicts, and not-found cases
 
 6. **Documentation**
-   - OpenAPI/Swagger documentation
-   - API versioning (/api/v1/)
+   - OpenAPI/Swagger documentation served by SpringDoc (`/api-docs`, `/swagger-ui.html`)
+   - API versioning via `/api/v1` base path
 
 7. **Testing**
-   - Unit tests for services
-   - Integration tests for controllers
-   - Test data fixtures
+   - Unit tests for services with parameterized edge cases
+   - Integration tests covering all endpoints and validation scenarios
+   - Repository slice tests
+   - Test data builders for readable fixtures
 
 ## Starting Point
 
-The `starter/` directory contains a basic Spring Boot project structure.
+The `starter/` directory contains a complete Spring Boot project you can inspect, extend, or rebuild using Codex.
 
 ## Codex Prompts Progression
 
@@ -62,17 +66,17 @@ codex "Create JPA entities for Task with proper annotations, validation, and aud
 
 ### Step 3: Implement Repository Layer
 ```bash
-codex "Create Spring Data JPA repository for Task with custom query methods for searching and filtering"
+codex "Create Spring Data JPA repository for Task with methods to enforce unique titles"
 ```
 
 ### Step 4: Build Service Layer
 ```bash
-codex "Implement TaskService with business logic including validation rules and error handling"
+codex "Implement TaskService enforcing business rules (unique titles, future due dates, status restrictions) with meaningful exceptions"
 ```
 
 ### Step 5: Create REST Controllers
 ```bash
-codex "Generate REST controllers with proper HTTP status codes, request/response DTOs, and OpenAPI annotations"
+codex "Generate REST controllers that map to `/api/v1/tasks`, use record-based DTOs, and annotate endpoints for OpenAPI"
 ```
 
 ### Step 6: Add Exception Handling
@@ -82,7 +86,7 @@ codex "Create global exception handler with custom exceptions and meaningful err
 
 ### Step 7: Configure Database
 ```bash
-codex "Configure H2 database with initialization scripts and sample data for development"
+codex "Configure H2 with `schema.sql` + `data.sql` seeding and show how to defer initialization in `application.yml`"
 ```
 
 ### Step 8: Generate Tests
@@ -92,21 +96,21 @@ codex "Generate comprehensive test suite including unit tests for services and i
 
 ### Step 9: Add Documentation
 ```bash
-codex "Configure Swagger UI and add detailed OpenAPI documentation for all endpoints"
+codex "Configure SpringDoc to expose `/api-docs` and customize Swagger UI metadata"
 ```
 
 ### Step 10: Performance & Security
 ```bash
-codex "Add caching, rate limiting, and basic security configuration"
+codex "Discuss potential next steps such as rate limiting or Spring Security integration"
 ```
 
 ## Success Criteria
 
-- [ ] All endpoints working as specified
+- [ ] All CRUD endpoints working as specified
 - [ ] Validation rules enforced
 - [ ] Error handling implemented
 - [ ] Tests passing with >80% coverage
-- [ ] Swagger UI accessible at /swagger-ui.html
+- [ ] Swagger UI accessible at http://localhost:8080/swagger-ui.html
 - [ ] Code follows Spring Boot best practices
 
 ## Advanced Challenges
@@ -121,13 +125,13 @@ codex "Add caching, rate limiting, and basic security configuration"
 
 ```bash
 # Run the application
-./mvnw spring-boot:run
+mvn spring-boot:run
 
 # Run tests
-./mvnw test
+mvn test
 
 # Check test coverage
-./mvnw jacoco:report
+mvn jacoco:report
 
 # Access Swagger UI
 open http://localhost:8080/swagger-ui.html
@@ -147,12 +151,12 @@ Create an AGENTS.md file in the project root:
 # Task Management API
 
 ## Tech Stack
-- Spring Boot 3.2
+- Spring Boot 3.5
 - Java 17
 - H2 Database
 - Spring Data JPA
 - Spring Validation
-- SpringDoc OpenAPI
+- SpringDoc OpenAPI 2.7
 
 ## Conventions
 - RESTful API design

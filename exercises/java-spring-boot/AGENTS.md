@@ -4,13 +4,13 @@
 Building a production-ready REST API for task management using Spring Boot.
 
 ## Technology Stack
-- **Framework**: Spring Boot 3.2.0
+- **Framework**: Spring Boot 3.5.3
 - **Language**: Java 17
 - **Build Tool**: Maven
 - **Database**: H2 (in-memory for development)
 - **ORM**: Spring Data JPA
 - **Validation**: Jakarta Bean Validation
-- **Documentation**: SpringDoc OpenAPI 3.0
+- **Documentation**: SpringDoc OpenAPI 2.7.0
 - **Testing**: JUnit 5, Mockito, AssertJ, REST Assured
 
 ## Project Structure
@@ -50,7 +50,7 @@ src/
   - 500 Internal Server Error - Unexpected errors
 
 ## Coding Standards
-- Use DTOs for API requests/responses
+- Use DTOs (Java records) for API requests/responses
 - Never expose entities directly
 - Service layer handles all business logic
 - Controllers only handle HTTP concerns
