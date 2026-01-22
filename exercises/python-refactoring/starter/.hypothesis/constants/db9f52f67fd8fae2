@@ -1,0 +1,4 @@
+# file: /Users/kennethkousen/Documents/OReilly/codex-training/exercises/python-refactoring/starter/src/data_processing/writers.py
+# hypothesis_version: 6.150.2
+
+['utf-8', 'w']

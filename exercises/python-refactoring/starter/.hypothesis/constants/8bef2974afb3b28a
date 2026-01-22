@@ -1,0 +1,4 @@
+# file: /Users/kennethkousen/Documents/OReilly/codex-training/exercises/python-refactoring/starter/src/data_processing/__init__.py
+# hypothesis_version: 6.150.2
+
+['FilterProcessor', 'Processor', 'Record', 'TransformProcessor', 'ValidateProcessor', 'read_json_records', 'write_json_records']

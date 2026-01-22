@@ -1,0 +1,4 @@
+# file: /Users/kennethkousen/Documents/OReilly/codex-training/exercises/python-refactoring/starter/legacy_processor.py
+# hypothesis_version: 6.150.2
+
+['/tmp/input.json', '/tmp/output.json', '__main__', 'src']

@@ -45,6 +45,62 @@ The `starter/legacy_processor.py` file contains poorly written data processing c
    - Add pre-commit hooks
    - Create Makefile for common tasks
 
+## Architecture Diagrams
+
+### High-Level Module Architecture
+```mermaid
+flowchart LR
+  legacy[legacy_processor.py]
+  dp[data_processing]
+  calc[calculator]
+  temp[temperature]
+  utils[utils]
+  exc[exceptions]
+
+  legacy --> dp
+  legacy --> utils
+  legacy --> exc
+  dp --> utils
+  dp --> exc
+  calc --> utils
+  calc --> exc
+  temp --> utils
+  temp --> exc
+```
+
+### Data Processing Pipeline (Chain of Responsibility)
+```mermaid
+flowchart LR
+  reader[Reader] --> model[Record.from_mapping]
+  model --> filter[FilterProcessor]
+  filter --> transform[TransformProcessor]
+  transform --> validate[ValidateProcessor]
+  validate --> writer[Writer]
+```
+
+### Calculator Operations (Strategy Pattern)
+```mermaid
+classDiagram
+  class Calculator {
+    -strategy: OperationStrategy
+    +set_strategy(strategy)
+    +calculate(a, b)
+  }
+  class OperationStrategy {
+    <<interface>>
+    +execute(a, b)
+  }
+  class AddOperation
+  class SubtractOperation
+  class MultiplyOperation
+  class DivideOperation
+  Calculator --> OperationStrategy
+  OperationStrategy <|.. AddOperation
+  OperationStrategy <|.. SubtractOperation
+  OperationStrategy <|.. MultiplyOperation
+  OperationStrategy <|.. DivideOperation
+```
+
 ## Codex Prompts Progression
 
 ### Step 1: Analyze Current Code

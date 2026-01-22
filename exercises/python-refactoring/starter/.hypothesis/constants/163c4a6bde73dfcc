@@ -1,0 +1,4 @@
+# file: /Users/kennethkousen/Documents/OReilly/codex-training/exercises/python-refactoring/starter/src/data_processing/models.py
+# hypothesis_version: 6.150.2
+
+['Invalid record data', 'Record', 'id', 'name', 'processed', 'status', 'timestamp']
