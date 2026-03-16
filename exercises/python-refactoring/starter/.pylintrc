@@ -1,0 +1,16 @@
+[MASTER]
+init-hook='import sys; sys.path.extend(["src", "."])'
+ignore=.venv
+persistent=no
+
+[MESSAGES CONTROL]
+disable=
+    missing-class-docstring,
+    missing-function-docstring,
+    missing-module-docstring,
+    redefined-outer-name,
+    too-few-public-methods,
+    wrong-import-order
+
+[FORMAT]
+max-line-length=88

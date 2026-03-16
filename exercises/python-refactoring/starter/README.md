@@ -1,48 +1,70 @@
-# Legacy Processor - Refactoring Exercise
+# Legacy Processor Refactor
 
-This is the starting point for Lab 2: Python Code Refactoring.
+This project refactors a monolithic script into a typed, testable data
+processing pipeline with explicit error handling, structured logging,
+and automated quality checks.
 
-## The Challenge
+## Architecture
 
-`legacy_processor.py` is working code with many issues:
+- `src/calculator/calculator.py`: calculator facade using the Strategy pattern
+- `src/calculator/operations.py`: arithmetic strategies and strategy factory
+- `legacy_processor.py`: thin compatibility CLI and script entrypoint
+- `src/data_processing/models.py`: dataclass-based domain model
+- `src/data_processing/processors.py`: Chain of Responsibility handlers and factory
+- `src/data_processing/pipeline.py`: file orchestration over the handler chain
+- `src/data_processing/readers.py`: JSON reader with context manager support
+- `src/data_processing/writers.py`: JSON writer with context manager support
+- `src/exceptions/custom.py`: domain-specific exception hierarchy
+- `src/utils/logging.py`: logging configuration and decorator support
 
-- No type hints
-- Poor variable names (`d`, `t`, `r`, `i`, `f`)
-- No error handling (bare `except:`)
-- No context managers for file handling
-- Magic strings and hardcoded paths
-- No documentation
-- Deeply nested conditionals
-- No tests
+## Usage
 
-## What You'll Do
-
-Use Codex to:
-1. Add type hints throughout
-2. Rename variables to be descriptive
-3. Add proper error handling
-4. Use context managers (`with` statements)
-5. Extract configuration
-6. Add docstrings
-7. Write pytest tests
-8. Set up code quality tools
-
-## Quick Start
+Install dependencies into the existing virtual environment:
 
 ```bash
-# Install dependencies
-pip install -r requirements.txt
-
-# Run the legacy code
-python legacy_processor.py
-
-# After refactoring, run tests
-pytest --cov=. --cov-report=html
+./.venv/bin/pip install -r requirements.txt
 ```
 
-## First Codex Prompt
+Run the processor with the default pipeline (`filter -> transform -> validate`):
 
 ```bash
-codex "Analyze legacy_processor.py and list all the code smells and 
-issues that need to be fixed. Then start by adding type hints."
+./.venv/bin/python legacy_processor.py --input /tmp/input.json --output /tmp/output.json
 ```
+
+Use the calculator strategies directly:
+
+```python
+from calculator.calculator import Calculator
+
+calculator = Calculator()
+result = calculator.calculate("multiply", 6, 7)
+```
+
+Input files must contain a JSON array of objects. Example:
+
+```json
+[
+  {"id": 1, "name": "Alpha", "status": "active"},
+  {"id": 2, "name": "Beta", "status": "inactive"}
+]
+```
+
+## Quality Commands
+
+```bash
+make format
+make lint
+make test
+make docs
+make check
+```
+
+## Testing
+
+The suite includes:
+
+- unit tests for models, processors, readers, writers, and logging
+- integration tests for the pipeline and CLI compatibility layer
+- property-based tests with Hypothesis for validation and transformation rules
+
+Coverage is enforced at 100%.

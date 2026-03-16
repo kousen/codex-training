@@ -1,6 +1,10 @@
-# Core dependencies
-pytest>=7.4.0
-pytest-cov>=4.1.0
-mypy>=1.7.0
-black>=23.12.0
-ruff>=0.1.8
+black>=26.1.0
+flake8>=7.3.0
+hypothesis>=6.150.2
+isort>=7.0.0
+mypy>=1.19.1
+pre-commit>=4.3.0
+pylint>=4.0.4
+pytest>=9.0.2
+pytest-cov>=7.0.0
+sphinx>=9.1.0
