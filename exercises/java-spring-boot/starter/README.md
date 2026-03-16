@@ -6,7 +6,8 @@ This is the starting point for Lab 1: Spring Boot Task Management API.
 
 - `pom.xml` - Maven configuration with all required dependencies
 - `TaskApiApplication.java` - Spring Boot main class
-- `application.properties` - Database and OpenAPI configuration
+- `application.yml` - Database and OpenAPI configuration
+- `docs/architecture-diagrams.md` - Mermaid diagrams for the implemented architecture
 
 ## What You'll Build
 
