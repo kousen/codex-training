@@ -1,146 +1,109 @@
-# OpenAI Codex CLI - Advanced Configuration Example
+# OpenAI Codex - Advanced Configuration Example
 # Location: ~/.codex/config.toml
+#
+# Project-scoped config can also live in .codex/config.toml for trusted projects.
 
-# Model Configuration (March 13, 2026)
-model = "gpt-5.4"
+# Model configuration
+# Start with gpt-5.5 when it appears in your Codex model picker.
+# If you authenticate with an API key, or gpt-5.5 is unavailable, use gpt-5.4.
+model = "gpt-5.5"
 model_provider = "openai"
+model_reasoning_effort = "medium"  # minimal, low, medium, high, xhigh
+model_verbosity = "medium"         # low, medium, high
+service_tier = "flex"              # flex or fast
 
-# Alternative OpenAI models:
-# model = "gpt-5.3-codex"      # Frontier agentic coding model
-# model = "gpt-5.2-codex"      # Strong agentic coding model
-# model = "gpt-5.1-codex-max"  # Deep reasoning, long sessions
+# Security and sandbox settings
+approval_policy = "on-request"     # untrusted, on-request, never
+sandbox_mode = "workspace-write"   # read-only, workspace-write, danger-full-access
 
-# Alternative model providers
-# model_provider = "anthropic"
-# model = "claude-sonnet-4-20250514"
+[sandbox_workspace_write]
+network_access = false             # Network is off unless you explicitly enable it
+writable_roots = []                # Add extra writable paths only when needed
 
-# model_provider = "ollama"
-# model = "codellama"
+# Documentation and web search
+project_doc_max_bytes = 32768      # Maximum bytes loaded from AGENTS.md files
+web_search = "cached"              # disabled, cached, live
 
-# Security & Sandbox Settings
-approval_policy = "on-request"   # Options: on-request, never, on-failure (deprecated)
-sandbox_mode = "workspace-write" # Options: read-only, workspace-write, danger-full-access
+# Stable feature flags
+[features]
+codex_hooks = true
+multi_agent = true
+fast_mode = true
+undo = false
 
-# Project Documentation
-project_doc_max_bytes = 32768   # Maximum bytes to read from AGENTS.md
+# Shell environment policy
+[shell_environment_policy]
+inherit = "core"                   # all, core, none
+exclude = ["AWS_SECRET_ACCESS_KEY", "GITHUB_TOKEN", "OPENAI_API_KEY"]
 
-# Shell Environment
-shell_environment_policy = "inherit"  # Options: inherit, explicit, minimal
-
-[shell_environment]
-# Add custom environment variables here
+[shell_environment_policy.set]
 NODE_ENV = "development"
-PYTHONPATH = "/usr/local/lib/python3.11/site-packages"
-RUST_LOG = "debug"
+RUST_LOG = "warn"
 
-# Notification Configuration
-[notification]
-program = "notify-send"
-args = ["Codex", "Task completed: {task}"]
+# Completion notification command.
+# Codex passes a JSON payload to the command on stdin.
+# macOS example:
+# notify = ["osascript", "-e", "display notification \"Codex task complete\" with title \"Codex\""]
+#
+# Linux example:
+# notify = ["notify-send", "Codex", "Task complete"]
 
-# macOS alternative:
-# program = "osascript"
-# args = ["-e", "display notification \"Task completed\" with title \"Codex\""]
-
-# Slack webhook alternative:
-# program = "curl"
-# args = ["-X", "POST", "https://hooks.slack.com/services/YOUR/WEBHOOK/URL", "-d", "{\"text\":\"Codex task completed\"}"]
-
-# Logging Configuration
-[logging]
-level = "info"  # Options: trace, debug, info, warn, error
-file = "~/.codex/log/codex-custom.log"
-format = "json"  # Options: json, pretty
-
-# Profiles for Different Environments
-[profiles.development]
-model = "gpt-5.2-codex"
+# Profiles for different workflows
+[profiles.quick]
+model = "gpt-5.4-mini"
+model_reasoning_effort = "low"
 approval_policy = "never"
-sandbox_mode = "danger-full-access"
-shell_environment_policy = "inherit"
-
-[profiles.production]
-model = "gpt-5.4"
-approval_policy = "on-request"
 sandbox_mode = "read-only"
-shell_environment_policy = "explicit"
+web_search = "disabled"
 
-[profiles.testing]
-model = "gpt-5.2-codex"
+[profiles.development]
+model = "gpt-5.4"
+model_reasoning_effort = "medium"
 approval_policy = "on-request"
 sandbox_mode = "workspace-write"
-project_doc_max_bytes = 16384
+web_search = "cached"
 
-# Model Context Protocol (MCP) Servers
-[mcp_servers.github]
+[profiles.thorough]
+model = "gpt-5.5"
+model_reasoning_effort = "high"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+web_search = "live"
+
+# Local OSS profile. Use `codex --oss --local-provider ollama` for local mode.
+[profiles.local]
+model_provider = "ollama"
+model = "qwen2.5-coder:32b"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+web_search = "disabled"
+
+# Model Context Protocol (MCP) servers
+[mcp_servers.context7]
 command = "npx"
-args = ["@modelcontextprotocol/server-github"]
-env = { GITHUB_TOKEN = "${GITHUB_TOKEN}" }
+args = ["-y", "@upstash/context7-mcp"]
+startup_timeout_sec = 20
+tool_timeout_sec = 60
+enabled = true
 
-[mcp_servers.postgres]
-command = "npx"
-args = ["@modelcontextprotocol/server-postgres"]
-env = { CONNECTION_STRING = "${DATABASE_URL}" }
+[mcp_servers.openaiDeveloperDocs]
+url = "https://developers.openai.com/mcp"
+startup_timeout_sec = 20
+tool_timeout_sec = 60
+enabled = true
 
-[mcp_servers.filesystem]
-command = "npx"
-args = ["@modelcontextprotocol/server-filesystem", "--root", "/workspace"]
+# Remote HTTP server with bearer token from the environment.
+# [mcp_servers.example_remote]
+# url = "https://example.com/mcp"
+# bearer_token_env_var = "EXAMPLE_MCP_TOKEN"
+# startup_timeout_sec = 20
+# tool_timeout_sec = 60
 
-[mcp_servers.slack]
-command = "npx"
-args = ["@modelcontextprotocol/server-slack"]
-env = { SLACK_TOKEN = "${SLACK_TOKEN}" }
+# Sub-agent limits
+[agents]
+max_threads = 6
+max_depth = 2
 
-[mcp_servers.web]
-command = "npx"
-args = ["@modelcontextprotocol/server-web"]
-
-# Custom MCP server
-[mcp_servers.custom]
-command = "node"
-args = ["./custom-mcp-server.js"]
-env = { API_KEY = "${CUSTOM_API_KEY}" }
-
-# Alternative Model Providers
-[providers.anthropic]
-type = "anthropic"
-api_key = "${ANTHROPIC_API_KEY}"
-model = "claude-sonnet-4-20250514"
-max_tokens = 4096
-
-[providers.ollama]
-type = "ollama"
-base_url = "http://localhost:11434"
-model = "codellama:34b"
-temperature = 0.7
-
-[providers.azure]
-type = "azure-openai"
-api_key = "${AZURE_OPENAI_API_KEY}"
-endpoint = "https://myinstance.openai.azure.com"
-deployment = "gpt-4"
-api_version = "2024-02-01"
-
-# Rate Limiting (for API usage)
-[rate_limiting]
-max_requests_per_minute = 60
-max_tokens_per_minute = 90000
-
-# Advanced Options
-[advanced]
-auto_resume = true                    # Automatically resume last session
-max_conversation_turns = 50           # Maximum turns before forcing new session
-context_window_buffer = 1000         # Reserve tokens for system messages
-stream_responses = true               # Stream responses as they generate
-verify_ssl = true                    # Verify SSL certificates
-timeout_seconds = 120                 # Request timeout
-retry_attempts = 3                    # Number of retry attempts on failure
-retry_delay_ms = 1000                # Delay between retries
-
-# Custom Commands (aliases for common operations)
-[aliases]
-review = "Review this code for bugs, performance issues, and best practices"
-test = "Generate comprehensive tests with at least 90% coverage"
-doc = "Add documentation comments to all public functions and classes"
-refactor = "Refactor this code following SOLID principles and clean code practices"
-security = "Check for security vulnerabilities and suggest fixes"
+# Project trust examples
+# [projects."/Users/you/work/trusted-repo"]
+# trust_level = "trusted"

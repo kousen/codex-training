@@ -1,18 +1,18 @@
-# OpenAI Codex CLI Training
+# OpenAI Codex Training
 
-A comprehensive training course for mastering OpenAI Codex CLI - the lightweight terminal-based AI coding agent.
+A hands-on training course for using OpenAI Codex across the CLI, app, IDE extensions, and cloud workflows.
 
 ## Course Overview
 
-This 5-hour hands-on workshop covers everything from basic installation to advanced multi-model configurations, custom MCP servers, and enterprise deployment patterns.
+This 5-hour hands-on workshop covers installation, authentication, safe agent workflows, configuration, MCP servers, skills, cloud tasks, and practical development labs.
 
 ### What You'll Learn
 
-- 🚀 **Installation & Setup**: Multiple authentication methods, configuration strategies
-- 🛡️ **Safety & Security**: Sandbox modes, approval policies, secure configurations
-- 🎯 **Core Features**: Project memory (AGENTS.md), custom prompts, profiles
-- ⚡ **Agent Skills**: Reusable workflow bundles for repeatable workflows
-- 🔧 **Advanced Capabilities**: MCP integration, multi-model support, CI/CD workflows
+- 🚀 **Installation & Setup**: CLI, app, IDE, ChatGPT login, and API-key authentication
+- 🛡️ **Safety & Security**: Sandbox modes, approval policies, trusted projects, and reviews
+- 🎯 **Core Features**: AGENTS.md guidance, custom prompts, profiles, and session resumption
+- ⚡ **Agent Skills**: Reusable workflow bundles with scripts, references, and assets
+- 🔧 **Advanced Capabilities**: MCP integration, Codex Cloud, local OSS models, and CI/CD workflows
 - 💻 **Practical Skills**: Real-world exercises in Java, Python, and TypeScript
 
 ## Prerequisites
@@ -33,7 +33,8 @@ codex-training/
 │   ├── python-refactoring/      # Lab 2: Legacy code refactoring
 │   ├── react-forms/             # Lab 3: React TypeScript forms
 │   ├── microservices/           # Lab 4: Multi-language microservices
-│   └── skills-creation/         # Lab 5: Create custom Codex skills
+│   ├── skills-creation/         # Lab 5: Create custom Codex skills
+│   └── mcp-context7/            # Lab 6: Connect current docs through MCP
 ├── config-examples/              # Sample configurations
 │   ├── basic-config.toml        # Minimal setup for beginners
 │   └── advanced-config.toml     # Full features with MCP, profiles
@@ -56,7 +57,7 @@ codex-training/
 npm install -g @openai/codex
 
 # Via Homebrew (macOS/Linux)
-brew install --cask codex
+brew install codex
 
 # Verify installation
 codex --version
@@ -96,11 +97,11 @@ npm run dev
 
 ## Exercises
 
-### Lab 0: Plan Mode Warm-Up
+### Lab 0: Planning and Steering Warm-Up
 Learn the current Codex interaction model before the larger labs:
-- Review and approve plans
+- Ask Codex to propose a plan before editing
 - Steer an in-flight task with follow-up messages
-- Practice key slash commands
+- Inspect permissions, model choice, and diffs with slash commands
 
 **Time**: 15-20 minutes
 
@@ -148,6 +149,14 @@ Create a custom Codex skill using `$skill-creator`:
 
 **Time**: 30 minutes
 
+### Lab 6: MCP Servers with Context7
+Connect Codex to current library documentation:
+- Add Context7 as an MCP server
+- Inspect configured MCP tools
+- Use current React Hook Form, Zod, pytest, and Spring docs in prompts
+
+**Time**: 15-20 minutes
+
 ## Key Codex Features Covered
 
 ### Core Features
@@ -166,8 +175,9 @@ Create a custom Codex skill using `$skill-creator`:
 
 ### Advanced Features
 - ✅ Model Context Protocol (MCP)
-- ✅ Multi-model provider support (OpenAI, Anthropic, Ollama)
+- ✅ OpenAI models plus local OSS providers through Ollama or LM Studio
 - ✅ Running as MCP server
+- ✅ Codex App, IDE extensions, and Codex Cloud workflows
 - ✅ CI/CD integration
 - ✅ Non-interactive execution
 
@@ -180,11 +190,11 @@ Create a custom Codex skill using `$skill-creator`:
 
 ## Tips for Success
 
-1. **Start with Read-Only Mode**: Get comfortable before making changes
+1. **Start Conservatively**: Use `workspace-write` with `on-request`, or `read-only` for review-only tasks
 2. **Use AGENTS.md**: Provide context for better results
 3. **Create Profiles**: Separate development/production configurations
 4. **Review Generated Code**: Never blindly accept AI suggestions
-5. **Leverage MCP**: Extend capabilities with external tools
+5. **Leverage MCP**: Pull current documentation and project data into prompts
 6. **Test Thoroughly**: Always verify generated code works correctly
 
 ## Useful Commands Reference
@@ -196,18 +206,24 @@ codex "prompt"                 # Start with initial prompt
 codex exec "prompt"            # Execute and exit
 codex resume                   # Resume session picker
 codex resume --last            # Resume most recent session
+codex update                   # Update the CLI
 
 # Configuration
 codex --profile development    # Use specific profile
 codex --sandbox read-only      # Set sandbox mode
-codex --model gpt-5.4          # Select model
+codex --model gpt-5.5          # Select model when available
+codex --model gpt-5.4          # Fallback for API-key auth or availability
 codex --search "latest docs"   # Enable live web search for that run
 
 # Advanced
 codex mcp list                 # List configured MCP servers
+codex mcp login server-name    # OAuth login for supported MCP servers
 codex mcp-server               # Expose Codex itself as an MCP server
 codex cloud exec "prompt"      # Launch a cloud task
+codex cloud diff               # Inspect cloud task changes
+codex cloud apply              # Apply cloud task changes locally
 codex login --device-auth      # Device-auth flow for remote/headless environments
+codex review --uncommitted     # Review local changes
 ```
 
 Inside an interactive Codex session, you can also invoke skills directly:
@@ -228,6 +244,8 @@ $create-plan
 
 ### Official Documentation
 - [Codex CLI Documentation](https://developers.openai.com/codex/cli/)
+- [Codex App Documentation](https://developers.openai.com/codex/app/)
+- [Codex MCP Documentation](https://developers.openai.com/codex/mcp/)
 - [Codex GitHub Repository](https://github.com/openai/codex)
 - [Agent Skills Documentation](https://developers.openai.com/codex/skills/)
 - [Skills Catalog](https://github.com/openai/skills)
@@ -255,8 +273,7 @@ This training material is licensed under the MIT License. See [LICENSE](./LICENS
 
 ## Acknowledgments
 
-- OpenAI for Codex CLI
-- Anthropic for inspiration from Claude Code
+- OpenAI for Codex
 - The open-source community for MCP tools
 
 ---

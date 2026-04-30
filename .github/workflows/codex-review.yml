@@ -1,4 +1,4 @@
-# Codex CLI - Automated Code Review Workflow
+# Codex - Automated Code Review Workflow
 # 
 # This workflow demonstrates running Codex in CI/CD for automated code review.
 # It runs on pull requests and posts review comments.
@@ -6,9 +6,6 @@
 # Required secrets:
 #   OPENAI_API_KEY - Your OpenAI API key
 #
-# Optional secrets:
-#   ANTHROPIC_API_KEY - For Claude models
-
 name: Codex Code Review
 
 on:
@@ -43,6 +40,11 @@ jobs:
       - name: Install Codex CLI
         run: npm install -g @openai/codex
 
+      - name: Authenticate Codex
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: printenv OPENAI_API_KEY | codex login --with-api-key
+
       - name: Get changed files
         id: changed
         run: |
@@ -75,8 +77,9 @@ jobs:
           
           Changed files:
           ${{ steps.changed.outputs.files }}" \
-            --model gpt-5.2-codex \
-            --dangerously-bypass-approvals-and-sandbox \
+            --model gpt-5.4-mini \
+            --sandbox read-only \
+            --ask-for-approval never \
             > /tmp/review-output.md 2>&1 || true
 
       - name: Post Review Comment

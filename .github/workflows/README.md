@@ -1,6 +1,6 @@
 # GitHub Actions Workflows
 
-Example workflows demonstrating Codex CLI in CI/CD pipelines.
+Example workflows demonstrating Codex in CI/CD pipelines.
 
 ## Available Workflows
 
@@ -35,12 +35,12 @@ paths:
 
 # Use different model
 --model gpt-5.4        # More thorough
---model gpt-5.2-codex  # Faster, cheaper
+--model gpt-5.4-mini   # Faster, cheaper
 ```
 
 ## Security Notes
 
 - Never commit API keys to the repository
 - Use GitHub Secrets for all credentials
-- The `--dangerously-bypass-approvals-and-sandbox` flag is required for CI
+- Prefer `--sandbox read-only --ask-for-approval never` for review-only CI tasks
 - Review generated comments before merging

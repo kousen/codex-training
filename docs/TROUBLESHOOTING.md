@@ -1,4 +1,4 @@
-# Codex CLI Troubleshooting Guide
+# Codex Troubleshooting Guide
 
 Quick solutions to common issues you may encounter during the training.
 
@@ -14,8 +14,8 @@ Quick solutions to common issues you may encounter during the training.
 # Check if installed
 which codex
 
-# Reinstall via Homebrew (macOS)
-brew reinstall --cask codex
+# Reinstall via Homebrew (macOS/Linux)
+brew reinstall codex
 
 # Or via npm
 npm uninstall -g @openai/codex
@@ -60,8 +60,8 @@ printenv OPENAI_API_KEY | codex login --with-api-key
 
 ```bash
 # Wait 60 seconds and retry
-# Or switch to a different model
-codex --model gpt-5.2-codex
+# Or switch to a faster model
+codex --model gpt-5.4-mini
 
 # Check your rate limits
 cat ~/.codex/config.toml | grep rate
@@ -131,7 +131,7 @@ cat ~/.codex/config.toml | grep -A5 mcp_servers
 [mcp_servers.github]
 command = "npx"
 args = ["@modelcontextprotocol/server-github"]
-startup_timeout_ms = 30000  # Increase timeout
+startup_timeout_sec = 30  # Increase timeout
 ```
 
 ### "Tool not found" from MCP server
@@ -156,9 +156,8 @@ codex "What MCP servers are connected?"
 # Start a fresh session
 codex
 
-# Or resume a specific session point
+# Or resume an existing session
 codex resume
-# Select an earlier checkpoint
 ```
 
 ### "Cannot resume session"
@@ -167,8 +166,8 @@ codex resume
 # List available sessions
 codex resume
 
-# If corrupted, clear session data
-rm -rf ~/.codex/sessions/*
+# If corrupted, move session data aside
+mv ~/.codex/sessions ~/.codex/sessions.backup
 
 # Start fresh
 codex
@@ -182,7 +181,7 @@ codex
 
 ```bash
 # Launch with a specific known-good model
-codex --model gpt-5.2-codex
+codex --model gpt-5.4
 
 # In the TUI, use /model to inspect or switch models interactively
 ```
@@ -194,6 +193,9 @@ codex --model gpt-5.2-codex
 grep model ~/.codex/config.toml
 
 # Try with explicit model
+codex --model gpt-5.5
+
+# If unavailable, fall back to GPT-5.4
 codex --model gpt-5.4
 
 # Use a profile with known-good settings
@@ -213,7 +215,7 @@ codex --profile production
 
 2. **Try a faster model**
    ```bash
-   codex --model gpt-5.2-codex
+   codex --model gpt-5.4-mini
    ```
 
 3. **Reduce context size**
@@ -233,7 +235,7 @@ codex --profile production
 
 ```bash
 # Use mini model for simple tasks
-codex --model gpt-5.2-codex
+codex --model gpt-5.4-mini
 
 # Be specific in prompts (shorter responses)
 codex "Fix the bug on line 42"  # vs "Review the whole file"
@@ -334,10 +336,10 @@ codex
 
 | Symptom | Likely Cause | Quick Fix |
 |---------|--------------|-----------|
-| "command not found" | Not installed | `brew install --cask codex` |
-| "Authentication failed" | Bad credentials | `rm -rf ~/.codex/auth && codex login` |
+| "command not found" | Not installed | `brew install codex` |
+| "Authentication failed" | Bad credentials | `mv ~/.codex/auth ~/.codex/auth.backup && codex login` |
 | "Operation not permitted" | Sandbox restriction | Inspect permissions, or relaunch with `--sandbox danger-full-access` |
 | "MCP server failed" | Missing env var | Check `$GITHUB_TOKEN` etc. |
 | "Rate limit exceeded" | Too many requests | Wait 60s or use smaller model |
 | Slow responses | Large context | Reduce `project_doc_max_bytes` |
-| Session corrupted | Cache issue | `rm -rf ~/.codex/sessions/*` |
+| Session corrupted | Cache issue | `mv ~/.codex/sessions ~/.codex/sessions.backup` |

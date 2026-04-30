@@ -54,7 +54,8 @@ Create a React TypeScript project with Vite, configure ESLint, Prettier, and Tai
 
 ### Step 2: Form Schema
 ```
-Define Zod schemas for registration form with email, password, username, and terms validation
+Use current Zod docs through Context7 or OpenAI/web docs, then define schemas
+for registration form with email, password, username, and terms validation
 ```
 
 ### Step 3: Form Component
@@ -92,7 +93,14 @@ Implement form state persistence with Context API and local storage
 Create comprehensive test suite with unit tests, integration tests, and accessibility tests
 ```
 
-### Step 10: Performance Optimization
+### Step 10: Browser Verification
+```
+Run the app locally, inspect the form in a browser, and verify desktop and
+mobile layouts, error states, focus behavior, loading states, and success flow
+before accepting the diff
+```
+
+### Step 11: Performance Optimization
 ```
 Add code splitting, lazy loading, and performance optimizations
 ```
@@ -197,6 +205,26 @@ npm run test:coverage
 # Build
 npm run build
 ```
+
+## Browser Verification
+
+After implementation, run the development server:
+
+```bash
+npm run dev
+```
+
+Use Codex app computer use, the in-app browser, or Playwright to inspect:
+
+- Empty submit error states
+- Invalid and valid email/password values
+- Username availability loading and failure states
+- Keyboard-only navigation and focus order
+- Mobile width layout
+- Final success state
+
+For frontend work, do not rely only on unit tests. Visually check that labels,
+inputs, errors, buttons, and progress indicators do not overlap or shift.
 
 ### Advanced Testing (Optional)
 

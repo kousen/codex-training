@@ -9,7 +9,7 @@ class: text-center
 highlighter: shiki
 lineNumbers: false
 info: |
-  ## OpenAI Codex CLI Training
+  ## OpenAI Codex Training
 
   By Kenneth Kousen
 
@@ -17,7 +17,7 @@ info: |
 drawings:
   persist: false
 transition: slide-left
-title: "OpenAI Codex CLI Training"
+title: "OpenAI Codex Training"
 mdc: true
 slidev:
   slide-number: true
@@ -40,9 +40,9 @@ css: unocss
 }
 </style>
 
-# OpenAI Codex CLI Training
+# OpenAI Codex Training
 
-## AI-Powered Terminal Coding Agent
+## AI-Powered Software Engineering Agent
 
 <div class="pt-12">
   <span @click="$slidev.nav.next" class="px-2 py-1 rounded cursor-pointer" hover="bg-white bg-opacity-10">
@@ -78,6 +78,7 @@ Kousen IT, Inc.
 
 - Installation and authentication strategies
 - Terminal UI and navigation
+- Codex app, IDE, and cloud workflows
 - Sandbox modes and approval policies
 - Real-world coding projects
 
@@ -90,11 +91,11 @@ Kousen IT, Inc.
 <v-clicks>
 
 - Advanced TOML configuration
-- **Agent Skills** - Reusable workflows (NEW!)
+- **Agent Skills** - Reusable workflows
 - MCP services integration
 - Memory with AGENTS.md
 - Custom prompts and profiles
-- Multi-model provider support
+- Model selection and local OSS options
 
 </v-clicks>
 
@@ -113,9 +114,9 @@ Kousen IT, Inc.
 
 ---
 
-# What is OpenAI Codex CLI?
+# What is OpenAI Codex?
 
-## Lightweight Terminal-Based Coding Agent
+## A Coding Agent Across CLI, App, IDE, and Cloud
 
 ---
 
@@ -123,7 +124,7 @@ Kousen IT, Inc.
 
 <v-clicks>
 
-- Multi-model support (GPT, Claude, Ollama)
+- Frontier OpenAI models plus local OSS options
 - Built-in safety with sandbox modes
 - Rich configuration system
 - Model Context Protocol (MCP) integration
@@ -151,13 +152,13 @@ Kousen IT, Inc.
 
 ## ChatGPT Account (Recommended)
 - Uses your ChatGPT account login
-- Included in ChatGPT Free and Go for a limited time
+- Required for some Codex surfaces and model availability
 - Simplified login flow
 
 ## API Key
 - Direct API access
 - Pay-per-use pricing
-- More configuration required
+- Some Codex app/cloud features and models may not be available
 
 </v-clicks>
 
@@ -167,12 +168,12 @@ Kousen IT, Inc.
 
 <v-clicks>
 
-- <span style="color: #00D4FF">**GPT-5.4**</span> - Current default for complex professional work
-- <span style="color: #00D4FF">**GPT-5.3-Codex**</span> - Most capable current agentic coding model
-- <span style="color: #00D4FF">**GPT-5.2-Codex**</span> - Strong long-horizon coding model
-- <span style="color: #00D4FF">**codex-mini-latest**</span> - Fast Codex CLI iteration loop
-- Anthropic Claude via API
-- Local models via Ollama
+- <span style="color: #00D4FF">**GPT-5.5**</span> - Start here when available in the Codex model picker
+- <span style="color: #00D4FF">**GPT-5.4**</span> - Strong fallback and API-key-friendly default
+- <span style="color: #00D4FF">**GPT-5.4-mini**</span> - Fast scoped work and lighter sub-agent tasks
+- <span style="color: #00D4FF">**GPT-5.3-Codex**</span> - Codex-tuned model still available in some surfaces
+- Local OSS models through Ollama or LM Studio
+- Use `/model` to inspect what your account and surface expose
 
 </v-clicks>
 
@@ -185,7 +186,7 @@ Kousen IT, Inc.
 npm install -g @openai/codex
 
 # Homebrew (macOS/Linux)
-brew install --cask codex
+brew install codex
 
 # Direct binary download
 # Visit: https://github.com/openai/codex/releases
@@ -231,9 +232,11 @@ codex login --device-auth
 # Set environment variable
 export OPENAI_API_KEY="your-key"
 
-# Or configure in TOML
-echo 'api_key = "your-key"' >> ~/.codex/config.toml
+# Store it with Codex
+printenv OPENAI_API_KEY | codex login --with-api-key
 ```
+
+Do not put API keys directly in `config.toml`.
 
 ---
 
@@ -283,13 +286,14 @@ codex exec "generate a README"
 - `/clear` - Clear screen or start fresh chat
 - `/save` - Save current session
 - `/help` - Show available commands
-- `/plan` - Toggle plan mode
+- `/model` - Inspect or switch active model
 - `/fast` - Toggle fast/standard mode
 - `/permissions` - Manage sandbox permissions
-- `/skill` - Enable/disable skills
-- `/copy` - Copy last assistant reply
-- `/theme` - Syntax highlighting theme picker
-- `/debug-config` - Inspect effective config
+- `/review` - Review changes without editing
+- `/mcp` - Inspect MCP servers
+- `/skills` - Inspect available skills
+- `/plugins` - Inspect installed plugins
+- `/fork` and `/side` - Split work into separate threads where available
 
 </v-clicks>
 
@@ -313,12 +317,12 @@ Review line-by-line before approving!
 
 ---
 
-# /status Command (v0.35+)
+# /status Command
 
 Shows comprehensive session information:
 
 ```
-Current model: gpt-5.4
+Current model: gpt-5.5
 Session ID: abc123
 Token usage: 15,432 / 272,000
 Cost estimate: $0.46
@@ -327,7 +331,7 @@ Time elapsed: 12m 34s
 
 ---
 
-# /review Command (v0.76+)
+# /review Command
 
 Launch code review without modifying your working tree:
 
@@ -388,11 +392,11 @@ codex --search "latest Spring Boot validation guidance"
 
 <v-clicks>
 
-- Search the entire web for solutions
-- Find latest documentation and tutorials
-- Access Stack Overflow answers
-- Get real-time information
-- Research libraries and frameworks
+- `web_search = "cached"` uses Codex's maintained index
+- `web_search = "live"` fetches current web data
+- `web_search = "disabled"` keeps the session offline
+- Prefer official docs for APIs, SDKs, and product behavior
+- Use MCP documentation servers when they are available
 
 </v-clicks>
 
@@ -403,16 +407,16 @@ codex --search "latest Spring Boot validation guidance"
 ```bash
 # In interactive mode, Codex can search the web
 codex
-> "Search for the latest React 18 features"
+> "Search official docs for the current React Hook Form API"
 > "Find Python async/await best practices"
-> "What are the breaking changes in Spring Boot 3?"
+> "What changed in Spring Boot validation docs?"
 ```
 
 <v-clicks>
 
-- Automatic web search when needed
-- Current information beyond training cutoff
-- Verify solutions with official docs
+- Ask for current sources explicitly when accuracy matters
+- Use live search for unstable or recent information
+- Use cached or disabled search for reproducible coding work
 
 </v-clicks>
 
@@ -499,8 +503,7 @@ graph LR
 
 - **untrusted** - Run only trusted commands without prompting
 - **on-request** - Approve risky actions
-- **on-failure** - Approve only on failures
-- **never** - No approval prompts
+- **never** - No approval prompts; best for narrow, non-interactive tasks
 
 </v-clicks>
 
@@ -515,8 +518,8 @@ codex --sandbox read-only
 # Set approval policy (equivalent to approval_policy in config)
 codex --ask-for-approval on-request
 
-# Bypass all safety (dangerous!)
-codex --dangerously-bypass-approvals-and-sandbox
+# Full access only inside an external sandbox you trust
+codex --sandbox danger-full-access --ask-for-approval on-request
 ```
 
 CLI flags override config file settings for the session.
@@ -564,7 +567,7 @@ Working on payment integration with Stripe
 
 ---
 
-# Hierarchical AGENTS.md (v0.39+)
+# Hierarchical AGENTS.md
 
 ```mermaid
 graph TD
@@ -582,7 +585,8 @@ graph TD
     style F fill:#FFCCCC,stroke:#333,stroke-width:2px,color:#000
 ```
 
-Rules cascade: Subfolder overrides parent
+Codex reads guidance from the project root down to the current directory.
+Closer files override earlier guidance when instructions conflict.
 
 ---
 
@@ -592,6 +596,7 @@ Rules cascade: Subfolder overrides parent
 
 - Global rules apply everywhere
 - Subfolder rules override parent
+- `AGENTS.override.md` takes precedence over `AGENTS.md` in the same directory
 - Each team owns their conventions
 - Frontend/backend stay independent
 - Microservices maintain autonomy
@@ -651,7 +656,7 @@ Refactor the selected code following these principles:
 
 <v-clicks>
 
-- Codex doesn't support <span style="color: #00D4FF">`$ARGUMENTS`</span> like Claude Code
+- Custom prompts are static markdown files
 - Solution: Use shell scripts as wrappers
 - Scripts can accept parameters and build dynamic prompts
 - Store in <span style="color: #00D4FF">`~/.codex/scripts/`</span> for reuse
@@ -694,7 +699,7 @@ backgroundSize: cover
     Reusable Workflows
   </h2>
   <p class="text-xl text-white bg-black bg-opacity-60 px-4 py-2 rounded mt-4">
-    December 2025
+    Instructions, scripts, references, and assets
   </p>
 </div>
 
@@ -705,10 +710,10 @@ backgroundSize: cover
 <v-clicks>
 
 - **Reusable instruction bundles** with optional scripts and resources
-- **Follows <span style="color: #00D4FF">agentskills.io</span> spec** (same as Claude Code!)
+- **Authoring format** for workflows Codex can discover and invoke
 - **Progressive loading**: Only name/description loaded at startup
 - **Two invocation modes**: Explicit (<span style="color: #00D4FF">`$skill-name`</span>) or implicit (auto-detect)
-- **Skills replace complex prompts** for multi-step workflows
+- **Plugins** are the installable distribution unit for shared capabilities
 
 </v-clicks>
 
@@ -720,11 +725,12 @@ backgroundSize: cover
 
 | Scope | Location | Use Case |
 |-------|----------|----------|
-| **User** | <span style="color: #00D4FF">`~/.agents/skills/`</span> | Personal workflows |
 | **Repository** | <span style="color: #00D4FF">`.agents/skills/`</span> | Team-shared skills |
+| **User** | <span style="color: #00D4FF">`~/.agents/skills/`</span> | Personal workflows |
 | **Admin** | System-managed | Enterprise policies |
+| **System** | Bundled with Codex | Built-in workflows |
 
-Skills load in precedence order: repo → user → admin
+Repo skills are discovered from the current directory up to the repo root.
 
 </v-clicks>
 
@@ -735,7 +741,8 @@ Skills load in precedence order: repo → user → admin
 ```
 my-skill/
 ├── SKILL.md          # Required: YAML frontmatter + instructions
-├── SKILL.toml        # Optional: icons, brand color, defaults
+├── agents/
+│   └── openai.yaml   # Optional: metadata, deps, invocation policy
 ├── scripts/          # Optional: executable code
 ├── references/       # Optional: documentation
 └── assets/           # Optional: templates, resources
@@ -792,7 +799,7 @@ $create-plan Design a new authentication system
 
 - <span style="color: #00D4FF">**$skill-creator**</span> - Bootstrap new skills from description
 - <span style="color: #00D4FF">**$skill-installer**</span> - Install skills from catalog
-- <span style="color: #00D4FF">**$create-plan**</span> (experimental) - Research and plan features
+- Additional skills depend on your local installation and plugins
 
 Install additional skills:
 ```bash
@@ -834,18 +841,17 @@ Codex will:
 
 ---
 
-# Skills: Claude Code vs Codex
+# Skill Discovery in Practice
 
-| Aspect | Claude Code | Codex CLI |
-|--------|-------------|-----------|
-| Spec | agentskills.io | agentskills.io |
-| Format | SKILL.md + YAML | SKILL.md + YAML |
-| User Location | `~/.claude/skills/` | `~/.agents/skills/` |
-| Repo Location | `.claude/skills/` | `.agents/skills/` |
-| Invocation | Auto/explicit | `$skill-name` or auto |
-| Creator | skill-creator | `$skill-creator` |
+<v-clicks>
 
-**Same spec, different paths!**
+- Keep the `description` specific and action-oriented
+- Use `$skill-name` when you want to force a skill
+- Let implicit invocation handle repeated workflow matches
+- Put large examples in `references/`, not `SKILL.md`
+- Put deterministic helpers in `scripts/`
+
+</v-clicks>
 
 ---
 
@@ -857,14 +863,19 @@ Codex will:
 # ~/.codex/config.toml
 
 [profiles.production]
-model = "gpt-5.4"
+model = "gpt-5.5"
 approval_policy = "on-request"
 sandbox_mode = "workspace-write"
 
 [profiles.development]
-model = "gpt-5.2-codex"
+model = "gpt-5.4"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+[profiles.quick]
+model = "gpt-5.4-mini"
 approval_policy = "never"
-sandbox_mode = "danger-full-access"
+sandbox_mode = "read-only"
 ```
 
 ---
@@ -961,13 +972,17 @@ Run long tasks without tying up your terminal:
 
 ```bash
 # Launch a cloud task
-codex cloud exec --env my-env "Refactor authentication module"
+codex cloud exec "Refactor authentication module"
 
 # Check task status
 codex cloud status
 
 # List running tasks
 codex cloud list
+
+# Inspect and apply results
+codex cloud diff
+codex cloud apply
 ```
 
 ---
@@ -1078,7 +1093,7 @@ Codex launches the server as a child process; they communicate over stdin/stdout
 ```toml
 [mcp_servers.context7]
 command = "npx"
-args = ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_KEY"]
+args = ["-y", "@upstash/context7-mcp"]
 ```
 
 ### HTTP (Remote Server)
@@ -1088,7 +1103,8 @@ Codex connects to a running server over the network.
 ```toml
 [mcp_servers.context7-remote]
 url = "https://mcp.context7.com/mcp"
-http_headers = { "CONTEXT7_API_KEY" = "YOUR_KEY" }
+# If auth is required:
+# bearer_token_env_var = "CONTEXT7_API_KEY"
 ```
 
 ---
@@ -1098,7 +1114,7 @@ http_headers = { "CONTEXT7_API_KEY" = "YOUR_KEY" }
 ### CLI Command (Recommended)
 
 ```bash
-codex mcp add context7 -- npx -y @upstash/context7-mcp --api-key YOUR_KEY
+codex mcp add context7 -- npx -y @upstash/context7-mcp
 ```
 
 ### Verify
@@ -1122,7 +1138,7 @@ The `codex mcp add` command writes to `~/.codex/config.toml`:
 ```toml
 [mcp_servers.context7]
 command = "npx"
-args = ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_KEY"]
+args = ["-y", "@upstash/context7-mcp"]
 ```
 
 ### Optional Settings
@@ -1130,7 +1146,7 @@ args = ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_KEY"]
 ```toml
 [mcp_servers.context7]
 command = "npx"
-args = ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_KEY"]
+args = ["-y", "@upstash/context7-mcp"]
 startup_timeout_sec = 15   # Abort if server takes too long to start
 tool_timeout_sec = 30      # Abort if a tool call takes too long
 enabled = true             # Toggle without removing config
@@ -1145,15 +1161,19 @@ enabled = true             # Toggle without removing config
 Available in all projects. Stored in `~/.codex/config.toml`.
 
 ```bash
-codex mcp add context7 -- npx -y @upstash/context7-mcp --api-key YOUR_KEY
+codex mcp add context7 -- npx -y @upstash/context7-mcp
 ```
 
 ### Project-Level
 
 Only available in this project. Stored in `.codex/config.toml`.
 
-```bash
-codex mcp add --scope project context7 -- npx -y @upstash/context7-mcp --api-key YOUR_KEY
+```toml
+[mcp_servers.context7]
+command = "npx"
+args = ["-y", "@upstash/context7-mcp"]
+startup_timeout_sec = 20
+tool_timeout_sec = 60
 ```
 
 Project-level is useful when a server is specific to one codebase (e.g., a database server for that project's schema).
@@ -1168,7 +1188,7 @@ Context7 is an MCP server that fetches up-to-date library documentation.
 
 - **Two tools**: `resolve-library-id` and `query-docs`
 - **Thousands of libraries**: React, Spring Boot, Zod, pytest, and more
-- **Free API key**: Sign up at [context7.com](https://context7.com)
+- **Authentication optional in many setups**: Use environment variables if your setup requires a key
 - **Why it matters**: Codex uses current APIs instead of stale training data
 
 </v-clicks>
@@ -1251,33 +1271,29 @@ codex mcp-server --config ~/.codex/config.toml
 
 <v-clicks>
 
-- Claude Code can call Codex as a sub-agent
 - IDEs can integrate without plugins
 - CI/CD pipelines can invoke Codex workflows
-- Mix model strengths (GPT + Claude)
+- Other agent tools can call Codex through MCP
+- Shared tools can route specialized coding tasks to Codex
 
 </v-clicks>
 
 ---
 
-# Codex as Sub-Agent
+# Codex as an MCP Tool
 
 ```bash
-# Add Codex as MCP server in Claude Code
-claude mcp add codex -- codex mcp-server
+# Start Codex's MCP server
+codex mcp-server
 
-# List MCP servers
-claude mcp list
-
-# Remove if needed
-claude mcp remove codex
+# Configure the calling tool with that command
 ```
 
 <v-clicks>
 
-- Leverage GPT-5-Codex for specialized coding tasks
-- Use Codex's sandbox and approval policies
-- Each tool stays in its strength zone
+- The caller gets Codex tools through MCP
+- Codex still applies its sandbox and approval policies
+- Useful when one tool needs Codex as a specialized coding sub-agent
 
 </v-clicks>
 
@@ -1287,7 +1303,7 @@ claude mcp remove codex
 
 ```mermaid
 flowchart TB
-    CC[Claude Code] --> CM[Codex MCP Server]
+    TOOL[Calling Tool] --> CM[Codex MCP Server]
     IDE[IDE Extensions] --> CM
     CI[CI/CD Pipeline] --> CM
 
@@ -1296,7 +1312,7 @@ flowchart TB
     CM --> PG[PostgreSQL]
     CM --> Custom[Custom Server]
 
-    style CC fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#000
+    style TOOL fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#000
     style CM fill:#4ECDC4,stroke:#333,stroke-width:2px,color:#000
     style IDE fill:#FFA500,stroke:#333,stroke-width:2px,color:#000
     style CI fill:#FFD700,stroke:#333,stroke-width:2px,color:#000
@@ -1312,65 +1328,67 @@ image: https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0
 backgroundSize: cover
 ---
 
-# Multi-Model Support
+# Model Flexibility
 
 <div class="mt-20">
   <h2 class="text-4xl font-bold text-white bg-black bg-opacity-60 px-6 py-3 rounded-lg">
-    Provider Flexibility
+    Hosted and Local Options
   </h2>
   <p class="text-xl text-white bg-black bg-opacity-60 px-4 py-2 rounded mt-4">
-    OpenAI, Anthropic, Ollama, Azure
+    OpenAI models, local OSS, and profiles
   </p>
 </div>
 
 ---
 
-# Multi-Model Provider Support
+# Model Profiles
 
-## Configure Alternative Providers
+## Match the model to the work
 
 ---
 
-# Anthropic Claude
+# Recommended OpenAI Profiles
 
 ```toml
-[providers.anthropic]
-type = "anthropic"
-api_key = "${ANTHROPIC_API_KEY}"
-model = "claude-sonnet-4-20250514"
+[profiles.quick]
+model = "gpt-5.4-mini"
+model_reasoning_effort = "low"
+
+[profiles.standard]
+model = "gpt-5.4"
+model_reasoning_effort = "medium"
+
+[profiles.thorough]
+model = "gpt-5.5"
+model_reasoning_effort = "high"
 ```
 
 ---
 
-# Local Ollama
-
-```toml
-[providers.ollama]
-type = "ollama"
-base_url = "http://localhost:11434"
-model = "codellama"
-```
-
----
-
-# Azure OpenAI
-
-```toml
-[providers.azure]
-type = "azure-openai"
-api_key = "${AZURE_API_KEY}"
-endpoint = "https://myinstance.openai.azure.com"
-deployment = "gpt-5.4"
-```
-
----
-
-# Switch Providers
+# Local OSS Models
 
 ```bash
-codex --provider anthropic
-codex --provider ollama
-codex --provider azure
+codex --oss --local-provider ollama
+codex --oss --local-provider lmstudio
+```
+
+```toml
+[profiles.local]
+model_provider = "ollama"
+model = "qwen2.5-coder:32b"
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
+```
+
+---
+
+# Switch Models
+
+```bash
+codex --model gpt-5.5
+codex --model gpt-5.4
+codex --model gpt-5.4-mini
+codex --profile thorough
 ```
 
 ---
@@ -1403,11 +1421,12 @@ codex
 
 # Debug Configuration
 
-```toml
-# ~/.codex/config.toml
-[logging]
-level = "debug"
-file = "/path/to/custom.log"
+```bash
+# Session-level debug output
+RUST_LOG=debug codex
+
+# Trace-level output for MCP startup issues
+RUST_LOG=trace codex
 ```
 
 ---
@@ -1453,11 +1472,12 @@ npm run build
 
 ```toml
 # ~/.codex/config.toml
-model = "gpt-5.4"
+model = "gpt-5.5"
 model_provider = "openai"
 approval_policy = "on-request"
 sandbox_mode = "workspace-write"
-personality = "friendly"  # Options: friendly, pragmatic, none
+web_search = "cached"
+model_reasoning_effort = "medium"
 ```
 
 ---
@@ -1465,13 +1485,14 @@ personality = "friendly"  # Options: friendly, pragmatic, none
 # Environment & Notifications
 
 ```toml
-[notification]
-program = "notify-send"
-args = ["Codex", "Task completed"]
+notify = ["notify-send", "Codex", "Task completed"]
 
-[shell_environment]
+[shell_environment_policy]
+inherit = "core"
+exclude = ["OPENAI_API_KEY", "GITHUB_TOKEN"]
+
+[shell_environment_policy.set]
 NODE_ENV = "development"
-PYTHONPATH = "/usr/local/lib/python3.9"
 ```
 
 ---
@@ -1480,9 +1501,9 @@ PYTHONPATH = "/usr/local/lib/python3.9"
 
 <v-clicks>
 
-- **inherit** - Use parent shell environment
-- **explicit** - Only specified variables
-- **minimal** - Basic environment only
+- **all** - Inherit the parent shell environment
+- **core** - Inherit the minimal useful shell environment
+- **none** - Start from an empty environment, then add explicit variables
 
 </v-clicks>
 
@@ -1491,22 +1512,23 @@ PYTHONPATH = "/usr/local/lib/python3.9"
 # Environment Configuration
 
 ```toml
-# Inherit all variables
-shell_environment_policy = "inherit"
+[shell_environment_policy]
+inherit = "core"
+exclude = ["AWS_SECRET_ACCESS_KEY", "OPENAI_API_KEY"]
 
-# Explicit variables only
-shell_environment_policy = "explicit"
+[shell_environment_policy.set]
+LANG = "en_US.UTF-8"
 ```
 
 ---
 
-# Explicit Environment
+# Explicit Environment Additions
 
 ```toml
-[shell_environment]
+[shell_environment_policy.set]
 PATH = "/usr/local/bin:/usr/bin:/bin"
-HOME = "/home/user"
-LANG = "en_US.UTF-8"
+NODE_ENV = "development"
+RUST_LOG = "warn"
 ```
 
 ---
@@ -1515,8 +1537,8 @@ LANG = "en_US.UTF-8"
 
 <v-clicks>
 
-- Use `explicit` for production
-- Use `inherit` for development
+- Use `inherit = "none"` for tightly controlled automation
+- Use `inherit = "core"` for most local development
 - Never expose secrets in config
 
 </v-clicks>
@@ -1527,9 +1549,9 @@ LANG = "en_US.UTF-8"
 
 <v-clicks>
 
-- Notifications live in `[notification]` (see repo for full examples)
-- macOS: `program="osascript"`, Linux: `program="notify-send"`, Webhook: `program="curl"`
-- Triggers: task completion, approval prompts, error conditions (configurable)
+- Notifications use the top-level `notify = [...]` command
+- Codex passes a JSON payload to the command on stdin
+- Keep secrets in environment variables, not command arguments
 
 </v-clicks>
 
@@ -1558,14 +1580,17 @@ Enforce organizational policies:
 # or via MDM (macOS)
 
 [sandbox]
-allowed_modes = ["read-only", "workspace-write"]
+allowed_sandbox_modes = ["read-only", "workspace-write"]
 # Prevents danger-full-access
 
 [skills]
 admin_only = ["deploy-prod", "db-migrate"]
 
 [approval]
-required_for = ["file-delete", "git-push"]
+allowed_approval_policies = ["untrusted", "on-request"]
+
+[web_search]
+allowed_web_search_modes = ["disabled", "cached"]
 ```
 
 ---
@@ -1658,7 +1683,7 @@ backgroundSize: cover
 
 <v-clicks>
 
-- **Lab 0**: Plan Mode Warm-Up (learn the new defaults, 15 min)
+- **Lab 0**: Planning and Steering Warm-Up (15 min)
 - **Lab 1**: Spring Boot REST API (generate from scratch)
 - **Lab 2**: Python Refactoring (improve legacy code)
 - **Lab 3**: React TypeScript Forms (frontend development)
@@ -1685,15 +1710,15 @@ Note: You build the solution using Codex—no reference implementations provided
 
 ---
 
-# Lab 0: Plan Mode Warm-Up
+# Lab 0: Planning and Steering Warm-Up
 
 <v-clicks>
 
-- Objective: Learn plan mode, steer mode, and new slash commands
+- Objective: Practice planning, steering, permissions, and review commands
 - Timebox: 15–20 minutes
 - Workspace: `exercises/plan-mode-warmup`
 - Fix bugs in a small Python module while learning the interaction model
-- Practice `/plan`, `/fast`, `/copy`, `/theme`, `/debug-config`
+- Practice `/status`, `/permissions`, `/diff`, `/model`, `/review`
 
 </v-clicks>
 
@@ -1771,7 +1796,7 @@ Note: You build the solution using Codex—no reference implementations provided
 
 - Objective: Configure an MCP server and use live documentation in prompts
 - Timebox: 15–20 minutes
-- Pre-req: Free API key from [context7.com](https://context7.com)
+- Pre-req: Node.js 18+ and internet access
 - Workspace: `exercises/mcp-context7/` (then apply to `exercises/react-forms/`)
 - Instructions: open `exercises/mcp-context7/README.md`
 
@@ -1839,8 +1864,8 @@ backgroundSize: cover
 
 ```toml
 [profiles.dev]
-sandbox_mode = "danger-full-access"
-approval_policy = "never"
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
 ```
 
 ---
@@ -1871,7 +1896,8 @@ approval_policy = "on-request"
 
 - Never store API keys in config files
 - Use environment variables for secrets
-- Enable approval for production
+- Use `read-only` for reviews and audits
+- Enable approval for risky actions
 - Regular audit of generated code
 - Restrict network access in sandbox
 
@@ -1924,10 +1950,10 @@ cd ~/.codex/prompts && git pull
 
 ```toml
 [profiles.quick]
-model = "gpt-5.2-codex"  # Fast responses
+model = "gpt-5.4-mini"  # Fast scoped work
 
 [profiles.complex]
-model = "gpt-5.4"  # Complex reasoning
+model = "gpt-5.5"  # Complex reasoning when available
 ```
 
 ---
@@ -1936,8 +1962,8 @@ model = "gpt-5.4"  # Complex reasoning
 
 ```toml
 [profiles.local]
-provider = "ollama"
-model = "codellama"  # No API costs
+model_provider = "ollama"
+model = "qwen2.5-coder:32b"  # Local model availability varies
 ```
 
 ---
@@ -1946,7 +1972,7 @@ model = "codellama"  # No API costs
 
 <v-clicks>
 
-- Use smaller models for simple tasks
+- Use GPT-5.4-mini for simple tasks
 - Cache responses with session resumption
 - Batch similar operations
 - Use local models for sensitive data
@@ -1996,8 +2022,8 @@ codex login --device-auth
 # Confirm sandbox configuration
 grep sandbox_mode ~/.codex/config.toml
 
-# Bypass for Docker environments
-codex --dangerously-bypass-approvals-and-sandbox
+# If the workspace is intentionally disposable
+codex --sandbox danger-full-access --ask-for-approval on-request
 ```
 
 ---
@@ -2035,8 +2061,8 @@ RUST_LOG=trace codex
 ```bash
 # In the TUI, use /model to inspect or switch models
 
-# Fall back to different model
-codex --model gpt-5.2-codex
+# Fall back to a broadly available model
+codex --model gpt-5.4
 
 # Verify API connectivity
 curl -I https://api.openai.com/v1/models
@@ -2092,24 +2118,17 @@ generate-tests:
 
 ---
 
-# Structured Logging
+# Diagnostics Workflow
 
-```toml
-[logging]
-level = "info"
-format = "json"
-file = "/var/log/codex/codex.log"
-```
+<v-clicks>
 
----
+- Reproduce with a narrow prompt
+- Run with `RUST_LOG=debug` or `RUST_LOG=trace`
+- Inspect `~/.codex/log/`
+- Disable optional MCP servers if startup is flaky
+- Capture command, model, sandbox, approval policy, and error text
 
-# Metrics Configuration
-
-```toml
-[metrics]
-enable = true
-endpoint = "http://metrics.internal:9090"
-```
+</v-clicks>
 
 ---
 
@@ -2175,17 +2194,16 @@ args = ["./custom-mcp-server.js"]
 
 ---
 
-# From Claude Code
+# From Other Agent Tools
 
-```bash
-# Import Claude memory
-cp ../claude-code/.claude/CLAUDE.md ./AGENTS.md
+<v-clicks>
 
-# Convert slash commands
-for f in ../claude-code/.claude/commands/*.md; do
-  cp "$f" ~/.codex/prompts/
-done
-```
+- Move durable project guidance into `AGENTS.md`
+- Convert reusable prompt text into `~/.codex/prompts/`
+- Convert multi-step workflows into skills
+- Recreate external integrations as MCP servers where possible
+
+</v-clicks>
 
 ---
 
@@ -2201,82 +2219,73 @@ done
 
 ---
 
-# Recent Features (v0.88-0.114)
-
----
-
-# Version 0.88-0.114 Highlights (Jan-Mar 2026)
+# Current Codex Surfaces
 
 <v-clicks>
 
-- **GPT-5.4** (v0.114) - Latest frontier model, now default
-- **GPT-5.3-Codex** (v0.98) - New flagship coding model
-- **Plan mode default** (v0.94) - Plan → execute workflow
-- **Fast mode default** (v0.111) - Faster output by default
-- **Plugin system** (v0.110) - Marketplace, install/uninstall
-- **Memory system** (v0.97) - Persistent thread memories
-- **Multi-agent forking** (v0.107) - Fork threads into sub-agents
-- **Hooks engine** (v0.114) - SessionStart/Stop hook events
+- **CLI**: fastest way to work in a terminal or SSH session
+- **IDE extensions**: editor-native context, diffs, and prompts
+- **Codex App**: visual thread management, worktrees, and review
+- **Codex Cloud**: background tasks on remote environments
+- **MCP**: current docs, project data, services, and custom tools
 
 </v-clicks>
 
 ---
 
-# More New Features (v0.88-0.114)
+# Current Local Defaults
 
 <v-clicks>
 
-- **Syntax highlighting** (v0.105) - Code blocks & `/theme` picker
-- **Voice input** (v0.105) - Hold spacebar to dictate (experimental)
-- **JS REPL** (v0.100) - Persistent JavaScript runtime
-- **Codex App** (v0.95) - Standalone desktop app for visual multi-agent workflows
-- **Smart approvals** (v0.93) - MCP tool approval by default
-- **Steer mode** (v0.98) - Enter sends during tasks, Tab queues
-- **Personality config** (v0.94) - friendly/pragmatic/none
-- **Network proxy** (v0.90) - Policy-enforced outbound access
+- Sandbox controls what Codex can technically access
+- Approval policy controls when Codex asks you first
+- Network is constrained unless explicitly enabled
+- Project `.codex/config.toml` loads only for trusted projects
+- `AGENTS.md` gives project and directory-specific guidance
 
 </v-clicks>
 
 ---
 
-# Earlier Features (v0.40-0.87)
+# Extension Points
 
 <v-clicks>
 
-- Agent Skills (v0.76) - Reusable instruction bundles
-- Project-local config (v0.78) - `.codex/config.toml` per-repo
-- Multi-agent control (v0.79) - Spawn/message conversations
-- Thread rollback (v0.79) - Undo last N turns
-- Elevated sandbox (v0.80) - `/elevate-sandbox` command
-- Hierarchical AGENTS.md cascading (v0.39)
+- **AGENTS.md** for durable project guidance
+- **Prompts** for reusable slash-command text
+- **Skills** for multi-step workflows with resources
+- **Plugins** for installable capabilities
+- **MCP servers** for live tools and data
+- **Hooks** for session events and local automation
 
 </v-clicks>
 
 ---
 
-# MCP Robustness (v0.31+)
+# MCP Robustness
 
 Always add timeout to MCP servers:
 
 ```toml
 [mcp_servers.your_server]
 command = "your-command"
-startup_timeout_ms = 15000  # Recommended
+startup_timeout_sec = 15
+tool_timeout_sec = 60
 ```
 
 ---
 
-# Advanced Model Control (v0.36+)
+# Advanced Model Control
 
-Use GPT-5.4 with high reasoning for complex, long-running tasks:
+Use high reasoning for complex, long-running tasks:
 
 ```bash
-codex -m gpt-5.4 -c model_reasoning_effort='high'
+codex -m gpt-5.5 -c model_reasoning_effort='high'
 ```
 
 Or configure in TOML:
 ```toml
-model_reasoning_effort = "high"  # minimal/low/medium/high
+model_reasoning_effort = "high"  # minimal/low/medium/high/xhigh
 ```
 
 ---
@@ -2319,8 +2328,8 @@ Control network access in sandbox mode:
 network_access = true  # Default: false
 ```
 
-Note: Domain-specific allowlists may be available
-in v0.36+ (check release notes)
+Keep network off for reproducible local tasks. Enable it only when installs,
+integration tests, or live documentation require it.
 
 ---
 
@@ -2352,34 +2361,29 @@ in v0.36+ (check release notes)
 
 ---
 
-# What Shipped (2025-2026)
+# Codex App Workflows
 
 <v-clicks>
 
-- **GPT-5.4 & 5.3-Codex** - Latest frontier models (2026)
-- **Plugin marketplace** - Discover, install, manage plugins
-- **Memory system** - Persistent thread memories with `/m_update`
-- **Plan & Fast modes** - Now enabled by default
-- **Multi-agent forking** - Sub-agents with max 6 concurrent
-- **JS REPL** - Persistent JavaScript runtime
-- **Codex App** - Native desktop app for multi-agent workflows
-- **Voice input** - Spacebar-to-dictate (experimental)
+- **Local mode**: work directly in the current project directory
+- **Worktree mode**: isolate agent changes in a git worktree
+- **Cloud mode**: run tasks in configured cloud environments
+- **Visual review**: inspect diffs before landing changes
+- **Computer use**: inspect apps and browsers when the task needs it
 
 </v-clicks>
 
 ---
 
-# What's New in the TUI
+# Computer Use Safety
 
 <v-clicks>
 
-- Syntax-highlighted code blocks and diffs
-- `/theme` picker with live preview
-- `/copy` to copy assistant replies
-- `/fast` toggle in header
-- `/debug-config` for troubleshooting
-- `@plugin` mentions in chat
-- Steer mode: Enter sends, Tab queues
+- Keep the task narrow and stay present
+- Close sensitive apps and tabs before granting access
+- Review permission prompts carefully
+- Be cautious with signed-in browser sessions
+- Cancel if Codex focuses the wrong window or website
 
 </v-clicks>
 
@@ -2387,14 +2391,14 @@ in v0.36+ (check release notes)
 
 # The Codex App
 
-Standalone desktop application — your **Codex command center**
+Standalone desktop application for visual Codex workflows
 
 <v-clicks>
 
-- **Native app** for macOS (Apple Silicon) and Windows
-- Launched February 2026, rapid updates (v26.312+)
-- Same models, config, and Skills as the CLI
-- Included with ChatGPT Plus, Pro, Business, Enterprise, Edu plans
+- Work in local projects, isolated worktrees, or cloud tasks
+- Share MCP configuration and skills with the CLI and IDE
+- Review diffs visually before accepting changes
+- Useful for parallel threads and frontend/browser inspection
 
 </v-clicks>
 
@@ -2405,12 +2409,10 @@ Standalone desktop application — your **Codex command center**
 <v-clicks>
 
 - **Multi-agent parallelism** — run multiple agents simultaneously, each in its own thread
-- **Automatic worktree isolation** — each agent works on its own copy of the repo
-- **Visual diff review** — inline comments, stage/revert chunks, commit in-app
-- **Integrated terminal** — each thread gets its own terminal; app reads output for context
-- **Automations** — schedule recurring background tasks, review results in inbox
-- **Built-in Figma integration** — fetch designs, translate to production UI code
-- **Cloud deploy** — push to Cloudflare, Netlify, Render, Vercel from the app
+- **Worktree isolation** — keep experimental changes separate
+- **Visual diff review** — inspect and stage changes deliberately
+- **Computer use** — inspect browser and desktop UI when needed
+- **Cloud handoff** — run long tasks away from your terminal
 
 </v-clicks>
 
@@ -2423,8 +2425,8 @@ Standalone desktop application — your **Codex command center**
 | **Interface** | Terminal | Desktop GUI |
 | **Multi-project** | Terminal tabs | Visual thread list |
 | **Diff review** | Basic | Inline with comments |
-| **Automations** | Not available | Built-in scheduler |
-| **Worktrees** | Manual | Automatic |
+| **Computer use** | Limited | Built-in app/browser control |
+| **Worktrees** | Manual | First-class workflow |
 | **Remote/SSH** | Supported | Not supported |
 | **Speed** | Faster | Slightly heavier |
 
@@ -2437,9 +2439,9 @@ Standalone desktop application — your **Codex command center**
 <v-clicks>
 
 - Open source at github.com/openai/codex
-- 56k+ GitHub stars, 500+ releases
-- Plugin marketplace for skills, apps, and connectors
-- Active discussions and contributions welcome
+- Official docs at developers.openai.com/codex
+- Skills, plugins, and MCP servers extend the base agent
+- GitHub discussions and issues are the right place for project feedback
 
 </v-clicks>
 
@@ -2452,7 +2454,9 @@ Standalone desktop application — your **Codex command center**
 codex                          # Interactive mode
 codex exec "prompt"           # Execute task & exit
 codex resume                  # Resume session
+codex resume --last           # Resume most recent session
 codex apply                   # Apply last diff
+codex update                  # Update Codex CLI
 ```
 
 ---
@@ -2470,9 +2474,12 @@ codex --ask-for-approval on-request   # Set approval
 # Advanced Commands
 
 ```bash
-codex mcp-server --config ~/.codex/config.toml  # MCP server mode (v0.37+)
-codex apply                              # Apply last diff
-codex resume --last                      # Resume most recent session
+codex mcp list                 # List MCP servers
+codex mcp login server-name    # OAuth login for supported MCP servers
+codex mcp-server               # Expose Codex as an MCP server
+codex cloud exec "prompt"      # Launch a cloud task
+codex cloud diff               # Review cloud task changes
+codex cloud apply              # Apply cloud task changes locally
 ```
 
 ---
@@ -2493,7 +2500,7 @@ codex resume --last                      # Resume most recent session
 # Documentation & Code
 
 ### 📚 Official Documentation
-`https://github.com/openai/codex/docs`
+`https://developers.openai.com/codex/`
 
 ### 🐙 GitHub Repository
 `https://github.com/openai/codex`
@@ -2513,16 +2520,6 @@ codex resume --last                      # Resume most recent session
 
 ---
 
-# Discord & Office Hours
-
-## Discord Server
-Join the Codex community for support and discussion
-
-## Weekly Office Hours
-Every Thursday at 2 PM PST
-
----
-
 # Contributing
 
 <v-clicks>
@@ -2535,7 +2532,7 @@ Every Thursday at 2 PM PST
 
 ---
 
-# Ecosystem
+# Ecosystem Examples
 
 <v-clicks>
 
@@ -2548,36 +2545,15 @@ Every Thursday at 2 PM PST
 
 ---
 
-# Codex CLI vs Claude Code
-
-For teams using both tools:
-
-| Aspect | Codex CLI | Claude Code |
-|--------|-----------|-------------|
-| **Model** | GPT-5.4 | Claude Opus 4.6 |
-| **Runtime** | Rust | TypeScript |
-| **Memory File** | AGENTS.md | CLAUDE.md |
-| **Skills Location** | `~/.agents/skills/` | `~/.claude/skills/` |
-| **Skill Invoke** | `$skill-name` | Auto or explicit |
-| **Cloud Tasks** | Codex Cloud | - |
-
----
-
-# When to Use Which?
+# Choosing a Codex Surface
 
 <v-clicks>
 
-**Choose Codex CLI when:**
-- GPT-5.4 model strengths needed
-- Codex Cloud for long tasks
-- Enterprise MDM requirements
-
-**Choose Claude Code when:**
-- Claude's reasoning preferred
-- Extended thinking needed
-- Anthropic ecosystem integration
-
-**Use both** with MCP to leverage each model's strengths!
+- **CLI** for speed, SSH, automation, and terminal-native workflows
+- **IDE extension** for editor-local changes and inline context
+- **App** for visual review, parallel threads, worktrees, and browser inspection
+- **Cloud** for long-running background work
+- **MCP** when the agent needs live docs, services, or custom tools
 
 </v-clicks>
 
@@ -2585,24 +2561,22 @@ For teams using both tools:
 
 # References & Credits
 
-## Newsletter Sources
+## Course Sources
 
-**MLearning.ai Art** on Substack by @mlearning
-- [100 OpenAI Codex CLI Tricks and Tips](https://mlearning.substack.com/p/100-openai-codex-cli-tricks-and-tips)
-- [30 Codex CLI Tips v0.30-0.39](https://mlearning.substack.com/p/30-codex-cli-tips-and-tricks-v30-version-0-39)
-
-Many advanced tips including:
-- Command chaining with `&&`
-- Scheduled maintenance automation
-- Network allowlists
-- High reasoning mode
+- Official Codex documentation
+- OpenAI Codex GitHub repository
+- Model Context Protocol documentation
+- Course labs and configuration examples
 
 ---
 
 # Additional Resources
 
 ## Official Sources
+- [Codex Documentation](https://developers.openai.com/codex/)
 - [Codex CLI Documentation](https://developers.openai.com/codex/cli/)
+- [Codex App Documentation](https://developers.openai.com/codex/app/)
+- [Codex MCP Documentation](https://developers.openai.com/codex/mcp/)
 - [Agent Skills Guide](https://developers.openai.com/codex/skills/)
 - [Codex GitHub Repository](https://github.com/openai/codex)
 - [Skills Catalog](https://github.com/openai/skills)
@@ -2611,12 +2585,6 @@ Many advanced tips including:
 - [agentskills.io](https://agentskills.io) - Skills specification
 - [Model Context Protocol](https://modelcontextprotocol.io)
 - [Codex Discussions](https://github.com/openai/codex/discussions)
-
-## Related Training
-- [Claude Code Training](https://github.com/anthropics/claude-code)
-- [Junie Training Materials](https://github.com/kousen/junie-training)
-
----
 
 # Thank You!
 

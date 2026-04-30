@@ -2,18 +2,19 @@
 
 ## Overview
 
-This directory contains hands-on exercises for learning OpenAI Codex CLI. Each exercise is designed to teach different aspects of using Codex for real-world development tasks.
+This directory contains hands-on exercises for learning OpenAI Codex. Each exercise is designed to teach different aspects of using Codex for real-world development tasks.
 
 ## Exercise Structure
 
 ```
 exercises/
-├── plan-mode-warmup/      # Lab 0: Plan Mode & New Defaults (15 min)
+├── plan-mode-warmup/      # Lab 0: Planning, steering, and permissions (15 min)
 ├── java-spring-boot/      # Lab 1: REST API Development
 ├── python-refactoring/    # Lab 2: Code Refactoring
 ├── react-forms/           # Lab 3: Frontend Development
 ├── microservices/         # Lab 4: Distributed Systems
-└── skills-creation/       # Lab 5: Custom Codex Skills
+├── skills-creation/       # Lab 5: Custom Codex Skills
+└── mcp-context7/          # Lab 6: Current docs through MCP
 ```
 
 ## Prerequisites
@@ -25,7 +26,7 @@ exercises/
 - Java 17+ and Maven
 - Go 1.21+ (for microservices exercise)
 - Docker and Docker Compose
-- OpenAI Codex CLI installed and configured
+- OpenAI Codex CLI installed and authenticated
 
 ### Verify Installation
 ```bash
@@ -42,7 +43,7 @@ docker --version
 
 ## Setup Instructions
 
-### Lab 0: Plan Mode Warm-Up
+### Lab 0: Planning and Steering Warm-Up
 
 ```bash
 cd plan-mode-warmup/starter
@@ -53,7 +54,7 @@ The starter includes:
 - `inventory.py` — Small Python module with two intentional bugs
 - `test_inventory.py` — Partial test suite
 
-**Your Task**: Learn plan mode, steer mode, and key slash commands while fixing bugs and adding tests.
+**Your Task**: Practice planning, steering, permissions, and key slash commands while fixing bugs and adding tests.
 
 ### Lab 1: Spring Boot API
 
@@ -137,10 +138,11 @@ This lab teaches you to create custom Codex skills. No starter code is needed—
 ### Best Practices
 
 1. **Start with AGENTS.md**: Each exercise has an AGENTS.md file that provides context to Codex
-2. **Use appropriate sandbox mode**: Start with `auto` mode for safety
+2. **Use appropriate sandbox mode**: Start with `workspace-write` and `on-request`
 3. **Review generated code**: Never blindly accept AI suggestions
 4. **Test frequently**: Run tests after each major change
 5. **Commit often**: Use Git to track your progress
+6. **Use MCP docs when APIs matter**: Ask Codex to look up current docs before using fast-moving libraries
 
 ### Example Workflow
 

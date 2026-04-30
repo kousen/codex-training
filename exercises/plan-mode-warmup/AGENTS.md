@@ -1,6 +1,6 @@
 # Inventory Module
 
-A simple Python inventory management module used for learning Codex CLI interaction patterns.
+A simple Python inventory management module used for learning Codex interaction patterns.
 
 ## Project Structure
 - `inventory.py` — Core inventory functions

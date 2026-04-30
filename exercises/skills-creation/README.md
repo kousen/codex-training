@@ -5,7 +5,9 @@ Use Codex to create a custom skill that generates conventional commit messages f
 
 ## Background
 
-Agent Skills are reusable instruction bundles that extend Codex's capabilities. They follow the [agentskills.io](https://agentskills.io) specification and can be invoked explicitly with `$skill-name` or implicitly based on task matching.
+Agent Skills are reusable instruction bundles that extend Codex's capabilities. They can include instructions, scripts, references, and assets. Codex loads only the name and description at startup, then reads the full `SKILL.md` when the skill is selected.
+
+Skills can be invoked explicitly with `$skill-name` or selected implicitly based on the description. Use `/skills` in an interactive session to inspect what is available.
 
 ## Requirements
 
@@ -42,6 +44,9 @@ Your completed skill should have this structure:
 ```
 ~/.agents/skills/commit-gen/
 ├── SKILL.md          # Required: YAML frontmatter + instructions
+├── agents/           # Optional: Codex metadata and dependencies
+│   └── openai.yaml
+├── scripts/          # Optional: executable helpers
 ├── references/       # Optional: commit examples
 │   └── conventions.md
 └── assets/           # Optional: templates
@@ -186,7 +191,9 @@ Use lowercase, typically matching:
 
 ### Project-Level Sharing
 
-Copy your skill to the project's `.agents/skills/` directory:
+Copy your skill to the project's `.agents/skills/` directory. Codex scans repo
+skills from the current directory up to the repository root, so this is the
+right location for team-shared workflows.
 
 ```bash
 cp -r ~/.agents/skills/commit-gen .agents/skills/
@@ -196,14 +203,16 @@ git commit -m "chore: add commit-gen skill for team"
 
 ### Skill Catalog Submission
 
-For wider distribution, consider contributing to the [Skills Catalog](https://github.com/openai/skills).
+For wider distribution, package the skill in a plugin or contribute it to a
+shared skills catalog.
 
 ## Tips
 
 - **Keep instructions focused**: Skills work best with clear, specific workflows
-- **Use triggers wisely**: Good trigger phrases help Codex know when to invoke your skill
+- **Write precise descriptions**: The description is what Codex sees before loading the full skill
 - **Test implicit invocation**: Verify your description matches user intent
 - **Add examples**: Reference files with examples improve output quality
+- **Use scripts for repeatable work**: Put deterministic commands in `scripts/` instead of re-describing them
 - **Iterate**: Refine your skill based on real usage
 
 ## Comparison: Skills vs Custom Prompts

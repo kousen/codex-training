@@ -2,7 +2,7 @@
   "name": "codex-training",
   "version": "1.0.0",
   "private": true,
-  "description": "OpenAI Codex CLI Training Course",
+  "description": "OpenAI Codex Training Course",
   "author": "Kenneth Kousen <ken.kousen@kousenit.com>",
   "license": "MIT",
   "scripts": {

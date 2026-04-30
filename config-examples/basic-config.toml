@@ -1,17 +1,19 @@
-# OpenAI Codex CLI - Basic Configuration
+# OpenAI Codex - Basic Configuration
 # Location: ~/.codex/config.toml
 #
 # This is a minimal configuration to get started.
 # See advanced-config.toml for all available options.
 
 # Model Selection
-# As of March 13, 2026, GPT-5.4 is the current default in Codex.
-model = "gpt-5.4"
+# Start with gpt-5.5 when it is available in your Codex model picker.
+# If you authenticate with an API key, or gpt-5.5 is not available yet,
+# use gpt-5.4 instead.
+model = "gpt-5.5"
 
 # Security Settings
-# on-request: Ask before executing commands (recommended for beginners)
-# never: Never ask (for experienced users)
-# on-failure exists but is deprecated in current CLI help
+# untrusted: Only trusted commands run without prompting
+# on-request: Ask before risky actions (recommended for beginners)
+# never: Never ask (for automation; pair with a restrictive sandbox)
 approval_policy = "on-request"
 
 # Sandbox Mode
@@ -24,8 +26,11 @@ sandbox_mode = "workspace-write"
 # Maximum bytes to read from AGENTS.md files
 project_doc_max_bytes = 32768
 
-# Live web search is enabled per run:
-# codex --search "look up current release notes"
+# Web Search
+# cached: use OpenAI's maintained search index without live page fetches
+# live: fetch current web pages when freshness matters
+# disabled: remove web search from the session
+web_search = "cached"
 
 # That's it! This basic config is enough to get started.
 #
