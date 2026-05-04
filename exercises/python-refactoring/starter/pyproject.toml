@@ -1,0 +1,69 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "python-refactoring-starter"
+version = "0.1.0"
+description = "Refactored data-processing starter for Codex CLI training"
+requires-python = ">=3.10"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.black]
+line-length = 88
+target-version = ["py310"]
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.pytest.ini_options]
+addopts = "--cov=src --cov=legacy_processor --cov-report=term-missing --cov-fail-under=100"
+pythonpath = ["src", "."]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+branch = true
+source = ["src", "legacy_processor.py"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "raise SystemExit\\(main\\(\\)\\)",
+    "@abstractmethod",
+]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+files = ["src", "legacy_processor.py", "tests"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "ANN", "C4"]
+
+[tool.pylint.main]
+py-version = "3.10"
+source-roots = ["src"]
+persistent = false
+
+[tool.pylint.format]
+max-line-length = 88
+
+[tool.pylint.messages_control]
+disable = [
+    "duplicate-code",
+    "missing-module-docstring",
+    "too-few-public-methods",
+]

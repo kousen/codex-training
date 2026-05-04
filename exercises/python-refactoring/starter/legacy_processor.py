@@ -1,55 +1,107 @@
-# Legacy Data Processor - Needs Refactoring!
-# This code works but has many issues. Use Codex to improve it.
+"""Compatibility entry point for the refactored data processor.
 
-import json
-import os
+The original exercise exposed ``process``, ``load_and_process``, and
+``save_results`` from this module. They now delegate to the typed package under
+``src/data_processing`` while preserving familiar call sites for the lab.
+"""
 
-def process(d, t):
-    # process data
-    r = []
-    for i in d:
-        if t == 'filter':
-            if i['status'] == 'active':
-                r.append(i)
-        elif t == 'transform':
-            i['processed'] = True
-            i['timestamp'] = '2024-01-01'
-            r.append(i)
-        elif t == 'validate':
-            if 'id' in i and 'name' in i:
-                if len(i['name']) > 0:
-                    if i['id'] > 0:
-                        r.append(i)
-    return r
+from __future__ import annotations
 
-def load_and_process(f, t):
+import argparse
+import logging
+from collections.abc import Mapping, Sequence
+from pathlib import Path
+from typing import Any
+
+from data_processing.models import JsonObject
+from data_processing.pipeline import load_process_save
+from data_processing.processors import Operation, process_records
+from data_processing.readers import JsonFileReader
+from data_processing.writers import JsonFileWriter
+from exceptions.custom import DataProcessingError
+from utils.logging import configure_logging
+
+LOGGER = logging.getLogger(__name__)
+DEFAULT_INPUT = Path("/tmp/input.json")
+DEFAULT_OUTPUT = Path("/tmp/output.json")
+
+
+def process(
+    data: Sequence[Mapping[str, Any]],
+    operation: Operation | str,
+) -> list[JsonObject]:
+    """Process records with one operation.
+
+    Args:
+        data: JSON-like records.
+        operation: ``filter``, ``transform``, or ``validate``.
+
+    Returns:
+        Processed records as dictionaries.
+    """
+
+    return process_records(data, operation)
+
+
+def load_and_process(
+    filename: str | Path,
+    operation: Operation | str,
+) -> list[JsonObject]:
+    """Load JSON records from disk and process them.
+
+    Args:
+        filename: Input JSON file.
+        operation: Processing operation to apply.
+
+    Returns:
+        Processed records, or an empty list when reading/processing fails.
+    """
+
     try:
-        file = open(f, 'r')
-        data = json.load(file)
-        file.close()
-        result = process(data, t)
-        return result
-    except:
+        data = JsonFileReader().read(filename)
+        return process(data, operation)
+    except DataProcessingError:
+        LOGGER.exception("Could not load and process %s", filename)
         return []
 
-def save_results(data, filename):
-    f = open(filename, 'w')
-    f.write(json.dumps(data))
-    f.close()
 
-def main():
-    # hardcoded paths
-    input_file = '/tmp/input.json'
-    output_file = '/tmp/output.json'
-    
-    if os.path.exists(input_file):
-        data = load_and_process(input_file, 'filter')
-        data = process(data, 'transform')
-        data = process(data, 'validate')
-        save_results(data, output_file)
-        print('Done! Processed ' + str(len(data)) + ' items')
-    else:
-        print('File not found')
+def save_results(data: list[Mapping[str, Any]], filename: str | Path) -> None:
+    """Write processed records to disk.
 
-if __name__ == '__main__':
-    main()
+    Args:
+        data: JSON-compatible records.
+        filename: Output JSON file.
+    """
+
+    JsonFileWriter().write(data, filename)
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    """Run the command-line data processor.
+
+    Args:
+        argv: Optional command-line arguments, excluding the executable name.
+
+    Returns:
+        Process exit code.
+    """
+
+    parser = argparse.ArgumentParser(description="Process a JSON data file.")
+    parser.add_argument("--input", type=Path, default=DEFAULT_INPUT)
+    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    args = parser.parse_args(argv)
+
+    configure_logging()
+
+    try:
+        count = load_process_save(args.input, args.output)
+    except DataProcessingError:
+        LOGGER.exception("Data processing failed")
+        return 1
+
+    LOGGER.info("Done. Processed %s items", count)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

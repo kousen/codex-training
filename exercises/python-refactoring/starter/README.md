@@ -1,48 +1,89 @@
-# Legacy Processor - Refactoring Exercise
+# Refactored Data Processor
 
-This is the starting point for Lab 2: Python Code Refactoring.
+This project is the completed version of Lab 2: Python Code Refactoring. The
+legacy single-file script has been split into a typed package with explicit
+models, processors, file I/O classes, tests, quality tooling, and Sphinx docs.
 
-## The Challenge
+## Features
 
-`legacy_processor.py` is working code with many issues:
+- Python 3.10+ type hints and strict mypy configuration
+- Immutable dataclass model for normalized records
+- Strategy and Chain of Responsibility patterns for processing
+- Specific custom exceptions with logging
+- Context-managed JSON readers and writers
+- Pytest, coverage, parameterized tests, and Hypothesis property tests
+- Black, isort, ruff, flake8, pylint, pre-commit, and Makefile tasks
 
-- No type hints
-- Poor variable names (`d`, `t`, `r`, `i`, `f`)
-- No error handling (bare `except:`)
-- No context managers for file handling
-- Magic strings and hardcoded paths
-- No documentation
-- Deeply nested conditionals
-- No tests
-
-## What You'll Do
-
-Use Codex to:
-1. Add type hints throughout
-2. Rename variables to be descriptive
-3. Add proper error handling
-4. Use context managers (`with` statements)
-5. Extract configuration
-6. Add docstrings
-7. Write pytest tests
-8. Set up code quality tools
-
-## Quick Start
+## Usage
 
 ```bash
-# Install dependencies
-pip install -r requirements.txt
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 
-# Run the legacy code
-python legacy_processor.py
-
-# After refactoring, run tests
-pytest --cov=. --cov-report=html
+python legacy_processor.py --input /tmp/input.json --output /tmp/output.json
 ```
 
-## First Codex Prompt
+Example input:
 
+```json
+[
+  {"id": 1, "name": "Ada", "status": "active"},
+  {"id": 2, "name": "Grace", "status": "inactive"},
+  {"id": 0, "name": "", "status": "active"}
+]
 ```
-Analyze legacy_processor.py and list all the code smells and
-issues that need to be fixed. Then start by adding type hints.
+
+The standard pipeline keeps active records, marks them as processed, validates
+the result, and writes JSON like this:
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Ada",
+    "status": "active",
+    "processed": true,
+    "timestamp": "2024-01-01"
+  }
+]
 ```
+
+## Development
+
+```bash
+make install
+make test
+make typecheck
+make format
+make lint
+make docs
+```
+
+Or run tools directly:
+
+```bash
+source .venv/bin/activate
+
+pytest
+mypy
+black src tests legacy_processor.py
+isort src tests legacy_processor.py
+ruff check src tests legacy_processor.py
+flake8 src tests legacy_processor.py
+pylint src legacy_processor.py
+sphinx-build -b html docs docs/_build/html
+```
+
+## Architecture
+
+- `data_processing.models`: immutable `DataRecord` domain model
+- `data_processing.processors`: operation strategies and processing chain
+- `data_processing.readers`: JSON input reader
+- `data_processing.writers`: JSON output writer
+- `data_processing.pipeline`: high-level orchestration
+- `legacy_processor.py`: compatibility CLI and wrapper functions
+
+See `docs/architecture.md` for Mermaid diagrams of the package structure,
+runtime flow, processing chain, and class relationships.

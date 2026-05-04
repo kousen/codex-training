@@ -1,0 +1,14 @@
+flowchart TD
+    raw["Raw JSON objects"]
+    normalize["Normalize to immutable<br/>DataRecord objects"]
+    active["ActiveStatusFilter<br/>keep status == active"]
+    transform["TransformProcessor<br/>processed = true<br/>timestamp = 2024-01-01"]
+    valid["ValidRecordFilter<br/>id > 0 and name not blank"]
+    output["JSON-compatible dictionaries"]
+
+    raw --> normalize --> active --> transform --> valid --> output
+
+    invalid_type["Invalid field types"] --> invalid_error["InvalidDataError"]
+    unknown_op["Unknown operation"] --> processing_error["ProcessingError"]
+    read_failure["Missing or malformed input"] --> reader_error["ReaderError"]
+    write_failure["Unwritable output"] --> writer_error["WriterError"]

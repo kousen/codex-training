@@ -1,0 +1,9 @@
+.coverage
+.hypothesis/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.venv/
+__pycache__/
+htmlcov/
+docs/_build/

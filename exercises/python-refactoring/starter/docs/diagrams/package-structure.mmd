@@ -1,0 +1,26 @@
+flowchart LR
+    cli["legacy_processor.py<br/>CLI and compatibility wrappers"]
+
+    subgraph src["src/"]
+        pipeline["data_processing.pipeline<br/>DataProcessingPipeline"]
+        processors["data_processing.processors<br/>strategies and chain"]
+        models["data_processing.models<br/>DataRecord dataclass"]
+        readers["data_processing.readers<br/>JsonFileReader"]
+        writers["data_processing.writers<br/>JsonFileWriter"]
+        errors["exceptions.custom<br/>domain exceptions"]
+        logging["utils.logging<br/>logging decorator/config"]
+    end
+
+    cli --> pipeline
+    cli --> processors
+    cli --> readers
+    cli --> writers
+    pipeline --> readers
+    pipeline --> processors
+    pipeline --> writers
+    processors --> models
+    readers --> errors
+    writers --> errors
+    processors --> errors
+    pipeline --> logging
+    processors --> logging

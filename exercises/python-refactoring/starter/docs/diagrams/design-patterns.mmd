@@ -1,0 +1,47 @@
+classDiagram
+    class DataProcessingPipeline {
+        +process_file(input_path, output_path) int
+    }
+
+    class JsonFileReader {
+        +read(path) list
+    }
+
+    class JsonFileWriter {
+        +write(records, path) None
+    }
+
+    class DataRecord {
+        +id int
+        +name str
+        +status str
+        +processed bool
+        +timestamp str_or_none
+        +from_mapping(value) DataRecord
+        +mark_processed(timestamp) DataRecord
+        +to_dict() dict
+    }
+
+    class RecordProcessor {
+        <<abstract>>
+        +set_next(processor) RecordProcessor
+        +handle(records) list
+        +apply(records) list
+    }
+
+    class ActiveStatusFilter
+    class TransformProcessor
+    class ValidRecordFilter
+    class ProcessingChain {
+        +standard(timestamp) ProcessingChain
+        +run(records) list
+    }
+
+    DataProcessingPipeline --> JsonFileReader
+    DataProcessingPipeline --> JsonFileWriter
+    DataProcessingPipeline --> ProcessingChain
+    ProcessingChain --> RecordProcessor
+    RecordProcessor <|-- ActiveStatusFilter
+    RecordProcessor <|-- TransformProcessor
+    RecordProcessor <|-- ValidRecordFilter
+    RecordProcessor --> DataRecord

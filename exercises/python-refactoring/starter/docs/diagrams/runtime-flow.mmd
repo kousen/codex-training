@@ -1,0 +1,18 @@
+sequenceDiagram
+    actor User
+    participant CLI as legacy_processor.py
+    participant Pipeline as DataProcessingPipeline
+    participant Reader as JsonFileReader
+    participant Chain as ProcessingChain
+    participant Writer as JsonFileWriter
+
+    User->>CLI: python legacy_processor.py --input input.json --output output.json
+    CLI->>Pipeline: load_process_save(input_path, output_path)
+    Pipeline->>Reader: read(input_path)
+    Reader-->>Pipeline: list[dict]
+    Pipeline->>Chain: run(list[DataRecord])
+    Chain-->>Pipeline: processed list[DataRecord]
+    Pipeline->>Writer: write(list[dict], output_path)
+    Writer-->>Pipeline: None
+    Pipeline-->>CLI: processed count
+    CLI-->>User: exit code 0
