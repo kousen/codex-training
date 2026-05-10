@@ -8,7 +8,7 @@ def add_item(inventory, name, quantity, price):
 
 def remove_item(inventory, name):
     """Remove an item from inventory."""
-    del inventory[name]  # Bug: crashes if item doesn't exist
+    inventory.pop(name, None)
 
 
 def get_total_value(inventory):
@@ -22,7 +22,7 @@ def get_total_value(inventory):
 def apply_discount(inventory, name, percent):
     """Apply a percentage discount to an item's price."""
     item = inventory[name]
-    item["price"] = item["price"] - (item["price"] * percent)  # Bug: percent should be / 100
+    item["price"] = item["price"] - (item["price"] * percent / 100)
 
 
 def find_low_stock(inventory, threshold):
