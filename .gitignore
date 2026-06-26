@@ -13,8 +13,8 @@ dist-ssr/
 *.local
 
 # Build outputs
+# Slides PDF is built in CI and published as the `slides-latest` GitHub release.
 *.pdf
-!exports/slides.pdf
 build/
 out/
 target/
