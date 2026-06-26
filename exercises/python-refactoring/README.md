@@ -5,7 +5,10 @@ Use Codex to refactor legacy Python code into modern, maintainable, and well-tes
 
 ## Starting Code
 
-The `starter/legacy_processor.py` file contains poorly written data processing code that needs significant improvement.
+Work inside the `starter/` directory for this lab (`cd starter`). The
+`starter/legacy_processor.py` file contains poorly written data processing code
+that needs significant improvement. (The `legacy_code.py` and `src/` at the lab
+root are leftover reference material—ignore them for the exercise.)
 
 ## Refactoring Goals
 

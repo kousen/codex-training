@@ -53,11 +53,14 @@ codex-training/
 ### 1. Install Codex
 
 ```bash
-# Via npm (recommended)
+# Official install script (macOS/Linux)
+curl -fsSL https://chatgpt.com/codex/install.sh | sh
+
+# Via npm
 npm install -g @openai/codex
 
 # Via Homebrew (macOS/Linux)
-brew install codex
+brew install --cask codex
 
 # Verify installation
 codex --version

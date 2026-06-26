@@ -182,11 +182,14 @@ Kousen IT, Inc.
 # Installation Methods
 
 ```bash
-# NPM (recommended)
+# Official install script (macOS/Linux)
+curl -fsSL https://chatgpt.com/codex/install.sh | sh
+
+# NPM
 npm install -g @openai/codex
 
 # Homebrew (macOS/Linux)
-brew install codex
+brew install --cask codex
 
 # Direct binary download
 # Visit: https://github.com/openai/codex/releases

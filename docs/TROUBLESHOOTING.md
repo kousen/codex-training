@@ -15,7 +15,7 @@ Quick solutions to common issues you may encounter during the training.
 which codex
 
 # Reinstall via Homebrew (macOS/Linux)
-brew reinstall codex
+brew reinstall --cask codex
 
 # Or via npm
 npm uninstall -g @openai/codex
@@ -311,7 +311,7 @@ codex --version
 cat ~/.codex/config.toml
 
 # Recent logs (if logging enabled)
-tail -100 ~/.codex/log/codex.log
+tail -100 ~/.codex/log/codex-tui.log
 ```
 
 ### Reset to defaults
@@ -336,7 +336,7 @@ codex
 
 | Symptom | Likely Cause | Quick Fix |
 |---------|--------------|-----------|
-| "command not found" | Not installed | `brew install codex` |
+| "command not found" | Not installed | `brew install --cask codex` |
 | "Authentication failed" | Bad credentials | `mv ~/.codex/auth ~/.codex/auth.backup && codex login` |
 | "Operation not permitted" | Sandbox restriction | Inspect permissions, or relaunch with `--sandbox danger-full-access` |
 | "MCP server failed" | Missing env var | Check `$GITHUB_TOKEN` etc. |

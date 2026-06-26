@@ -4,12 +4,12 @@
 Building a production-ready user registration form with React, TypeScript, and modern best practices.
 
 ## Technology Stack
-- **Framework**: React 18.2
-- **Language**: TypeScript 5.3
-- **Build Tool**: Vite 5
-- **Form Library**: React Hook Form 7.48
-- **Validation**: Zod 3.22
-- **Styling**: Tailwind CSS 3.4
+- **Framework**: React 19.2
+- **Language**: TypeScript 5.9
+- **Build Tool**: Vite 8
+- **Form Library**: React Hook Form 7.71
+- **Validation**: Zod 4.3
+- **Styling**: Tailwind CSS 4.2
 - **Testing**: Jest, React Testing Library, Playwright
 - **State**: Context API + useReducer
 - **HTTP Client**: Axios
