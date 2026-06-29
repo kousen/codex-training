@@ -34,7 +34,9 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Export slides to PDF
-        run: npm run export
+        # Force the output name: this Slidev version ignores exportFilename for
+        # the bare `export` command and would otherwise write slides-export.pdf.
+        run: npm run export -- --output codex-training-slides.pdf
 
       - name: Publish rolling "latest" release
         uses: softprops/action-gh-release@v2
