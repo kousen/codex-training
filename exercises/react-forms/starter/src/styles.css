@@ -1,0 +1,14 @@
+@import 'tailwindcss';
+
+@layer base {
+  body {
+    @apply min-h-screen bg-slate-50 text-slate-950 antialiased;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+}
