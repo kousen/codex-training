@@ -8,6 +8,7 @@
     "preview": "vite preview",
     "test": "vitest --passWithNoTests",
     "test:coverage": "vitest --coverage --passWithNoTests",
+    "test:e2e": "playwright test",
     "lint": "eslint . --max-warnings 0",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
+    "@playwright/test": "^1.61.1",
     "@tailwindcss/vite": "^4.2.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
