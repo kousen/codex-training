@@ -3,53 +3,50 @@
 
 import json
 import os
+from pathlib import Path
+from typing import cast
 
-def process(d, t):
-    # process data
-    r = []
-    for i in d:
-        if t == 'filter':
-            if i['status'] == 'active':
-                r.append(i)
-        elif t == 'transform':
-            i['processed'] = True
-            i['timestamp'] = '2024-01-01'
-            r.append(i)
-        elif t == 'validate':
-            if 'id' in i and 'name' in i:
-                if len(i['name']) > 0:
-                    if i['id'] > 0:
-                        r.append(i)
-    return r
+from src.data_processing.processors import (
+    ProcessType,
+    Record,
+    build_default_pipeline,
+    processor_for,
+)
 
-def load_and_process(f, t):
+
+def process(d: list[Record], t: ProcessType) -> list[Record]:
+    processor = processor_for(t)
+    return processor.process(d)
+
+
+def load_and_process(f: str, t: ProcessType) -> list[Record]:
     try:
-        file = open(f, 'r')
-        data = json.load(file)
-        file.close()
+        with Path(f).open() as file:
+            data = cast(list[Record], json.load(file))
         result = process(data, t)
         return result
-    except:
+    except (FileNotFoundError, json.JSONDecodeError, OSError):
         return []
 
-def save_results(data, filename):
-    f = open(filename, 'w')
-    f.write(json.dumps(data))
-    f.close()
 
-def main():
+def save_results(data: list[Record], filename: str) -> None:
+    Path(filename).write_text(json.dumps(data))
+
+
+def main() -> None:
     # hardcoded paths
-    input_file = '/tmp/input.json'
-    output_file = '/tmp/output.json'
-    
-    if os.path.exists(input_file):
-        data = load_and_process(input_file, 'filter')
-        data = process(data, 'transform')
-        data = process(data, 'validate')
-        save_results(data, output_file)
-        print('Done! Processed ' + str(len(data)) + ' items')
-    else:
-        print('File not found')
+    input_file = "/tmp/input.json"
+    output_file = "/tmp/output.json"
 
-if __name__ == '__main__':
+    if os.path.exists(input_file):
+        with Path(input_file).open() as file:
+            data = cast(list[Record], json.load(file))
+        data = build_default_pipeline().process(data)
+        save_results(data, output_file)
+        print("Done! Processed " + str(len(data)) + " items")
+    else:
+        print("File not found")
+
+
+if __name__ == "__main__":
     main()

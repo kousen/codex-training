@@ -176,6 +176,7 @@ class TaskControllerIntegrationTest {
         mockMvc.perform(post("/api/v1/tasks")
                         .with(admin())
                         .contentType(MediaType.APPLICATION_JSON)
+                        //noinspection JsonStandardCompliance
                         .content("{"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Request body is missing or malformed"));
