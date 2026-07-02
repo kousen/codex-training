@@ -2,23 +2,39 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Any, Mapping, Optional
+from typing import Any
 
 
 @dataclass
 class Record:
-    """Structured representation of a data record."""
+    """Structured representation of a data record.
 
-    id: Optional[int] = None
+    Attributes:
+        id: Optional numeric identifier for the record.
+        name: Display name used by validation.
+        status: Workflow status, such as ``"active"`` or ``"inactive"``.
+        processed: Whether the record has passed through the transform step.
+        timestamp: Optional timestamp assigned during transformation.
+    """
+
+    id: int | None = None
     name: str = ""
     status: str = ""
     processed: bool = False
-    timestamp: Optional[str] = None
+    timestamp: str | None = None
 
     @classmethod
     def from_mapping(cls, data: Mapping[str, Any]) -> Record:
-        """Create a record from JSON-style mapping data."""
+        """Create a record from JSON-style mapping data.
+
+        Args:
+            data: Mapping loaded from JSON or supplied by legacy callers.
+
+        Returns:
+            A normalized ``Record`` dataclass instance.
+        """
         raw_id = data.get("id")
         return cls(
             id=raw_id if isinstance(raw_id, int) else None,
@@ -29,7 +45,11 @@ class Record:
         )
 
     def to_dict(self) -> dict[str, Any]:
-        """Convert this record back to JSON-serializable data."""
+        """Convert this record back to JSON-serializable data.
+
+        Returns:
+            Dictionary representation suitable for ``json.dump``.
+        """
         data: dict[str, Any] = {
             "id": self.id,
             "name": self.name,

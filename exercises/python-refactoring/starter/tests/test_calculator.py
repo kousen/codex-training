@@ -7,7 +7,6 @@ from collections.abc import Callable
 
 import pytest
 
-from src.exceptions import DataValidationError, DivisionByZeroCalculationError
 from src.calculator import (
     AddOperation,
     Calculator,
@@ -16,6 +15,7 @@ from src.calculator import (
     Operation,
     SubtractOperation,
 )
+from src.exceptions import DataValidationError, DivisionByZeroCalculationError
 
 
 @pytest.mark.parametrize(

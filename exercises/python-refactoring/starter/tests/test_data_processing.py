@@ -7,7 +7,6 @@ from pathlib import Path
 
 import pytest
 
-from src.data_processing import readers, writers
 from src.data_processing import (
     ActiveRecordFilter,
     DataProcessor,
@@ -17,6 +16,8 @@ from src.data_processing import (
     Record,
     RequiredFieldsValidator,
     TimestampTransformer,
+    readers,
+    writers,
 )
 from src.data_processing.processors import ProcessType, processor_for
 from src.exceptions import (

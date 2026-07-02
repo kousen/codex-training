@@ -40,6 +40,63 @@ python legacy_processor.py
 pytest --cov=. --cov-report=html
 ```
 
+## Usage Examples
+
+Run the calculator Strategy pattern example:
+
+```bash
+python examples/calculator_strategy_example.py
+```
+
+Run the data-processing Chain of Responsibility example:
+
+```bash
+python examples/data_processing_pipeline_example.py
+```
+
+The examples show how the refactored modules can be used directly, without the
+legacy facade.
+
+## Quality Tools
+
+This lab uses a focused modern toolchain:
+
+```bash
+black .
+ruff check . --fix
+mypy legacy_processor.py src tests examples
+pytest
+```
+
+Install the pre-commit hooks:
+
+```bash
+pre-commit install
+```
+
+Run all hooks manually:
+
+```bash
+pre-commit run --all-files
+```
+
+Or use the Makefile shortcuts:
+
+```bash
+make format
+make lint
+make test
+make coverage
+make docs
+make precommit
+```
+
+Build the package locally:
+
+```bash
+python -m build
+```
+
 ## First Codex Prompt
 
 ```

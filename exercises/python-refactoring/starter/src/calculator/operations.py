@@ -16,7 +16,15 @@ class Operation(ABC):
 
     @abstractmethod
     def execute(self, left: float, right: float) -> float:
-        """Return the result of applying the operation."""
+        """Return the result of applying the operation.
+
+        Args:
+            left: Left operand.
+            right: Right operand.
+
+        Returns:
+            The numeric result of the operation.
+        """
 
 
 class AddOperation(Operation):
@@ -24,7 +32,15 @@ class AddOperation(Operation):
 
     @validate_numeric_operands
     def execute(self, left: float, right: float) -> float:
-        """Return ``left + right``."""
+        """Return the sum of two numbers.
+
+        Args:
+            left: Left operand.
+            right: Right operand.
+
+        Returns:
+            The value of ``left + right``.
+        """
         return left + right
 
 
@@ -33,7 +49,15 @@ class SubtractOperation(Operation):
 
     @validate_numeric_operands
     def execute(self, left: float, right: float) -> float:
-        """Return ``left - right``."""
+        """Return the difference between two numbers.
+
+        Args:
+            left: Left operand.
+            right: Right operand.
+
+        Returns:
+            The value of ``left - right``.
+        """
         return left - right
 
 
@@ -42,7 +66,15 @@ class MultiplyOperation(Operation):
 
     @validate_numeric_operands
     def execute(self, left: float, right: float) -> float:
-        """Return ``left * right``."""
+        """Return the product of two numbers.
+
+        Args:
+            left: Left operand.
+            right: Right operand.
+
+        Returns:
+            The value of ``left * right``.
+        """
         return left * right
 
 
@@ -51,7 +83,18 @@ class DivideOperation(Operation):
 
     @validate_numeric_operands
     def execute(self, left: float, right: float) -> float:
-        """Return ``left / right``."""
+        """Return the quotient of two numbers.
+
+        Args:
+            left: Left operand.
+            right: Right operand.
+
+        Returns:
+            The value of ``left / right``.
+
+        Raises:
+            DivisionByZeroCalculationError: If ``right`` is zero.
+        """
         if right == 0:
             logger.error("Cannot divide %s by zero", left)
             raise DivisionByZeroCalculationError("Cannot divide by zero")

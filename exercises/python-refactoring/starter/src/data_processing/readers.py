@@ -7,7 +7,7 @@ import logging
 from collections.abc import Mapping
 from pathlib import Path
 from types import TracebackType
-from typing import Optional, TextIO
+from typing import TextIO
 
 from src.data_processing.models import Record
 from src.exceptions import DataLoadError
@@ -16,13 +16,30 @@ logger = logging.getLogger(__name__)
 
 
 class JsonRecordReader:
-    """Read records from a JSON file using an explicit context manager."""
+    """Read records from a JSON file using an explicit context manager.
+
+    Args:
+        filename: Path to a JSON file containing a list of record objects.
+    """
 
     def __init__(self, filename: str) -> None:
+        """Initialize the reader.
+
+        Args:
+            filename: Path to the JSON input file.
+        """
         self.path = Path(filename)
-        self._file: Optional[TextIO] = None
+        self._file: TextIO | None = None
 
     def __enter__(self) -> JsonRecordReader:
+        """Open the input file.
+
+        Returns:
+            This reader instance.
+
+        Raises:
+            DataLoadError: If the file cannot be opened.
+        """
         try:
             self._file = self.path.open()
             return self
@@ -35,15 +52,30 @@ class JsonRecordReader:
 
     def __exit__(
         self,
-        exc_type: Optional[type[BaseException]],
-        exc_value: Optional[BaseException],
-        traceback: Optional[TracebackType],
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: TracebackType | None,
     ) -> None:
+        """Close the input file when leaving the context manager.
+
+        Args:
+            exc_type: Exception type raised inside the context, if any.
+            exc_value: Exception instance raised inside the context, if any.
+            traceback: Traceback raised inside the context, if any.
+        """
         if self._file is not None:
             self._file.close()
 
     def read(self) -> list[Record]:
-        """Read JSON data as dataclass records."""
+        """Read JSON data as dataclass records.
+
+        Returns:
+            Records parsed from the JSON input file.
+
+        Raises:
+            DataLoadError: If the reader is not open, the JSON is invalid, or
+                the file does not contain a list of record objects.
+        """
         if self._file is None:
             raise DataLoadError("Reader must be opened before reading")
         try:
