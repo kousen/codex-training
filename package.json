@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "npx -y node@20 node_modules/@slidev/cli/bin/slidev.mjs slides.md --open",
     "build": "npx -y node@20 node_modules/@slidev/cli/bin/slidev.mjs build slides.md",
-    "export": "npx -y node@20 node_modules/@slidev/cli/bin/slidev.mjs export slides.md",
+    "export": "npx -y node@20 node_modules/@slidev/cli/bin/slidev.mjs export slides.md --output codex-training-slides.pdf",
     "export-pdf": "npx -y node@20 node_modules/@slidev/cli/bin/slidev.mjs export slides.md --format pdf",
     "preview": "npx -y node@20 node_modules/@slidev/cli/bin/slidev.mjs preview",
     "format": "prettier --write ."

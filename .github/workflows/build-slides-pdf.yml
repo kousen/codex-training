@@ -21,11 +21,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
 
       - run: npm ci
@@ -34,9 +34,9 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Export slides to PDF
-        # Force the output name: this Slidev version ignores exportFilename for
-        # the bare `export` command and would otherwise write slides-export.pdf.
-        run: npm run export -- --output codex-training-slides.pdf
+        # The name comes from --output in the export script: this Slidev version
+        # ignores exportFilename and would otherwise write slides-export.pdf.
+        run: npm run export
 
       - name: Verify PDF was produced
         # Fail loudly: action-gh-release only warns on a missing file, so without
@@ -46,7 +46,7 @@ jobs:
             || { echo "::error::codex-training-slides.pdf is missing or empty — export failed or the output name changed"; exit 1; }
 
       - name: Publish rolling "latest" release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: slides-latest
           name: Latest slides PDF
