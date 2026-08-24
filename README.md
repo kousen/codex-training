@@ -214,19 +214,21 @@ codex update                   # Update the CLI
 # Configuration
 codex --profile development    # Use specific profile
 codex --sandbox read-only      # Set sandbox mode
-codex --model gpt-5.5          # Select model when available
-codex --model gpt-5.4          # Fallback for API-key auth or availability
+codex --model gpt-5.6-sol      # Current frontier default (codex debug models lists your catalog)
+codex --strict-config          # Fail fast on stale/unknown config keys
 codex --search "latest docs"   # Enable live web search for that run
 
 # Advanced
 codex mcp list                 # List configured MCP servers
 codex mcp login server-name    # OAuth login for supported MCP servers
-codex mcp-server               # Expose Codex itself as an MCP server
+codex mcp-server               # Expose Codex as an MCP server (deprecated in 0.149; expect a warning)
+codex doctor                   # Diagnose install, config, auth, and runtime health
 codex cloud exec "prompt"      # Launch a cloud task
 codex cloud diff               # Inspect cloud task changes
 codex cloud apply              # Apply cloud task changes locally
 codex login --device-auth      # Device-auth flow for remote/headless environments
 codex review --uncommitted     # Review local changes
+codex review --base main       # Review your branch against main
 ```
 
 Inside an interactive Codex session, you can also invoke skills directly:
@@ -246,11 +248,11 @@ $create-plan
 - [Model Selection Guide](./docs/MODEL-SELECTION.md) - Cost/performance optimization
 
 ### Official Documentation
-- [Codex CLI Documentation](https://developers.openai.com/codex/cli/)
-- [Codex App Documentation](https://developers.openai.com/codex/app/)
-- [Codex MCP Documentation](https://developers.openai.com/codex/mcp/)
+- [Codex CLI Documentation](https://learn.chatgpt.com/docs/codex/cli)
+- [Codex App Documentation](https://learn.chatgpt.com/docs/app)
+- [Codex MCP Documentation](https://learn.chatgpt.com/docs/extend/mcp)
 - [Codex GitHub Repository](https://github.com/openai/codex)
-- [Agent Skills Documentation](https://developers.openai.com/codex/skills/)
+- [Agent Skills Documentation](https://learn.chatgpt.com/docs/build-skills)
 - [Skills Catalog](https://github.com/openai/skills)
 - [Model Context Protocol](https://modelcontextprotocol.io)
 - [agentskills.io Specification](https://agentskills.io)

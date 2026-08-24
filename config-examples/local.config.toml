@@ -1,0 +1,7 @@
+# Profile: local — open-weights model via Ollama
+# Install: cp local.config.toml ~/.codex/   Use: codex --oss --local-provider ollama --profile local
+model_provider = "ollama"
+model = "qwen2.5-coder:32b"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+web_search = "disabled"

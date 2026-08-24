@@ -168,12 +168,12 @@ Kousen IT, Inc.
 
 <v-clicks>
 
-- <span style="color: #00D4FF">**GPT-5.5**</span> - Start here when available in the Codex model picker
-- <span style="color: #00D4FF">**GPT-5.4**</span> - Strong fallback and API-key-friendly default
+- <span style="color: #00D4FF">**GPT-5.6-Sol**</span> - Current frontier default for agentic coding (272K context)
+- <span style="color: #00D4FF">**GPT-5.6-Terra / Luna**</span> - Sibling variants with different trade-offs
+- <span style="color: #00D4FF">**GPT-5.5 / GPT-5.4**</span> - Older models, still available
 - <span style="color: #00D4FF">**GPT-5.4-mini**</span> - Fast scoped work and lighter sub-agent tasks
-- <span style="color: #00D4FF">**GPT-5.3-Codex**</span> - Codex-tuned model still available in some surfaces
 - Local OSS models through Ollama or LM Studio
-- Use `/model` to inspect what your account and surface expose
+- Use `/model` in the TUI — or `codex debug models` for the full catalog
 
 </v-clicks>
 
@@ -325,7 +325,7 @@ Review line-by-line before approving!
 Shows comprehensive session information:
 
 ```
-Current model: gpt-5.5
+Current model: gpt-5.6-sol
 Session ID: abc123
 Token usage: 15,432 / 272,000
 Cost estimate: $0.46
@@ -504,9 +504,10 @@ graph LR
 
 <v-clicks>
 
-- **untrusted** - Run only trusted commands without prompting
-- **on-request** - Approve risky actions
+- **on-request** - Approve risky actions (the interactive default)
 - **never** - No approval prompts; best for narrow, non-interactive tasks
+- Config also accepts **on-failure** (failures return straight to the model)
+- `untrusted` was retired in 0.149 — configs still setting it refuse to load
 
 </v-clicks>
 
@@ -717,6 +718,7 @@ backgroundSize: cover
 - **Progressive loading**: Only name/description loaded at startup
 - **Two invocation modes**: Explicit (<span style="color: #00D4FF">`$skill-name`</span>) or implicit (auto-detect)
 - **Plugins** are the installable distribution unit for shared capabilities
+- Managed from the CLI: `codex plugin add|list|remove` and `codex plugin marketplace add|list|upgrade`
 
 </v-clicks>
 
@@ -860,26 +862,25 @@ Codex will:
 
 # Configuration Profiles
 
-## Define Multiple Profiles
+## One File per Profile (since 0.134)
+
+Each profile is its own file — `~/.codex/<name>.config.toml` — with **top-level keys**, layered over `config.toml`:
 
 ```toml
-# ~/.codex/config.toml
-
-[profiles.production]
-model = "gpt-5.5"
+# ~/.codex/production.config.toml
+model = "gpt-5.6-sol"
 approval_policy = "on-request"
 sandbox_mode = "workspace-write"
+```
 
-[profiles.development]
-model = "gpt-5.4"
-approval_policy = "on-request"
-sandbox_mode = "workspace-write"
-
-[profiles.quick]
+```toml
+# ~/.codex/quick.config.toml
 model = "gpt-5.4-mini"
 approval_policy = "never"
 sandbox_mode = "read-only"
 ```
+
+⚠️ Old-style `[profiles.*]` tables inside `config.toml` make the CLI **refuse to start** — if you configured profiles before 0.134, move them out.
 
 ---
 
@@ -887,8 +888,10 @@ sandbox_mode = "read-only"
 
 ```bash
 codex --profile production
-codex --profile development
-codex --profile testing
+codex --profile quick
+
+# Catch stale or misspelled config keys early
+codex --strict-config
 ```
 
 ---
@@ -1267,8 +1270,10 @@ startup_timeout_sec = 15  # Abort after 15 seconds
 Codex itself can be exposed as an MCP server for other tools:
 
 ```bash
-codex mcp-server --config ~/.codex/config.toml
+codex mcp-server    # reads ~/.codex/config.toml automatically
 ```
+
+⚠️ Deprecated in 0.149 — it still works but prints a warning; the successor isn't named yet (watch `codex app-server`).
 
 ### Use Cases
 
@@ -1286,7 +1291,7 @@ codex mcp-server --config ~/.codex/config.toml
 # Codex as an MCP Tool
 
 ```bash
-# Start Codex's MCP server
+# Start Codex's MCP server (deprecated in 0.149; still works, warns)
 codex mcp-server
 
 # Configure the calling tool with that command
@@ -1353,16 +1358,20 @@ backgroundSize: cover
 # Recommended OpenAI Profiles
 
 ```toml
-[profiles.quick]
+# ~/.codex/quick.config.toml
 model = "gpt-5.4-mini"
 model_reasoning_effort = "low"
+```
 
-[profiles.standard]
-model = "gpt-5.4"
+```toml
+# ~/.codex/standard.config.toml
+model = "gpt-5.6-sol"
 model_reasoning_effort = "medium"
+```
 
-[profiles.thorough]
-model = "gpt-5.5"
+```toml
+# ~/.codex/thorough.config.toml
+model = "gpt-5.6-sol"
 model_reasoning_effort = "high"
 ```
 
@@ -1376,7 +1385,7 @@ codex --oss --local-provider lmstudio
 ```
 
 ```toml
-[profiles.local]
+# ~/.codex/local.config.toml
 model_provider = "ollama"
 model = "qwen2.5-coder:32b"
 sandbox_mode = "workspace-write"
@@ -1388,10 +1397,12 @@ approval_policy = "on-request"
 # Switch Models
 
 ```bash
-codex --model gpt-5.5
-codex --model gpt-5.4
+codex --model gpt-5.6-sol
 codex --model gpt-5.4-mini
 codex --profile thorough
+
+# What can my account use?
+codex debug models
 ```
 
 ---
@@ -1475,7 +1486,7 @@ npm run build
 
 ```toml
 # ~/.codex/config.toml
-model = "gpt-5.5"
+model = "gpt-5.6-sol"
 model_provider = "openai"
 approval_policy = "on-request"
 sandbox_mode = "workspace-write"
@@ -1590,7 +1601,7 @@ allowed_sandbox_modes = ["read-only", "workspace-write"]
 admin_only = ["deploy-prod", "db-migrate"]
 
 [approval]
-allowed_approval_policies = ["untrusted", "on-request"]
+allowed_approval_policies = ["on-request"]
 
 [web_search]
 allowed_web_search_modes = ["disabled", "cached"]
@@ -1866,7 +1877,7 @@ backgroundSize: cover
 # Development Profile
 
 ```toml
-[profiles.dev]
+# ~/.codex/dev.config.toml
 sandbox_mode = "workspace-write"
 approval_policy = "on-request"
 ```
@@ -1876,7 +1887,7 @@ approval_policy = "on-request"
 # Staging Profile
 
 ```toml
-[profiles.staging]
+# ~/.codex/staging.config.toml
 sandbox_mode = "workspace-write"
 approval_policy = "on-request"
 ```
@@ -1886,7 +1897,7 @@ approval_policy = "on-request"
 # Production Profile
 
 ```toml
-[profiles.prod]
+# ~/.codex/prod.config.toml
 sandbox_mode = "read-only"
 approval_policy = "on-request"
 ```
@@ -1952,11 +1963,13 @@ cd ~/.codex/prompts && git pull
 # Model Selection Strategy
 
 ```toml
-[profiles.quick]
-model = "gpt-5.4-mini"  # Fast scoped work
+# ~/.codex/quick.config.toml
+model = "gpt-5.4-mini"    # Fast scoped work
+```
 
-[profiles.complex]
-model = "gpt-5.5"  # Complex reasoning when available
+```toml
+# ~/.codex/complex.config.toml
+model = "gpt-5.6-sol"     # Complex reasoning
 ```
 
 ---
@@ -1964,7 +1977,7 @@ model = "gpt-5.5"  # Complex reasoning when available
 # Local Models
 
 ```toml
-[profiles.local]
+# ~/.codex/local.config.toml
 model_provider = "ollama"
 model = "qwen2.5-coder:32b"  # Local model availability varies
 ```
@@ -2064,8 +2077,8 @@ RUST_LOG=trace codex
 ```bash
 # In the TUI, use /model to inspect or switch models
 
-# Fall back to a broadly available model
-codex --model gpt-5.4
+# Pick an explicit model from your catalog (codex debug models)
+codex --model gpt-5.6-sol
 
 # Verify API connectivity
 curl -I https://api.openai.com/v1/models
@@ -2103,9 +2116,11 @@ curl -I https://api.openai.com/v1/models
 ```bash
 #!/bin/bash
 # .git/hooks/pre-commit
-codex -n --profile review \
+codex exec -p quick -s read-only \
   "Check staged files for security issues"
 ```
+
+(`codex exec` is the non-interactive entry point — there is no `-n` flag; `quick` is the read-only profile from the config examples.)
 
 ---
 
@@ -2265,6 +2280,26 @@ args = ["./custom-mcp-server.js"]
 
 ---
 
+# Hooks
+
+<v-clicks>
+
+- Shell commands (or MCP tools) that fire on lifecycle events — stable, on by default
+- **Events**: `PreToolUse`, `PostToolUse`, `SessionStart`, `SessionEnd`, `UserPromptSubmit`, `Notification`, `Stop`, `SubagentStop`
+- Config: `~/.codex/hooks.json` or a `[hooks]` table in `config.toml`
+- First run prompts you to **trust** the hook (`--dangerously-bypass-hook-trust` skips — don't)
+- Async command hooks and MCP-tool hooks landed in 0.148/0.149
+- Admins can restrict to managed hooks: `allow_managed_hooks_only`
+
+</v-clicks>
+
+```json
+{ "hooks": { "PreToolUse": [ { "type": "command",
+    "command": "~/.codex/hooks/block-force-push.sh" } ] } }
+```
+
+---
+
 # MCP Robustness
 
 Always add timeout to MCP servers:
@@ -2283,12 +2318,12 @@ tool_timeout_sec = 60
 Use high reasoning for complex, long-running tasks:
 
 ```bash
-codex -m gpt-5.5 -c model_reasoning_effort='high'
+codex -m gpt-5.6-sol -c model_reasoning_effort='high'
 ```
 
 Or configure in TOML:
 ```toml
-model_reasoning_effort = "high"  # minimal/low/medium/high/xhigh
+model_reasoning_effort = "high"  # low/medium/high/xhigh/max/ultra (ultra also delegates to sub-agents)
 ```
 
 ---
@@ -2442,7 +2477,7 @@ Standalone desktop application for visual Codex workflows
 <v-clicks>
 
 - Open source at github.com/openai/codex
-- Official docs at developers.openai.com/codex
+- Official docs at learn.chatgpt.com/docs (developers.openai.com/codex redirects)
 - Skills, plugins, and MCP servers extend the base agent
 - GitHub discussions and issues are the right place for project feedback
 
@@ -2460,6 +2495,7 @@ codex resume                  # Resume session
 codex resume --last           # Resume most recent session
 codex apply                   # Apply last diff
 codex update                  # Update Codex CLI
+codex doctor                  # Diagnose install, config, auth, runtime
 ```
 
 ---
@@ -2467,9 +2503,10 @@ codex update                  # Update Codex CLI
 # Configuration Commands
 
 ```bash
-codex --profile production            # Use profile
+codex --profile production            # Use profile (~/.codex/production.config.toml)
 codex --sandbox read-only             # Set sandbox
-codex --ask-for-approval on-request   # Set approval
+codex --ask-for-approval on-request   # Set approval (on-request | never)
+codex --strict-config                 # Fail fast on stale/unknown config keys
 ```
 
 ---
@@ -2479,10 +2516,12 @@ codex --ask-for-approval on-request   # Set approval
 ```bash
 codex mcp list                 # List MCP servers
 codex mcp login server-name    # OAuth login for supported MCP servers
-codex mcp-server               # Expose Codex as an MCP server
+codex mcp-server               # Expose Codex as an MCP server (deprecated 0.149)
 codex cloud exec "prompt"      # Launch a cloud task
 codex cloud diff               # Review cloud task changes
 codex cloud apply              # Apply cloud task changes locally
+codex review --base main       # Review your branch against main
+codex exec --json -o out.md "…"  # Machine-readable run for CI
 ```
 
 ---
@@ -2503,7 +2542,7 @@ codex cloud apply              # Apply cloud task changes locally
 # Documentation & Code
 
 ### 📚 Official Documentation
-`https://developers.openai.com/codex/`
+`https://learn.chatgpt.com/docs`
 
 ### 🐙 GitHub Repository
 `https://github.com/openai/codex`
@@ -2576,11 +2615,11 @@ codex cloud apply              # Apply cloud task changes locally
 # Additional Resources
 
 ## Official Sources
-- [Codex Documentation](https://developers.openai.com/codex/)
-- [Codex CLI Documentation](https://developers.openai.com/codex/cli/)
-- [Codex App Documentation](https://developers.openai.com/codex/app/)
-- [Codex MCP Documentation](https://developers.openai.com/codex/mcp/)
-- [Agent Skills Guide](https://developers.openai.com/codex/skills/)
+- [Codex Documentation](https://learn.chatgpt.com/docs)
+- [Codex CLI Documentation](https://learn.chatgpt.com/docs/codex/cli)
+- [Codex App Documentation](https://learn.chatgpt.com/docs/app)
+- [Codex MCP Documentation](https://learn.chatgpt.com/docs/extend/mcp)
+- [Agent Skills Guide](https://learn.chatgpt.com/docs/build-skills)
 - [Codex GitHub Repository](https://github.com/openai/codex)
 - [Skills Catalog](https://github.com/openai/skills)
 

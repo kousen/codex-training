@@ -2,6 +2,19 @@
 
 Quick solutions to common issues you may encounter during the training.
 
+## Step zero: `codex doctor`
+
+Before the manual recipes below, run the built-in diagnostic:
+
+```bash
+codex doctor            # install, config, auth, network, runtime health
+codex doctor --all      # everything, including slower checks
+codex doctor --json     # redacted machine-readable report (for bug reports)
+```
+
+It also surfaces startup warnings for skills, hooks, plugins, MCP, and
+deprecated config — which covers most of this guide's sections in one shot.
+
 ---
 
 ## Installation Issues
@@ -181,7 +194,10 @@ codex
 
 ```bash
 # Launch with a specific known-good model
-codex --model gpt-5.4
+codex --model gpt-5.6-sol
+
+# See exactly which models your account can use
+codex debug models
 
 # In the TUI, use /model to inspect or switch models interactively
 ```
@@ -193,13 +209,11 @@ codex --model gpt-5.4
 grep model ~/.codex/config.toml
 
 # Try with explicit model
-codex --model gpt-5.5
-
-# If unavailable, fall back to GPT-5.4
-codex --model gpt-5.4
+codex --model gpt-5.6-sol
 
 # Use a profile with known-good settings
-codex --profile production
+# (profiles are per-file since 0.134: ~/.codex/<name>.config.toml)
+codex --profile thorough
 ```
 
 ---

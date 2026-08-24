@@ -5,13 +5,12 @@
 # See advanced-config.toml for all available options.
 
 # Model Selection
-# Start with gpt-5.5 when it is available in your Codex model picker.
-# If you authenticate with an API key, or gpt-5.5 is not available yet,
-# use gpt-5.4 instead.
-model = "gpt-5.5"
+# gpt-5.6-sol is the current frontier default; gpt-5.6-terra and
+# gpt-5.6-luna are its siblings. gpt-5.5 / gpt-5.4 remain available
+# as older models. Run `codex debug models` to see your catalog.
+model = "gpt-5.6-sol"
 
 # Security Settings
-# untrusted: Only trusted commands run without prompting
 # on-request: Ask before risky actions (recommended for beginners)
 # never: Never ask (for automation; pair with a restrictive sandbox)
 approval_policy = "on-request"
@@ -28,6 +27,7 @@ project_doc_max_bytes = 32768
 
 # Web Search
 # cached: use OpenAI's maintained search index without live page fetches
+# indexed: newer index-backed mode (see the config docs for details)
 # live: fetch current web pages when freshness matters
 # disabled: remove web search from the session
 web_search = "cached"

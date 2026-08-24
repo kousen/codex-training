@@ -4,32 +4,40 @@
 # Project-scoped config can also live in .codex/config.toml for trusted projects.
 
 # Model configuration
-# Start with gpt-5.5 when it appears in your Codex model picker.
-# If you authenticate with an API key, or gpt-5.5 is unavailable, use gpt-5.4.
-model = "gpt-5.5"
+# gpt-5.6-sol is the current frontier default (siblings: gpt-5.6-terra,
+# gpt-5.6-luna; older models gpt-5.5 / gpt-5.4 remain available).
+model = "gpt-5.6-sol"
 model_provider = "openai"
-model_reasoning_effort = "medium"  # minimal, low, medium, high, xhigh
+model_reasoning_effort = "medium"  # low, medium, high, xhigh, max, ultra ("minimal" is legacy)
 model_verbosity = "medium"         # low, medium, high
 service_tier = "flex"              # flex or fast
 
 # Security and sandbox settings
-approval_policy = "on-request"     # untrusted, on-request, never
+approval_policy = "on-request"     # on-request, never ("untrusted" was retired in 0.149)
 sandbox_mode = "workspace-write"   # read-only, workspace-write, danger-full-access
+
+# Documentation and web search
+project_doc_max_bytes = 32768      # Maximum bytes loaded from AGENTS.md files
+web_search = "cached"              # disabled, cached, indexed, live
+
+# Completion notification command (top-level key — keep it above any [table]).
+# Codex passes a JSON payload to the command on stdin. macOS example:
+# notify = ["osascript", "-e", "display notification \"Codex task complete\" with title \"Codex\""]
+# Linux: notify = ["notify-send", "Codex", "Task complete"]
+
+# NOTE: everything below a [table] header belongs to that table until the
+# next header — keep all top-level keys above this line.
 
 [sandbox_workspace_write]
 network_access = false             # Network is off unless you explicitly enable it
 writable_roots = []                # Add extra writable paths only when needed
 
-# Documentation and web search
-project_doc_max_bytes = 32768      # Maximum bytes loaded from AGENTS.md files
-web_search = "cached"              # disabled, cached, live
-
-# Stable feature flags
+# Stable feature flags (check names with `codex features list`;
+# unknown names fail silently, even under --strict-config)
 [features]
-codex_hooks = true
+hooks = true        # stable, on by default — shown here for visibility
 multi_agent = true
 fast_mode = true
-undo = false
 
 # Shell environment policy
 [shell_environment_policy]
@@ -40,43 +48,12 @@ exclude = ["AWS_SECRET_ACCESS_KEY", "GITHUB_TOKEN", "OPENAI_API_KEY"]
 NODE_ENV = "development"
 RUST_LOG = "warn"
 
-# Completion notification command.
-# Codex passes a JSON payload to the command on stdin.
-# macOS example:
-# notify = ["osascript", "-e", "display notification \"Codex task complete\" with title \"Codex\""]
-#
-# Linux example:
-# notify = ["notify-send", "Codex", "Task complete"]
-
 # Profiles for different workflows
-[profiles.quick]
-model = "gpt-5.4-mini"
-model_reasoning_effort = "low"
-approval_policy = "never"
-sandbox_mode = "read-only"
-web_search = "disabled"
-
-[profiles.development]
-model = "gpt-5.4"
-model_reasoning_effort = "medium"
-approval_policy = "on-request"
-sandbox_mode = "workspace-write"
-web_search = "cached"
-
-[profiles.thorough]
-model = "gpt-5.5"
-model_reasoning_effort = "high"
-approval_policy = "on-request"
-sandbox_mode = "workspace-write"
-web_search = "live"
-
-# Local OSS profile. Use `codex --oss --local-provider ollama` for local mode.
-[profiles.local]
-model_provider = "ollama"
-model = "qwen2.5-coder:32b"
-approval_policy = "on-request"
-sandbox_mode = "workspace-write"
-web_search = "disabled"
+# Since 0.134, [profiles.*] tables in config.toml are REJECTED — the CLI
+# refuses to start. Each profile is now its own file with top-level keys:
+#   ~/.codex/<name>.config.toml     (selected with: codex --profile <name>)
+# See quick.config.toml, development.config.toml, thorough.config.toml,
+# and local.config.toml in this directory; copy them into ~/.codex/.
 
 # Model Context Protocol (MCP) servers
 [mcp_servers.context7]
