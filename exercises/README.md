@@ -5,31 +5,31 @@ This directory contains hands-on exercises for learning OpenAI Codex.
 ## Available Exercises
 
 ### Lab 0: Planning and Steering Warm-Up
-- `plan-mode-warmup/` - Learn planning, steering, permissions, and key slash commands (15 min)
+- [`plan-mode-warmup/`](./plan-mode-warmup/) - Learn planning, steering, permissions, and key slash commands (15 min)
 
 ### Lab 1: Generate from Scratch
-- `java-spring-boot/` - Build a complete REST API with Spring Boot
+- [`java-spring-boot/`](./java-spring-boot/) - Build a complete REST API with Spring Boot
 
 ### Lab 2: Refactor Existing Code
-- `python-refactoring/` - Improve legacy Python code quality
+- [`python-refactoring/`](./python-refactoring/) - Improve legacy Python code quality
 
 ### Lab 3: Frontend Development
-- `react-forms/` - Build production-ready React TypeScript forms
+- [`react-forms/`](./react-forms/) - Build production-ready React TypeScript forms
 
 ### Lab 4: Multi-Language Projects
-- `microservices/` - Build an event-driven microservices architecture
+- [`microservices/`](./microservices/) - Build an event-driven microservices architecture
 
 ### Lab 5: Agent Skills
-- `skills-creation/` - Create a custom Codex skill for commit messages
+- [`skills-creation/`](./skills-creation/) - Create a custom Codex skill for commit messages
 
 ### Lab 6: MCP Servers
-- `mcp-context7/` - Connect Codex to live library documentation via MCP
+- [`mcp-context7/`](./mcp-context7/) - Connect Codex to live library documentation via MCP
 
 ## Getting Started
 
 Each exercise directory contains:
 - `README.md` - Exercise instructions and Codex prompt progression
-- `starter/` - Initial code to work with (most exercises)
+- [`starter/`](./starter/) - Initial code to work with (most exercises)
 - `AGENTS.md` - Project context for Codex (most exercises)
 
 Note: These are hands-on exercises where you build the solution using Codex. Reference implementations are not provided—the goal is to practice using Codex to generate and refactor code.
