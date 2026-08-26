@@ -16,7 +16,6 @@ Domain model:
   - priority: LOW, MEDIUM, or HIGH
   - dueDate: optional LocalDate
   - createdAt and updatedAt: automatically maintained Instant values
-  - version field for optimistic locking
 - New tasks default to TODO status and MEDIUM priority.
 - Task titles must be unique, ignoring case and surrounding whitespace.
 - A new task's due date must be in the future.
@@ -43,7 +42,6 @@ Persistence:
 - Use Spring Data JPA and an H2 in-memory database.
 - Initialize the development database from `src/main/resources/data.sql` with at least three representative tasks.
 - Ensure data initialization occurs after Hibernate creates the schema.
-- Use one application configuration format rather than duplicating properties and YAML files.
 
 Error handling:
 - Add global exception handling.
@@ -55,8 +53,7 @@ Error handling:
   - message
   - request path
   - field validation errors when applicable
-- Preserve normal 404 responses for unknown routes.
-- Do not expose internal exception details in 500 responses, but log unexpected exceptions.
+- Do not expose internal exception details in 500 responses.
 
 Documentation:
 - Add SpringDoc OpenAPI documentation.
@@ -79,4 +76,12 @@ Implementation guidance:
 - Run `mvn verify` when finished.
 - Continue fixing compilation, test, and coverage failures until the build passes.
 - Finish by summarizing the implementation, verification results, and any assumptions.
+
+Optional quality improvements:
+- These are stretch goals, not part of the required implementation. Do not implement them unless explicitly requested after the core application passes `mvn verify`.
+- Add optimistic locking with a version field.
+- Consolidate application configuration into one authoritative format.
+- Preserve framework-generated 404 responses for unknown routes.
+- Log unexpected exceptions before returning a generic 500 response.
+- Enforce case-insensitive title uniqueness at the database level so concurrent requests cannot bypass it.
 ```

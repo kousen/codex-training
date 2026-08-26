@@ -13,12 +13,12 @@ Build a Spring Boot application that includes:
    - Priority enum: LOW, MEDIUM, HIGH
 
 2. **REST Endpoints**
-   - GET /api/tasks - List all tasks (with pagination)
-   - GET /api/tasks/{id} - Get single task
-   - POST /api/tasks - Create new task
-   - PUT /api/tasks/{id} - Update task
-   - DELETE /api/tasks/{id} - Delete task
-   - GET /api/tasks/search - Search by title or description
+   - GET /api/v1/tasks - List all tasks (with pagination)
+   - GET /api/v1/tasks/{id} - Get single task
+   - POST /api/v1/tasks - Create new task
+   - PUT /api/v1/tasks/{id} - Update task
+   - DELETE /api/v1/tasks/{id} - Delete task
+   - GET /api/v1/tasks/search?query=... - Search by title or description
 
 3. **Data Layer**
    - H2 in-memory database
@@ -87,7 +87,7 @@ Configure H2 database with initialization scripts and sample data for developmen
 
 ### Step 8: Generate Tests
 ```
-Generate comprehensive test suite including unit tests for services and integration tests for controllers with at least 80% coverage
+Generate a comprehensive test suite including unit tests for services and integration tests for controllers with at least 80% line and branch coverage
 ```
 
 ### Step 9: Add Documentation
@@ -95,17 +95,20 @@ Generate comprehensive test suite including unit tests for services and integrat
 Configure Swagger UI and add detailed OpenAPI documentation for all endpoints
 ```
 
-### Step 10: Performance & Security
+### Optional Step 10: Production Hardening
 ```
-Add caching, rate limiting, and basic security configuration
+Review the completed API and recommend production-hardening improvements without implementing them
 ```
+
+The core lab ends after Step 9. Caching, rate limiting, security, and production
+infrastructure are optional follow-up topics rather than required features.
 
 ## Success Criteria
 
 - [ ] All endpoints working as specified
 - [ ] Validation rules enforced
 - [ ] Error handling implemented
-- [ ] Tests passing with >80% coverage
+- [ ] Tests passing with at least 80% line and branch coverage
 - [ ] Swagger UI accessible at /swagger-ui.html
 - [ ] Code follows Spring Boot best practices
 
@@ -120,14 +123,14 @@ Add caching, rate limiting, and basic security configuration
 ## Testing Your Implementation
 
 ```bash
+# Enter the Maven project
+cd starter
+
 # Run the application
 mvn spring-boot:run
 
-# Run tests
-mvn test
-
-# Check test coverage
-mvn jacoco:report
+# Run tests, package the application, and enforce coverage
+mvn verify
 
 # Access Swagger UI
 open http://localhost:8080/swagger-ui.html
@@ -139,29 +142,9 @@ curl -X POST http://localhost:8080/api/v1/tasks \
   -d '{"title":"Test Task","description":"Description","status":"TODO","priority":"HIGH"}'
 ```
 
-## Configuration Tips
+## Project Guidance
 
-Create an AGENTS.md file in the project root:
-
-```markdown
-# Task Management API
-
-## Tech Stack
-- Spring Boot 3.2
-- Java 17
-- H2 Database
-- Spring Data JPA
-- Spring Validation
-- SpringDoc OpenAPI
-
-## Conventions
-- RESTful API design
-- DTOs for request/response
-- Service layer for business logic
-- Repository pattern for data access
-- Global exception handling
-- Comprehensive testing
-
-## Current Focus
-Building CRUD operations for task management with proper validation and error handling.
-```
+The exercise includes an `AGENTS.md` file with the project conventions Codex
+should follow. The complete one-shot assignment is available in
+`starter/TASK-API-PROMPT.md`; the progression above can be used instead when the
+instructor wants students to build the application incrementally.
