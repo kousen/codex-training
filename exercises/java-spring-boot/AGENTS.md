@@ -1,108 +1,147 @@
-# Task Management API Project
+# Task Management API
 
-## Overview
-Building a production-ready REST API for task management using Spring Boot.
+## Purpose
 
-## Technology Stack
-- **Framework**: Spring Boot 3.2.0
-- **Language**: Java 17
-- **Build Tool**: Maven
-- **Database**: H2 (in-memory for development)
-- **ORM**: Spring Data JPA
-- **Validation**: Jakarta Bean Validation
-- **Documentation**: SpringDoc OpenAPI 3.0
-- **Testing**: JUnit 5, Mockito, AssertJ, REST Assured
+This exercise builds a Spring Boot task-management REST API for the Codex CLI
+training course. Keep the implementation approachable for students while using
+professional Java and Spring practices.
 
-## Project Structure
+The complete student assignment is in `starter/TASK-API-PROMPT.md`. This file
+defines durable project conventions rather than repeating the assignment.
+
+## Technology
+
+- Java 17
+- Spring Boot 3.2
+- Maven
+- Spring Web
+- Spring Data JPA
+- Jakarta Bean Validation
+- H2 for local development
+- SpringDoc OpenAPI
+- JUnit 5, Mockito, AssertJ, and MockMvc
+- JaCoCo coverage enforcement
+
+Do not upgrade Java, framework, dependency, or plugin versions unless explicitly
+requested.
+
+## Working Directory and Commands
+
+Run application commands from `starter/`.
+
+```bash
+cd starter
+
+# Compile, test, package, and enforce coverage
+mvn verify
+
+# Run the application
+mvn spring-boot:run
 ```
-src/
-├── main/
-│   ├── java/com/example/taskapi/
-│   │   ├── controller/      # REST controllers
-│   │   ├── service/         # Business logic
-│   │   ├── repository/      # Data access layer
-│   │   ├── entity/          # JPA entities
-│   │   ├── dto/             # Data transfer objects
-│   │   ├── exception/       # Custom exceptions
-│   │   ├── config/          # Configuration classes
-│   │   └── util/            # Utility classes
-│   └── resources/
-│       ├── application.yml   # Application configuration
-│       ├── data.sql         # Initial data
-│       └── schema.sql       # Database schema
-└── test/
-    └── java/com/example/taskapi/
-        ├── integration/      # Integration tests
-        └── unit/            # Unit tests
+
+A change is not complete until `mvn verify` passes.
+
+## Architecture
+
+Preserve the existing request flow:
+
+```text
+controller -> service -> repository -> database
+                 |
+                 -> DTO/entity mapping
 ```
+
+- Controllers handle HTTP concerns only.
+- Services own transactions and business rules.
+- Repositories contain persistence operations.
+- JPA entities are internal and must not be returned directly from controllers.
+- Request and response DTOs define the API contract.
+- Use constructor injection.
+- Use read-only transactions for queries.
+- Prefer straightforward code over unnecessary abstractions or frameworks.
+
+The current package-by-layer structure is appropriate for one aggregate. If the
+application grows to include users, projects, or other aggregates, prefer
+packaging by feature rather than adding more global technical-layer packages.
 
 ## API Conventions
-- Base URL: `/api/v1`
-- JSON request/response format
-- ISO 8601 date formats
-- HTTP status codes:
-  - 200 OK - Successful GET
-  - 201 Created - Successful POST
-  - 204 No Content - Successful DELETE
-  - 400 Bad Request - Validation errors
-  - 404 Not Found - Resource not found
-  - 409 Conflict - Business rule violation
-  - 500 Internal Server Error - Unexpected errors
 
-## Coding Standards
-- Use DTOs for API requests/responses
-- Never expose entities directly
-- Service layer handles all business logic
-- Controllers only handle HTTP concerns
-- Comprehensive input validation
-- Meaningful exception messages
-- Logging at appropriate levels
-- Unit test coverage minimum 80%
+- Base path: `/api/v1`
+- JSON request and response bodies
+- ISO-8601 dates and timestamps
+- Pagination defaults to 20 and must not exceed 100
+- `POST` returns `201 Created` with a `Location` header
+- `DELETE` returns `204 No Content`
+- Validation failures return `400 Bad Request`
+- Missing resources return `404 Not Found`
+- Business-rule and uniqueness conflicts return `409 Conflict`
+- Unexpected errors return `500 Internal Server Error` without internal details
 
-## Entity Relationships
-```
-Task
-├── id: Long (auto-generated)
-├── title: String (required, max 100)
-├── description: String (max 500)
-├── status: Enum (TODO, IN_PROGRESS, DONE)
-├── priority: Enum (LOW, MEDIUM, HIGH)
-├── dueDate: LocalDate (optional)
-├── createdAt: Instant (auto-managed)
-└── updatedAt: Instant (auto-managed)
-```
+Preserve normal framework 400 and 404 responses. Log unexpected exceptions
+before returning a generic error response. Update OpenAPI documentation and
+integration tests whenever the API contract changes.
 
-## Business Rules
-1. Task title is mandatory and unique
-2. Default status is TODO when creating
-3. Default priority is MEDIUM when creating
-4. Cannot delete task with status IN_PROGRESS
-5. Cannot change DONE task back to TODO
-6. Due date must be in the future when creating
-7. Updated timestamp changes on any modification
+## Domain Invariants
 
-## Testing Strategy
-- Unit tests for all service methods
-- Integration tests for all endpoints
-- Test data builders for readable tests
-- Parameterized tests for edge cases
-- MockMvc for controller tests
-- @DataJpaTest for repository tests
-- @SpringBootTest for full integration tests
+- Task titles are required and no longer than 100 characters.
+- Descriptions are optional and no longer than 500 characters.
+- New tasks default to `TODO` status.
+- New tasks default to `MEDIUM` priority.
+- A new task's due date must be in the future.
+- `IN_PROGRESS` tasks cannot be deleted.
+- `DONE` tasks cannot transition directly to `TODO`.
+- Updated timestamps change whenever a task is modified.
+- Normalize titles before checking uniqueness.
+- Keep database constraints consistent with service-level rules.
 
-## Security Considerations
-- Input validation on all endpoints
-- SQL injection prevention via parameterized queries
-- XSS prevention via output encoding
-- Rate limiting on API endpoints (future)
-- Authentication/authorization (future)
+If users or projects are introduced, reconsider globally unique task titles
+before extending the schema. Use optimistic locking when concurrent updates
+become part of the requirements.
 
-## Performance Guidelines
-- Pagination for list endpoints (default 20, max 100)
-- Lazy loading for relationships
-- Database indexes on frequently queried fields
-- Response caching where appropriate
-- Async processing for long operations
+## Persistence and Configuration
 
-## Current Development Focus
-Implementing core CRUD operations with proper validation, error handling, and comprehensive test coverage. Following TDD approach where possible.
+- H2 and `data.sql` are development conveniences.
+- Seed data must remain deterministic and development-only.
+- SQL initialization must occur after Hibernate creates the development schema.
+- Keep one authoritative application configuration format. Do not duplicate
+  settings across properties and YAML files.
+- Keep the H2 console, SQL logging, and verbose error details out of production
+  profiles.
+- For production persistence, use database migrations and test against the same
+  database engine used in production.
+
+## Testing
+
+- Unit-test service methods and every business-rule branch.
+- Use MockMvc integration tests for endpoint behavior.
+- Test successful requests and meaningful failures.
+- Use reusable test fixtures where helpful.
+- Prefer isolated test setup over dependence on hard-coded seed IDs.
+- Maintain at least 80% line coverage and 80% branch coverage.
+- Do not weaken or remove coverage gates to make a build pass.
+
+## Definition of Done
+
+Before finishing a change:
+
+1. Run `mvn verify` from `starter/`.
+2. Confirm all tests and coverage checks pass.
+3. Run `git diff --check`.
+4. Update the README and OpenAPI documentation if behavior changed.
+5. Summarize the implementation, verification, assumptions, and remaining risks.
+
+## Scope Control
+
+Do not add the following without an explicit request:
+
+- Authentication or authorization
+- Caching
+- Rate limiting
+- Messaging or event-driven infrastructure
+- Microservices
+- External production databases
+- Deployment infrastructure
+- Large dependency upgrades
+
+Do not modify intentional training vulnerabilities unless an exercise explicitly
+asks for it.
