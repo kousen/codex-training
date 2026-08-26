@@ -1,0 +1,89 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "codex-python-refactoring"
+version = "0.1.0"
+description = "A typed, testable JSON data-processing pipeline"
+readme = "README.md"
+requires-python = ">=3.10"
+
+[project.optional-dependencies]
+dev = [
+    "black>=23.12.0",
+    "build>=1.2.0",
+    "hypothesis>=6.92.0",
+    "mypy>=1.7.0",
+    "mutmut>=3.0.0",
+    "pre-commit>=4.6.2",
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-timeout>=2.4.0",
+    "ruff>=0.1.8",
+    "tox>=4.0",
+]
+
+[project.scripts]
+legacy-processor = "codex_refactoring.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "--strict-config --strict-markers"
+pythonpath = [".", "src"]
+session_timeout = 600
+testpaths = ["tests"]
+timeout = 60
+timeout_method = "thread"
+
+[tool.coverage.run]
+branch = true
+source = ["codex_refactoring", "legacy_processor"]
+
+[tool.coverage.report]
+fail_under = 100
+show_missing = true
+skip_covered = true
+
+[tool.black]
+line-length = 88
+target-version = ["py310"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["B", "C90", "D", "E", "F", "I", "PL", "S", "SIM", "UP"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101", "S404", "S603", "S607"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+files = ["legacy_processor.py", "src", "tests"]
+
+[tool.mutmut]
+source_paths = ["src/codex_refactoring"]
+pytest_add_cli_args_test_selection = [
+    "tests/test_compatibility_contract.py",
+    "tests/test_io.py",
+    "tests/test_legacy_processor.py",
+    "tests/test_processors.py",
+    "tests/test_property_based.py",
+]
+also_copy = ["legacy_processor.py", "pyproject.toml"]
+mutate_only_covered_lines = true
+on_dependency_change = "rerun"
