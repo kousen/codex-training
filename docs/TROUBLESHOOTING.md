@@ -74,7 +74,7 @@ printenv OPENAI_API_KEY | codex login --with-api-key
 ```bash
 # Wait 60 seconds and retry
 # Or switch to a faster model
-codex --model gpt-5.4-mini
+codex --model gpt-6-luna
 
 # Check your rate limits
 cat ~/.codex/config.toml | grep rate
@@ -194,7 +194,7 @@ codex
 
 ```bash
 # Launch with a specific known-good model
-codex --model gpt-5.6-sol
+codex --model gpt-6-sol
 
 # See exactly which models your account can use
 codex debug models
@@ -209,7 +209,7 @@ codex debug models
 grep model ~/.codex/config.toml
 
 # Try with explicit model
-codex --model gpt-5.6-sol
+codex --model gpt-6-sol
 
 # Use a profile with known-good settings
 # (profiles are per-file since 0.134: ~/.codex/<name>.config.toml)
@@ -229,7 +229,7 @@ codex --profile thorough
 
 2. **Try a faster model**
    ```bash
-   codex --model gpt-5.4-mini
+   codex --model gpt-6-luna
    ```
 
 3. **Reduce context size**
@@ -249,7 +249,7 @@ codex --profile thorough
 
 ```bash
 # Use mini model for simple tasks
-codex --model gpt-5.4-mini
+codex --model gpt-6-luna
 
 # Be specific in prompts (shorter responses)
 codex "Fix the bug on line 42"  # vs "Review the whole file"

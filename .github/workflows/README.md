@@ -34,8 +34,8 @@ paths:
   # Add your extensions
 
 # Use different model
---model gpt-5.4        # More thorough
---model gpt-5.4-mini   # Faster, cheaper
+--model gpt-6-sol    # More thorough
+--model gpt-6-luna   # Faster, cheaper
 ```
 
 ## Security Notes

@@ -214,14 +214,13 @@ codex update                   # Update the CLI
 # Configuration
 codex --profile development    # Use specific profile
 codex --sandbox read-only      # Set sandbox mode
-codex --model gpt-5.6-sol      # Current frontier default (codex debug models lists your catalog)
+codex --model gpt-6-sol      # Pin a model (/model or codex debug models lists your catalog)
 codex --strict-config          # Fail fast on stale/unknown config keys
 codex --search "latest docs"   # Enable live web search for that run
 
 # Advanced
 codex mcp list                 # List configured MCP servers
 codex mcp login server-name    # OAuth login for supported MCP servers
-codex mcp-server               # Expose Codex as an MCP server (deprecated in 0.149; expect a warning)
 codex doctor                   # Diagnose install, config, auth, and runtime health
 codex cloud exec "prompt"      # Launch a cloud task
 codex cloud diff               # Inspect cloud task changes

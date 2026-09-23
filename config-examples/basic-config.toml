@@ -5,10 +5,10 @@
 # See advanced-config.toml for all available options.
 
 # Model Selection
-# gpt-5.6-sol is the current frontier default; gpt-5.6-terra and
-# gpt-5.6-luna are its siblings. gpt-5.5 / gpt-5.4 remain available
+# gpt-6-sol is a GPT-6 frontier model (gpt-6-astra is its sibling;
+# gpt-6-luna is the fast option). gpt-5.6-* / gpt-5.5 remain available
 # as older models. Run `codex debug models` to see your catalog.
-model = "gpt-5.6-sol"
+model = "gpt-6-sol"
 
 # Security Settings
 # on-request: Ask before risky actions (recommended for beginners)

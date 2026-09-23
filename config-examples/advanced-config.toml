@@ -4,9 +4,9 @@
 # Project-scoped config can also live in .codex/config.toml for trusted projects.
 
 # Model configuration
-# gpt-5.6-sol is the current frontier default (siblings: gpt-5.6-terra,
-# gpt-5.6-luna; older models gpt-5.5 / gpt-5.4 remain available).
-model = "gpt-5.6-sol"
+# gpt-6-sol is a GPT-6 frontier model (siblings: gpt-6-astra,
+# gpt-6-luna; older gpt-5.6-* / gpt-5.5 remain available).
+model = "gpt-6-sol"
 model_provider = "openai"
 model_reasoning_effort = "medium"  # low, medium, high, xhigh, max, ultra ("minimal" is legacy)
 model_verbosity = "medium"         # low, medium, high

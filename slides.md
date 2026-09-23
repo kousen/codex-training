@@ -168,10 +168,10 @@ Kousen IT, Inc.
 
 <v-clicks>
 
-- <span style="color: #00D4FF">**GPT-5.6-Sol**</span> - Current frontier default for agentic coding (272K context)
-- <span style="color: #00D4FF">**GPT-5.6-Terra / Luna**</span> - Sibling variants with different trade-offs
-- <span style="color: #00D4FF">**GPT-5.5 / GPT-5.4**</span> - Older models, still available
-- <span style="color: #00D4FF">**GPT-5.4-mini**</span> - Fast scoped work and lighter sub-agent tasks
+- <span style="color: #00D4FF">**GPT-6-Astra / GPT-6-Sol**</span> - GPT-6 frontier models for agentic coding (272K context)
+- <span style="color: #00D4FF">**GPT-6-Luna**</span> - Fast scoped work and lighter sub-agent tasks
+- <span style="color: #00D4FF">**GPT-5.6 / GPT-5.5**</span> - Previous generations, still available
+- Codex picks your account's default model — check it with `/model`
 - Local OSS models through Ollama or LM Studio
 - Use `/model` in the TUI — or `codex debug models` for the full catalog
 
@@ -284,7 +284,7 @@ codex exec "generate a README"
 
 <v-clicks>
 
-- `/status` - Show session info & token usage
+- `/status` - Show session info & token usage (`/usage` for account analytics)
 - `/diff` - Review all pending changes
 - `/clear` - Clear screen or start fresh chat
 - `/save` - Save current session
@@ -325,7 +325,7 @@ Review line-by-line before approving!
 Shows comprehensive session information:
 
 ```
-Current model: gpt-5.6-sol
+Current model: gpt-6-sol
 Session ID: abc123
 Token usage: 15,432 / 272,000
 Cost estimate: $0.46
@@ -868,14 +868,14 @@ Each profile is its own file — `~/.codex/<name>.config.toml` — with **top-le
 
 ```toml
 # ~/.codex/production.config.toml
-model = "gpt-5.6-sol"
+model = "gpt-6-sol"
 approval_policy = "on-request"
 sandbox_mode = "workspace-write"
 ```
 
 ```toml
 # ~/.codex/quick.config.toml
-model = "gpt-5.4-mini"
+model = "gpt-6-luna"
 approval_policy = "never"
 sandbox_mode = "read-only"
 ```
@@ -1265,43 +1265,22 @@ startup_timeout_sec = 15  # Abort after 15 seconds
 
 ---
 
-# Running Codex as an MCP Server
+# Calling Codex from Other Tools
 
-Codex itself can be exposed as an MCP server for other tools:
-
-```bash
-codex mcp-server    # reads ~/.codex/config.toml automatically
-```
-
-⚠️ Deprecated in 0.149 — it still works but prints a warning; the successor isn't named yet (watch `codex app-server`).
-
-### Use Cases
-
-<v-clicks>
-
-- IDEs can integrate without plugins
-- CI/CD pipelines can invoke Codex workflows
-- Other agent tools can call Codex through MCP
-- Shared tools can route specialized coding tasks to Codex
-
-</v-clicks>
-
----
-
-# Codex as an MCP Tool
+`codex mcp-server` was removed in 0.154 — other tools now run Codex **headless**:
 
 ```bash
-# Start Codex's MCP server (deprecated in 0.149; still works, warns)
-codex mcp-server
-
-# Configure the calling tool with that command
+codex exec --sandbox read-only "Explain the failing test in src/"
+codex exec --json -o result.md "Summarize this repo's build"
+codex review --base main       # Non-interactive code review
 ```
 
 <v-clicks>
 
-- The caller gets Codex tools through MCP
+- CI/CD pipelines call `codex exec` directly
+- Other agents (e.g. Claude Code) shell out to `codex exec` / `codex review`
 - Codex still applies its sandbox and approval policies
-- Useful when one tool needs Codex as a specialized coding sub-agent
+- `--json` and `-o` give the caller machine-readable output
 
 </v-clicks>
 
@@ -1311,19 +1290,15 @@ codex mcp-server
 
 ```mermaid
 flowchart TB
-    TOOL[Calling Tool] --> CM[Codex MCP Server]
-    IDE[IDE Extensions] --> CM
-    CI[CI/CD Pipeline] --> CM
+    YOU[You / CI via codex exec] --> CM[Codex CLI as MCP client]
 
     CM --> C7[Context7]
     CM --> GH[GitHub]
     CM --> PG[PostgreSQL]
     CM --> Custom[Custom Server]
 
-    style TOOL fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#000
+    style YOU fill:#FF6B6B,stroke:#333,stroke-width:2px,color:#000
     style CM fill:#4ECDC4,stroke:#333,stroke-width:2px,color:#000
-    style IDE fill:#FFA500,stroke:#333,stroke-width:2px,color:#000
-    style CI fill:#FFD700,stroke:#333,stroke-width:2px,color:#000
     style C7 fill:#95E1D3,stroke:#333,stroke-width:2px,color:#000
     style GH fill:#95E1D3,stroke:#333,stroke-width:2px,color:#000
     style PG fill:#95E1D3,stroke:#333,stroke-width:2px,color:#000
@@ -1359,19 +1334,19 @@ backgroundSize: cover
 
 ```toml
 # ~/.codex/quick.config.toml
-model = "gpt-5.4-mini"
+model = "gpt-6-luna"
 model_reasoning_effort = "low"
 ```
 
 ```toml
 # ~/.codex/standard.config.toml
-model = "gpt-5.6-sol"
+model = "gpt-6-sol"
 model_reasoning_effort = "medium"
 ```
 
 ```toml
 # ~/.codex/thorough.config.toml
-model = "gpt-5.6-sol"
+model = "gpt-6-sol"
 model_reasoning_effort = "high"
 ```
 
@@ -1397,8 +1372,8 @@ approval_policy = "on-request"
 # Switch Models
 
 ```bash
-codex --model gpt-5.6-sol
-codex --model gpt-5.4-mini
+codex --model gpt-6-sol
+codex --model gpt-6-luna
 codex --profile thorough
 
 # What can my account use?
@@ -1486,7 +1461,7 @@ npm run build
 
 ```toml
 # ~/.codex/config.toml
-model = "gpt-5.6-sol"
+model = "gpt-6-sol"
 model_provider = "openai"
 approval_policy = "on-request"
 sandbox_mode = "workspace-write"
@@ -1964,12 +1939,12 @@ cd ~/.codex/prompts && git pull
 
 ```toml
 # ~/.codex/quick.config.toml
-model = "gpt-5.4-mini"    # Fast scoped work
+model = "gpt-6-luna"    # Fast scoped work
 ```
 
 ```toml
 # ~/.codex/complex.config.toml
-model = "gpt-5.6-sol"     # Complex reasoning
+model = "gpt-6-sol"     # Complex reasoning
 ```
 
 ---
@@ -1988,7 +1963,7 @@ model = "qwen2.5-coder:32b"  # Local model availability varies
 
 <v-clicks>
 
-- Use GPT-5.4-mini for simple tasks
+- Use GPT-6-Luna for simple tasks
 - Cache responses with session resumption
 - Batch similar operations
 - Use local models for sensitive data
@@ -2078,7 +2053,7 @@ RUST_LOG=trace codex
 # In the TUI, use /model to inspect or switch models
 
 # Pick an explicit model from your catalog (codex debug models)
-codex --model gpt-5.6-sol
+codex --model gpt-6-sol
 
 # Verify API connectivity
 curl -I https://api.openai.com/v1/models
@@ -2318,7 +2293,7 @@ tool_timeout_sec = 60
 Use high reasoning for complex, long-running tasks:
 
 ```bash
-codex -m gpt-5.6-sol -c model_reasoning_effort='high'
+codex -m gpt-6-sol -c model_reasoning_effort='high'
 ```
 
 Or configure in TOML:
@@ -2464,7 +2439,7 @@ Standalone desktop application for visual Codex workflows
 | **Multi-project** | Terminal tabs | Visual thread list |
 | **Diff review** | Basic | Inline with comments |
 | **Computer use** | Limited | Built-in app/browser control |
-| **Worktrees** | Manual | First-class workflow |
+| **Worktrees** | `--worktree` flag | First-class workflow |
 | **Remote/SSH** | Supported | Not supported |
 | **Speed** | Faster | Slightly heavier |
 
@@ -2516,7 +2491,6 @@ codex --strict-config                 # Fail fast on stale/unknown config keys
 ```bash
 codex mcp list                 # List MCP servers
 codex mcp login server-name    # OAuth login for supported MCP servers
-codex mcp-server               # Expose Codex as an MCP server (deprecated 0.149)
 codex cloud exec "prompt"      # Launch a cloud task
 codex cloud diff               # Review cloud task changes
 codex cloud apply              # Apply cloud task changes locally

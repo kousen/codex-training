@@ -77,7 +77,7 @@ jobs:
           
           Changed files:
           ${{ steps.changed.outputs.files }}" \
-            --model gpt-5.4-mini \
+            --model gpt-6-luna \
             --sandbox read-only \
             --ask-for-approval never \
             > /tmp/review-output.md 2>&1 || true

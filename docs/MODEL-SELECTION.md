@@ -9,11 +9,9 @@ and sandbox settings for the workflow.
 
 | Model | Best For | Notes |
 |-------|----------|-------|
-| **GPT-5.6-Sol** | Complex coding, research, reviews, broad refactors | Current frontier default — start here |
-| **GPT-5.6-Terra / GPT-5.6-Luna** | Sibling variants of the 5.6 family | Different latency/depth trade-offs; check `codex debug models` |
-| **GPT-5.5 / GPT-5.4** | Everyday professional coding | Older models, still available |
-| **GPT-5.4-mini** | Smaller fixes, fast iteration, lighter sub-agent tasks | Lower latency and cost for scoped work |
-| **GPT-5.3-Codex-Spark** | Codex-tuned coding workflows | Not available with API-key auth |
+| **GPT-6-Astra / GPT-6-Sol** | Complex coding, research, reviews, broad refactors | GPT-6 frontier models; Codex picks your account's default (check `/model`) |
+| **GPT-6-Luna** | Smaller fixes, fast iteration, lighter sub-agent tasks | Lower latency and cost for scoped work |
+| **GPT-5.6 (Sol / Terra / Luna) / GPT-5.5** | Everyday professional coding | Previous generations, still available |
 | **Local OSS models** | Offline, privacy-sensitive, or zero-API-cost work | Use Ollama or LM Studio with realistic expectations |
 
 ---
@@ -23,7 +21,7 @@ and sandbox settings for the workflow.
 ### Most Students
 
 ```toml
-model = "gpt-5.6-sol"
+model = "gpt-6-sol"
 approval_policy = "on-request"
 sandbox_mode = "workspace-write"
 web_search = "cached"
@@ -31,11 +29,11 @@ web_search = "cached"
 
 ### API Key Authentication
 
-The GPT-5.6 family is available with API-key auth (unlike Codex-Spark).
+The GPT-6 and GPT-5.6 families are available with API-key auth.
 Run `codex debug models` to see exactly what your account can use.
 
 ```bash
-codex --model gpt-5.6-sol
+codex --model gpt-6-sol
 ```
 
 ### Fast Scoped Work
@@ -46,7 +44,7 @@ refuse to start):
 
 ```toml
 # ~/.codex/quick.config.toml
-model = "gpt-5.4-mini"
+model = "gpt-6-luna"
 model_reasoning_effort = "low"
 approval_policy = "never"
 sandbox_mode = "read-only"
@@ -61,7 +59,7 @@ codex --profile quick "Explain the failing test"
 
 ```toml
 # ~/.codex/thorough.config.toml
-model = "gpt-5.6-sol"
+model = "gpt-6-sol"
 model_reasoning_effort = "high"
 approval_policy = "on-request"
 sandbox_mode = "workspace-write"
@@ -135,14 +133,14 @@ web_search = "disabled"
 
 | Task | Recommended Setup |
 |------|-------------------|
-| Explain code or errors | GPT-5.4-mini, low/medium reasoning |
-| Fix typos or small lint issues | GPT-5.4-mini, read-only first if unsure |
-| Add unit tests | GPT-5.6-sol medium, or GPT-5.4-mini for small scopes |
-| Multi-file refactor | GPT-5.6-sol, high reasoning |
-| Security review | GPT-5.6-sol, high reasoning, read-only |
-| Architecture design | GPT-5.6-sol, high/xhigh reasoning (ultra to delegate) |
-| CI automation | GPT-5.4-mini, `codex exec`, conservative permissions |
-| Current library usage | GPT-5.6-sol with MCP docs or live web search |
+| Explain code or errors | GPT-6-Luna, low/medium reasoning |
+| Fix typos or small lint issues | GPT-6-Luna, read-only first if unsure |
+| Add unit tests | GPT-6-Sol medium, or GPT-6-Luna for small scopes |
+| Multi-file refactor | GPT-6-Sol, high reasoning |
+| Security review | GPT-6-Sol, high reasoning, read-only |
+| Architecture design | GPT-6-Sol, high/xhigh reasoning (ultra to delegate) |
+| CI automation | GPT-6-Luna, `codex exec`, conservative permissions |
+| Current library usage | GPT-6-Sol with MCP docs or live web search |
 
 ---
 
@@ -153,11 +151,11 @@ Is it a current-docs question?
 ├─ Yes: use MCP docs or web_search = "live"
 └─ No
    Is it small and scoped?
-   ├─ Yes: gpt-5.4-mini
+   ├─ Yes: gpt-6-luna
    └─ No
       Is it complex, risky, or architectural?
-      ├─ Yes: gpt-5.6-sol, high reasoning
-      └─ No: gpt-5.6-sol, medium reasoning
+      ├─ Yes: gpt-6-sol, high reasoning
+      └─ No: gpt-6-sol, medium reasoning
 ```
 
 Pricing, rate limits, and availability change. Check the current OpenAI models
