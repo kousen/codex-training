@@ -4,14 +4,14 @@
 Building a production-ready REST API for task management using Spring Boot.
 
 ## Technology Stack
-- **Framework**: Spring Boot 3.2.0
+- **Framework**: Spring Boot 4.1.1
 - **Language**: Java 17
 - **Build Tool**: Maven
 - **Database**: H2 (in-memory for development)
 - **ORM**: Spring Data JPA
 - **Validation**: Jakarta Bean Validation
 - **Documentation**: SpringDoc OpenAPI 3.0
-- **Testing**: JUnit 5, Mockito, AssertJ, REST Assured
+- **Testing**: JUnit 6, Mockito, AssertJ, MockMvc
 
 ## Project Structure
 ```
@@ -27,9 +27,7 @@ src/
 │   │   ├── config/          # Configuration classes
 │   │   └── util/            # Utility classes
 │   └── resources/
-│       ├── application.yml   # Application configuration
-│       ├── data.sql         # Initial data
-│       └── schema.sql       # Database schema
+│       └── application.properties # Application configuration
 └── test/
     └── java/com/example/taskapi/
         ├── integration/      # Integration tests
@@ -105,4 +103,20 @@ Task
 - Async processing for long operations
 
 ## Current Development Focus
-Implementing core CRUD operations with proper validation, error handling, and comprehensive test coverage. Following TDD approach where possible.
+Core CRUD, search, validation, error handling, and tests are implemented in `starter/`.
+Run `./mvnw clean verify` from `starter/` with JDK 17. Coverage gates require 80%
+overall line coverage and 80% service line/branch coverage across the combined suite.
+
+## Resolved API Decisions
+- All task endpoints use `/api/v1/tasks`; search uses the required `q` parameter.
+- Titles are stripped and compared case-insensitively using `Locale.ROOT`; a unique
+  database constraint enforces the normalized key as well as the service check.
+- Creation accepts explicit valid status/priority, defaulting to TODO/MEDIUM.
+- Due-date creation validation uses an injectable UTC clock. Past dates are allowed
+  on update so overdue tasks remain editable.
+- PUT requires title, status, and priority; omitted description/dueDate are cleared.
+- Page numbers are zero-based; size is 1–100 (default 20), ordered by ID ascending.
+- Hibernate creates the development schema. `SampleDataConfiguration` seeds tasks
+  through the service when `app.sample-data.enabled=true`; tests disable it.
+- Use only `application.properties`. No YAML or separate SQL initialization scripts.
+- Optimistic locking protects concurrent writes. Entities are never returned by controllers.

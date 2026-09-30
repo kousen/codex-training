@@ -13,12 +13,12 @@ Build a Spring Boot application that includes:
    - Priority enum: LOW, MEDIUM, HIGH
 
 2. **REST Endpoints**
-   - GET /api/tasks - List all tasks (with pagination)
-   - GET /api/tasks/{id} - Get single task
-   - POST /api/tasks - Create new task
-   - PUT /api/tasks/{id} - Update task
-   - DELETE /api/tasks/{id} - Delete task
-   - GET /api/tasks/search - Search by title or description
+   - GET /api/v1/tasks - List all tasks (with pagination)
+   - GET /api/v1/tasks/{id} - Get single task
+   - POST /api/v1/tasks - Create new task
+   - PUT /api/v1/tasks/{id} - Update task
+   - DELETE /api/v1/tasks/{id} - Delete task
+   - GET /api/v1/tasks/search - Search by title or description
 
 3. **Data Layer**
    - H2 in-memory database
@@ -44,9 +44,14 @@ Build a Spring Boot application that includes:
    - Integration tests for controllers
    - Test data fixtures
 
-## Starting Point
+## Implementation
 
-The `starter/` directory contains a basic Spring Boot project structure.
+The `starter/` directory now contains the implemented Spring Boot 4.1.1 API using Java 17.
+See [the application README](starter/README.md) for its exact API contract, run commands,
+and test/coverage instructions. The prompt progression below is retained as lab guidance.
+
+The [architecture guide](starter/ARCHITECTURE.md) explains the implemented system
+with Mermaid diagrams of its layers, request flow, and task lifecycle.
 
 ## Codex Prompts Progression
 
@@ -82,7 +87,7 @@ Create global exception handler with custom exceptions and meaningful error resp
 
 ### Step 7: Configure Database
 ```
-Configure H2 database with initialization scripts and sample data for development
+Configure H2 database and initialize sample data through the service layer for development
 ```
 
 ### Step 8: Generate Tests
@@ -102,11 +107,11 @@ Add caching, rate limiting, and basic security configuration
 
 ## Success Criteria
 
-- [ ] All endpoints working as specified
-- [ ] Validation rules enforced
-- [ ] Error handling implemented
-- [ ] Tests passing with >80% coverage
-- [ ] Swagger UI accessible at /swagger-ui.html
+- [x] All endpoints working as specified
+- [x] Validation rules enforced
+- [x] Error handling implemented
+- [x] Tests passing with at least 80% coverage
+- [x] Swagger UI accessible at /swagger-ui.html
 - [ ] Code follows Spring Boot best practices
 
 ## Advanced Challenges
@@ -120,14 +125,18 @@ Add caching, rate limiting, and basic security configuration
 ## Testing Your Implementation
 
 ```bash
+# Run from the starter directory with JDK 17
+cd starter
+
 # Run the application
-mvn spring-boot:run
+./mvnw spring-boot:run
 
 # Run tests
-mvn test
+./mvnw test
 
-# Check test coverage
-mvn jacoco:report
+# Run tests, package the application, and generate coverage
+./mvnw clean verify
+open target/site/jacoco/index.html
 
 # Access Swagger UI
 open http://localhost:8080/swagger-ui.html
@@ -139,15 +148,21 @@ curl -X POST http://localhost:8080/api/v1/tasks \
   -d '{"title":"Test Task","description":"Description","status":"TODO","priority":"HIGH"}'
 ```
 
+JaCoCo generates HTML and XML reports under `starter/target/site/jacoco/` after tests run.
+The build enforces at least 80% overall line coverage and 80% line/branch coverage
+for each service class across the combined unit and integration test suite.
+Use JDK 17 for this exercise. The wrapper downloads Maven 3.9.11 on first use;
+a separate Maven installation is not required. On Windows, use `mvnw.cmd`.
+
 ## Configuration Tips
 
-Create an AGENTS.md file in the project root:
+The existing AGENTS.md defines the project rules. A minimal example is:
 
 ```markdown
 # Task Management API
 
 ## Tech Stack
-- Spring Boot 3.2
+- Spring Boot 4.1.1
 - Java 17
 - H2 Database
 - Spring Data JPA
