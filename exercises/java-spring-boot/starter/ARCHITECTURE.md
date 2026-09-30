@@ -59,8 +59,11 @@ responses.
 
 ## Creating a task
 
-Validation happens at two levels: Bean Validation checks the request shape, while
-the service checks creation-specific rules. A database constraint remains the
+Bean Validation checks the request shape at both the HTTP boundary and calls
+through the injected service bean. The service also checks creation-specific rules.
+Service method validation uses Spring's `@Validated` proxy with parameter
+constraints and cascading `@Valid` on request DTOs; direct construction and
+self-invocation bypass that proxy. A database constraint remains the
 final authority on title uniqueness, including when requests race.
 
 ```mermaid
@@ -160,7 +163,11 @@ There is one entity and one application table, with no entity relationships.
 | `version` | JPA optimistic-lock version used to detect conflicting writes |
 
 The unique constraint protects concurrent creates or renames that pass the
-service's preliminary check. JPA version checks protect overlapping updates and
+service's preliminary check. The error handler recognizes Hibernate's unique
+constraint kind and the title constraint name, including H2's appended backing
+index metadata, before returning 409. Unknown, unnamed, and unrelated integrity violations return
+a generic 500 with details logged only on the server.
+JPA version checks protect overlapping updates and
 deletes; stale writes return 409. The version is internal: the API does not expose
 an ETag or require a client version, so it does not detect an old client edit when
 the service loads an already-updated row before applying that edit.
@@ -180,8 +187,8 @@ restart. Configuration lives in `src/main/resources/application.properties`.
 | Test layer | What it verifies |
 | --- | --- |
 | Mockito service tests | Business rules, defaults, pagination, and clock-driven timestamps |
-| Full-context MockMvc tests | HTTP routes, JSON DTOs, validation, error responses, and OpenAPI |
-| JPA repository tests | Database uniqueness, literal search, and optimistic locking |
+| Full-context tests | MockMvc HTTP routes, JSON DTOs, validation, errors, and OpenAPI; direct calls to the injected service verify method validation |
+| JPA repository tests | Database uniqueness and translation of the real H2 exception to HTTP 409, literal search, and optimistic locking |
 | Error-handler and initializer tests | Safe error messages and conditional sample-data behavior |
 
 `./mvnw clean verify` runs the suite and enforces JaCoCo coverage gates: 80%
@@ -211,15 +218,6 @@ one entity, and a class hierarchy for three statuses would add little value now.
 
 The items below were identified during review on September 30, 2026. They are
 proposals, not implemented features or approved implementation tasks.
-
-### Concrete code improvements
-
-1. Validate at the service boundary as well as the HTTP boundary. Request-field
-   validation currently depends on the controller; an import, scheduled job, or
-   agent tool calling the service directly could bypass those checks.
-2. Narrow database-error translation. The current handler maps every
-   `DataIntegrityViolationException` to a title-related 409. Recognize the known
-   uniqueness constraint and distinguish unexpected integrity failures.
 
 ### Optional operational extensions
 

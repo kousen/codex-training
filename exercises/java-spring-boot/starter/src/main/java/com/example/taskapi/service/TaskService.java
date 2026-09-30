@@ -4,6 +4,8 @@ import com.example.taskapi.dto.*;
 import com.example.taskapi.entity.*;
 import com.example.taskapi.exception.*;
 import com.example.taskapi.repository.TaskRepository;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import java.time.Clock;
 import java.time.LocalDate;
 import org.slf4j.Logger;
@@ -12,8 +14,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 @Service
+@Validated
 @Transactional(readOnly = true)
 public class TaskService {
     private static final Logger log = LoggerFactory.getLogger(TaskService.class);
@@ -25,20 +29,21 @@ public class TaskService {
         this.clock = clock;
     }
 
-    public TaskPage list(int page, int size) {
+    public TaskPage list(@Min(0) int page, @Min(1) @Max(100) int size) {
         return TaskPage.from(repository.findAll(pageable(page, size)).map(TaskResponse::from));
     }
 
-    public TaskPage search(String query, int page, int size) {
+    public TaskPage search(@NotBlank @Size(max = 500) String query,
+                           @Min(0) int page, @Min(1) @Max(100) int size) {
         String term = query.strip();
         return TaskPage.from(repository.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
             term, term, pageable(page, size)).map(TaskResponse::from));
     }
 
-    public TaskResponse get(long id) { return TaskResponse.from(find(id)); }
+    public TaskResponse get(@Positive long id) { return TaskResponse.from(find(id)); }
 
     @Transactional
-    public TaskResponse create(CreateTaskRequest request) {
+    public TaskResponse create(@NotNull @Valid CreateTaskRequest request) {
         if (request.dueDate() != null && !request.dueDate().isAfter(LocalDate.now(clock))) {
             throw new InvalidTaskException("Due date must be in the future (UTC) when creating a task");
         }
@@ -54,7 +59,7 @@ public class TaskService {
     }
 
     @Transactional
-    public TaskResponse update(long id, UpdateTaskRequest request) {
+    public TaskResponse update(@Positive long id, @NotNull @Valid UpdateTaskRequest request) {
         Task task = find(id);
         if (task.getStatus() == TaskStatus.DONE && request.status() == TaskStatus.TODO) {
             throw new TaskConflictException("A DONE task cannot be changed back to TODO");
@@ -70,7 +75,7 @@ public class TaskService {
     }
 
     @Transactional
-    public void delete(long id) {
+    public void delete(@Positive long id) {
         Task task = find(id);
         if (task.getStatus() == TaskStatus.IN_PROGRESS) {
             throw new TaskConflictException("An IN_PROGRESS task cannot be deleted");

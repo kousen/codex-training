@@ -202,7 +202,7 @@ curl -X POST http://localhost:8080/api/v1/tasks \
 JaCoCo generates HTML and XML reports under `starter/target/site/jacoco/` after tests run.
 The build enforces at least 80% overall line coverage and 80% line/branch coverage
 for each service class across the combined unit and integration test suite.
-Use JDK 17 for this exercise. The wrapper downloads Maven 3.9.11 on first use;
+Use JDK 17 for this exercise. The wrapper downloads Maven 3.9.16 on first use;
 a separate Maven installation is not required. On Windows, use `mvnw.cmd`.
 
 ## Configuration Tips

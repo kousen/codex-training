@@ -3,6 +3,8 @@ package com.example.taskapi.integration;
 import com.example.taskapi.dto.*;
 import com.example.taskapi.entity.*;
 import com.example.taskapi.repository.TaskRepository;
+import com.example.taskapi.service.TaskService;
+import jakarta.validation.ConstraintViolationException;
 import java.time.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,7 +31,51 @@ class TaskApiTest {
     @Autowired MockMvc mvc;
     @Autowired ObjectMapper json;
     @Autowired TaskRepository repository;
+    @Autowired TaskService service;
     @BeforeEach void clean() { repository.deleteAll(); }
+
+    @ParameterizedTest @NullAndEmptySource @ValueSource(strings = {" ", "\t"})
+    void serviceRejectsBlankTitlesWithoutHttp(String title) {
+        assertThatThrownBy(() -> service.create(create(title))).isInstanceOf(ConstraintViolationException.class);
+        assertThatThrownBy(() -> service.update(1, update(title, TaskStatus.TODO))).isInstanceOf(ConstraintViolationException.class);
+        assertThat(repository.count()).isZero();
+    }
+
+    @Test void serviceValidatesRequestsWithoutHttp() {
+        assertThatThrownBy(() -> service.create(null)).isInstanceOf(ConstraintViolationException.class);
+        assertThatThrownBy(() -> service.update(1, null)).isInstanceOf(ConstraintViolationException.class);
+        assertThatThrownBy(() -> service.create(new CreateTaskRequest("t".repeat(101), null, null, null, null)))
+            .isInstanceOf(ConstraintViolationException.class);
+        assertThatThrownBy(() -> service.create(new CreateTaskRequest("Task", "d".repeat(501), null, null, null)))
+            .isInstanceOf(ConstraintViolationException.class);
+        assertThatThrownBy(() -> service.update(1, new UpdateTaskRequest("Task", null, null, TaskPriority.LOW, null)))
+            .isInstanceOf(ConstraintViolationException.class);
+        assertThatThrownBy(() -> service.update(1, new UpdateTaskRequest("Task", null, TaskStatus.TODO, null, null)))
+            .isInstanceOf(ConstraintViolationException.class);
+        assertThat(repository.count()).isZero();
+    }
+
+    @ParameterizedTest @ValueSource(longs = {0, -1})
+    void serviceRejectsInvalidIdsWithoutHttp(long id) {
+        assertThatThrownBy(() -> service.get(id)).isInstanceOf(ConstraintViolationException.class);
+        assertThatThrownBy(() -> service.delete(id)).isInstanceOf(ConstraintViolationException.class);
+        assertThatThrownBy(() -> service.update(id, update("Task", TaskStatus.TODO))).isInstanceOf(ConstraintViolationException.class);
+    }
+
+    @ParameterizedTest @CsvSource({"-1,20", "0,0", "0,101"})
+    void serviceRejectsInvalidPagesWithoutHttp(int page, int size) {
+        assertThatThrownBy(() -> service.list(page, size)).isInstanceOf(ConstraintViolationException.class);
+        assertThatThrownBy(() -> service.search("Task", page, size)).isInstanceOf(ConstraintViolationException.class);
+    }
+
+    @ParameterizedTest @NullAndEmptySource @ValueSource(strings = {" ", "\t"})
+    void serviceRejectsInvalidSearchWithoutHttp(String query) {
+        assertThatThrownBy(() -> service.search(query, 0, 20)).isInstanceOf(ConstraintViolationException.class);
+    }
+
+    @Test void serviceRejectsLongSearchWithoutHttp() {
+        assertThatThrownBy(() -> service.search("x".repeat(501), 0, 20)).isInstanceOf(ConstraintViolationException.class);
+    }
 
     long createTask(String title, TaskStatus status) throws Exception {
         var request = new CreateTaskRequest(title, "Searchable description", status, null, null);

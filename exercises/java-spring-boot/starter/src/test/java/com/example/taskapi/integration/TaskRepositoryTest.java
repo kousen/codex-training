@@ -1,15 +1,23 @@
 package com.example.taskapi.integration;
 
 import com.example.taskapi.entity.*;
+import com.example.taskapi.controller.TaskController;
+import com.example.taskapi.exception.GlobalExceptionHandler;
 import com.example.taskapi.repository.TaskRepository;
+import com.example.taskapi.service.TaskService;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.dao.*;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import static com.example.taskapi.support.TaskFixtures.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DataJpaTest(properties = "app.sample-data.enabled=false")
 class TaskRepositoryTest {
@@ -20,9 +28,17 @@ class TaskRepositoryTest {
         return repository.saveAndFlush(new Task(title, description, TaskStatus.TODO, TaskPriority.MEDIUM, null, NOW));
     }
 
-    @Test void databaseRejectsNormalizedDuplicatesWithoutServiceCheck() {
+    @Test void databaseDuplicateReturnsConflictWithoutServiceCheck() throws Exception {
         save("  Unique Title ", null);
-        assertThatThrownBy(() -> save("UNIQUE TITLE", null)).isInstanceOf(DataIntegrityViolationException.class);
+        var failure = assertThrows(DataIntegrityViolationException.class, () -> save("UNIQUE TITLE", null));
+        // Exercise HTTP translation with the real Hibernate/H2 exception, including its generated index name.
+        var service = mock(TaskService.class);
+        when(service.create(any())).thenThrow(failure);
+        var mvc = MockMvcBuilders.standaloneSetup(new TaskController(service))
+            .setControllerAdvice(new GlobalExceptionHandler(CLOCK)).build();
+        mvc.perform(post("/api/v1/tasks").contentType("application/json").content("{\"title\":\"UNIQUE TITLE\"}"))
+            .andExpect(status().isConflict())
+            .andExpect(jsonPath("$.message").value("A task with that title already exists"));
     }
 
     @Test void findsLiteralWildcardsAndNullableDescriptions() {

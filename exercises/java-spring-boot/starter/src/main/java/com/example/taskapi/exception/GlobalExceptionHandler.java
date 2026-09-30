@@ -2,6 +2,7 @@ package com.example.taskapi.exception;
 
 import com.example.taskapi.dto.ApiError;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 import java.time.Clock;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -41,8 +42,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     ResponseEntity<Object> integrity(DataIntegrityViolationException ex, HttpServletRequest request) {
-        log.warn("Task write violated a database constraint", ex);
-        return error(HttpStatus.CONFLICT, "Task conflicts with existing data; titles must be unique", request.getRequestURI());
+        for (Throwable cause = ex; cause != null; cause = cause.getCause()) {
+            if (cause instanceof org.hibernate.exception.ConstraintViolationException violation
+                    && violation.getKind() == org.hibernate.exception.ConstraintViolationException.ConstraintKind.UNIQUE
+                    && violation.getConstraintName() != null
+                    // H2 appends " INDEX <backing index>" to the declared constraint name.
+                    && violation.getConstraintName().matches("(?i)(?:PUBLIC\\.)?UK_TASKS_TITLE_KEY(?: INDEX .+)?")) {
+                log.warn("Task title conflicts with an existing task");
+                return error(HttpStatus.CONFLICT, "A task with that title already exists", request.getRequestURI());
+            }
+        }
+        return unexpected(ex, request);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    ResponseEntity<Object> serviceValidation(ConstraintViolationException ex, HttpServletRequest request) {
+        return error(HttpStatus.BAD_REQUEST, "Request validation failed", request.getRequestURI());
     }
 
     @ExceptionHandler(OptimisticLockingFailureException.class)

@@ -17,7 +17,7 @@ From this directory, with JDK 17 selected:
 ./mvnw spring-boot:run
 ```
 
-The Maven 3.9.11 wrapper downloads Maven on first use. Windows users can use
+The Maven 3.9.16 wrapper downloads Maven on first use. Windows users can use
 `mvnw.cmd` instead of `./mvnw`. No separate Maven installation is needed.
 
 - API: <http://localhost:8080/api/v1/tasks>
@@ -117,8 +117,11 @@ where available:
 ```
 
 Invalid input returns 400, missing tasks 404, and duplicate titles or business-rule
-conflicts 409. Unexpected failures return a generic 500 message; details stay in
-server logs. Responses expose DTOs, never persistence entities or internal versions.
+conflicts 409. Database failures produce a title-related 409 only when Hibernate
+identifies the known title uniqueness constraint, including H2's appended index
+metadata. Other integrity violations and unexpected failures return a generic 500
+message; details stay in server logs. Responses expose DTOs, never persistence
+entities or internal versions.
 
 ## Tests and coverage
 
@@ -139,7 +142,9 @@ service class. The gate measures the combined suite, including integration tests
 ## Structure and scope
 
 Controllers handle HTTP and DTO validation; the transactional service applies
-business rules; repositories handle persistence. Hibernate creates the development
+business rules and repeats input validation for calls through the injected service
+bean. Direct construction and self-invocation bypass Spring's method-validation
+proxy. Repositories handle persistence. Hibernate creates the development
 schema. A conditional startup initializer seeds sample tasks through the service,
 so no separate `schema.sql` or `data.sql` is needed.
 

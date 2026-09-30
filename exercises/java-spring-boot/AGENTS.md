@@ -125,6 +125,10 @@ overall line coverage and 80% service line/branch coverage across the combined s
   through the service when `app.sample-data.enabled=true`; tests disable it.
 - Use only `application.properties`. No YAML or separate SQL initialization scripts.
 - Optimistic locking protects concurrent writes. Entities are never returned by controllers.
+- Bean Validation also runs on calls through the injected `TaskService` bean;
+  direct construction and self-invocation bypass Spring method validation.
+- Only the recognized title uniqueness constraint maps to a database-related 409;
+  other integrity failures return a generic 500 and are logged on the server.
 
 ## Scope of Follow-up Work
 The architecture guide records proposed improvements and optional extensions.
