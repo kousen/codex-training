@@ -1673,7 +1673,7 @@ backgroundSize: cover
 <v-clicks>
 
 - **Lab 0**: Planning and Steering Warm-Up (15 min)
-- **Lab 1**: Spring Boot REST API (generate from scratch)
+- **Lab 1**: Spring Boot 4 REST API (build from scaffold)
 - **Lab 2**: Python Refactoring (improve legacy code)
 - **Lab 3**: React TypeScript Forms (frontend development)
 - **Lab 4**: Microservices Architecture (multi-language)
@@ -1695,7 +1695,7 @@ backgroundSize: cover
 
 </v-clicks>
 
-Note: You build the solution using Codex—no reference implementations provided!
+Lab 1 includes a reference implementation; use its README to extract a fresh scaffold.
 
 ---
 
@@ -1717,10 +1717,11 @@ Note: You build the solution using Codex—no reference implementations provided
 
 <v-clicks>
 
-- Objective: Build a Spring Boot 3 task-management REST API end-to-end
+- Objective: Build a Spring Boot 4.1.1 task-management REST API end-to-end
 - Timebox: 60–90 minutes
 - Workspace: `exercises/java-spring-boot`
 - Instructions: open `exercises/java-spring-boot/README.md`
+- Fresh lab: follow the scaffold recipe; `starter/` contains the reference solution
 
 </v-clicks>
 

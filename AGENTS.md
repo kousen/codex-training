@@ -24,7 +24,7 @@ This repository contains training materials for a 5-hour hands-on workshop on Op
 ## Technology Stack
 
 - **Slides**: Slidev (Vue-based presentation framework)
-- **Lab 1**: Java 17, Spring Boot 3.2, Maven
+- **Lab 1**: Java 17, Spring Boot 4.1.1, Maven
 - **Lab 2**: Python 3.11+, pytest, mypy
 - **Lab 3**: React 18, TypeScript, Vite, React Hook Form, Zod
 - **Lab 4**: Docker, RabbitMQ, PostgreSQL, MongoDB

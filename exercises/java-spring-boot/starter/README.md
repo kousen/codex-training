@@ -6,6 +6,9 @@ Jakarta Bean Validation, SpringDoc 3.1.1, and JaCoCo.
 See the [architecture guide](ARCHITECTURE.md) for Mermaid diagrams of the application
 layers, request flow, and task lifecycle, plus persistence and testing details.
 
+For a fresh implementation exercise, follow the [scaffold extraction instructions](../README.md#starting-a-fresh-lab).
+The `starter/` folder in this branch is the completed reference application.
+
 ## Run
 
 From this directory, with JDK 17 selected:
@@ -142,6 +145,9 @@ so no separate `schema.sql` or `data.sql` is needed.
 
 Configuration lives exclusively in `src/main/resources/application.properties`.
 Open Session in View is disabled; DTOs are mapped inside service transactions.
-This lab has no authentication or rate limiting; those remain later exercises.
+This lab has no authentication, rate limiting, or caching. Those are optional
+extensions, not approved implementation work. See the
+[design review follow-ups](ARCHITECTURE.md#design-review-follow-ups) for known
+improvements and the distinction between implemented decisions and proposals.
 Treat task text as plain text when displaying it in a browser; clients must escape
 it for their rendering context rather than insert it as HTML.

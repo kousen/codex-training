@@ -1,7 +1,10 @@
 # Task Management API Project
 
 ## Overview
-Building a production-ready REST API for task management using Spring Boot.
+A working Spring Boot REST API for a hands-on training lab. It uses an in-memory
+development database and does not yet include authentication or rate limiting.
+See [the application README](starter/README.md) for the API contract and
+[the architecture guide](starter/ARCHITECTURE.md) for diagrams and design tradeoffs.
 
 ## Technology Stack
 - **Framework**: Spring Boot 4.1.1
@@ -10,10 +13,13 @@ Building a production-ready REST API for task management using Spring Boot.
 - **Database**: H2 (in-memory for development)
 - **ORM**: Spring Data JPA
 - **Validation**: Jakarta Bean Validation
-- **Documentation**: SpringDoc OpenAPI 3.0
+- **Documentation**: SpringDoc 3.1.1 (OpenAPI and Swagger UI)
 - **Testing**: JUnit 6, Mockito, AssertJ, MockMvc
 
 ## Project Structure
+
+The application lives in `starter/`; paths below are relative to that directory.
+
 ```
 src/
 ├── main/
@@ -24,14 +30,14 @@ src/
 │   │   ├── entity/          # JPA entities
 │   │   ├── dto/             # Data transfer objects
 │   │   ├── exception/       # Custom exceptions
-│   │   ├── config/          # Configuration classes
-│   │   └── util/            # Utility classes
+│   │   └── config/          # Configuration classes
 │   └── resources/
 │       └── application.properties # Application configuration
 └── test/
     └── java/com/example/taskapi/
         ├── integration/      # Integration tests
-        └── unit/            # Unit tests
+        ├── unit/            # Unit tests
+        └── support/         # Shared test fixtures
 ```
 
 ## API Conventions
@@ -75,7 +81,7 @@ Task
 2. Default status is TODO when creating
 3. Default priority is MEDIUM when creating
 4. Cannot delete task with status IN_PROGRESS
-5. Cannot change DONE task back to TODO
+5. Cannot change DONE directly back to TODO; reopening as IN_PROGRESS is allowed
 6. Due date must be in the future when creating
 7. Updated timestamp changes on any modification
 
@@ -91,7 +97,7 @@ Task
 ## Security Considerations
 - Input validation on all endpoints
 - SQL injection prevention via parameterized queries
-- XSS prevention via output encoding
+- Return task text as JSON; browser clients must escape it for their rendering context
 - Rate limiting on API endpoints (future)
 - Authentication/authorization (future)
 
@@ -99,8 +105,7 @@ Task
 - Pagination for list endpoints (default 20, max 100)
 - Lazy loading for relationships
 - Database indexes on frequently queried fields
-- Response caching where appropriate
-- Async processing for long operations
+- Caching and asynchronous processing are not implemented; consider them only for a demonstrated need
 
 ## Current Development Focus
 Core CRUD, search, validation, error handling, and tests are implemented in `starter/`.
@@ -120,3 +125,7 @@ overall line coverage and 80% service line/branch coverage across the combined s
   through the service when `app.sample-data.enabled=true`; tests disable it.
 - Use only `application.properties`. No YAML or separate SQL initialization scripts.
 - Optimistic locking protects concurrent writes. Entities are never returned by controllers.
+
+## Scope of Follow-up Work
+The architecture guide records proposed improvements and optional extensions.
+These are not implemented or approved tasks. Do not add them without a new request.

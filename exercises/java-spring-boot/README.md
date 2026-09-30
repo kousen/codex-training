@@ -53,6 +53,48 @@ and test/coverage instructions. The prompt progression below is retained as lab 
 The [architecture guide](starter/ARCHITECTURE.md) explains the implemented system
 with Mermaid diagrams of its layers, request flow, and task lifecycle.
 
+## Starting a fresh lab
+
+Despite its name, `starter/` on this branch contains the completed reference
+implementation. To practice building the API, extract only the Spring Boot 4
+scaffold from the fixed commit below. Keep this README open for the requirements.
+
+Run from the `codex-training` repository root in a POSIX shell (macOS/Linux):
+
+```bash
+(
+  set -eu
+  lab_dir=../task-api-lab
+  mkdir "$lab_dir"
+  git archive 8a9cd4dc77dfce3fa2c05e96fa28708b5df9c807 \
+    exercises/java-spring-boot/starter/pom.xml \
+    exercises/java-spring-boot/starter/mvnw \
+    exercises/java-spring-boot/starter/mvnw.cmd \
+    exercises/java-spring-boot/starter/.mvn \
+    exercises/java-spring-boot/starter/src/main/java/com/example/taskapi/TaskApiApplication.java \
+    exercises/java-spring-boot/starter/src/main/resources/application.properties \
+    > "$lab_dir/scaffold.tar"
+  tar -xf "$lab_dir/scaffold.tar" -C "$lab_dir" --strip-components=3
+  rm "$lab_dir/scaffold.tar"
+)
+```
+
+The command requires that commit to be available locally. It creates a new sibling
+folder and stops if that folder already exists. It does not alter the completed
+reference application or check out an older course version.
+
+In `../task-api-lab`, select JDK 17 and run `./mvnw clean verify`. This scaffold has
+only the main application class, configuration, dependencies, wrapper, and coverage
+setup. It has no task endpoints, entities, sample-data initializer, or tests yet;
+JaCoCo therefore skips reporting and checking until tests exist. There is no
+`starter/` subdirectory in the extracted project: run commands at its root.
+Create an `AGENTS.md` there using the Configuration Tips below, and initialize a
+Git repository there if you want to practice commits. The source repository's
+agent instructions are not included in this separate folder.
+
+The earlier commit `0b407b1` preserves the original Spring Boot 3.2 scaffold for
+historical comparison; it is not the recommended baseline for this updated lab.
+
 ## Codex Prompts Progression
 
 ### Step 1: Analyze Project Structure
@@ -100,7 +142,12 @@ Generate comprehensive test suite including unit tests for services and integrat
 Configure Swagger UI and add detailed OpenAPI documentation for all endpoints
 ```
 
-### Step 10: Performance & Security
+### Step 10: Performance & Security (optional, not implemented)
+
+This is an extension exercise. Security and rate limiting were discussed as
+possible next steps; caching should address a measured need or an explicit teaching
+objective. None of these additions is implemented or approved for implementation.
+
 ```
 Add caching, rate limiting, and basic security configuration
 ```
@@ -112,7 +159,11 @@ Add caching, rate limiting, and basic security configuration
 - [x] Error handling implemented
 - [x] Tests passing with at least 80% coverage
 - [x] Swagger UI accessible at /swagger-ui.html
-- [ ] Code follows Spring Boot best practices
+- [x] Controllers, DTOs, transactional services, and repositories have separate responsibilities
+
+These checks cover the implemented lab scope, not production readiness. See the
+[design review follow-ups](starter/ARCHITECTURE.md#design-review-follow-ups) for
+known improvements.
 
 ## Advanced Challenges
 

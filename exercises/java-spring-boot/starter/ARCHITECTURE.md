@@ -188,3 +188,59 @@ restart. Configuration lives in `src/main/resources/application.properties`.
 overall line coverage, plus 80% line and branch coverage for each service class.
 Authentication, rate limiting, and durable production storage remain outside the
 implemented lab scope.
+
+## Design patterns and tradeoffs
+
+| Pattern | Current implementation and reason |
+| --- | --- |
+| Layered architecture | Controllers handle HTTP, services coordinate business operations, and repositories handle data access. |
+| Service Layer / Transaction Script | Each service method implements one use case within a transaction; the small rule set does not need a larger domain framework. |
+| Repository | Spring Data JPA provides CRUD and query implementations behind `TaskRepository`. |
+| DTO | Separate create/update request records express different validation requirements; response records hide persistence details. |
+| Dependency injection | Constructor-injected repository and `Clock` keep dependencies explicit and allow deterministic tests. |
+| Data Mapper / Unit of Work | Hibernate maps entities to rows and tracks changes within service transactions. |
+| Optimistic locking | JPA's `@Version` detects conflicting overlapping writes, subject to the client-version limitation described above. |
+| Framework proxies and hooks | Spring intercepts transactional service calls; the exception handler customizes framework handling through override methods. |
+
+Keep the current abstractions proportionate to the application. A one-implementation
+service interface, generic base CRUD services/controllers, a mapping framework for
+one entity, and a class hierarchy for three statuses would add little value now.
+`TaskResponse.from(task)` is enough mapping infrastructure for this model.
+
+## Design review follow-ups
+
+The items below were identified during review on September 30, 2026. They are
+proposals, not implemented features or approved implementation tasks.
+
+### Concrete code improvements
+
+1. Validate at the service boundary as well as the HTTP boundary. Request-field
+   validation currently depends on the controller; an import, scheduled job, or
+   agent tool calling the service directly could bypass those checks.
+2. Narrow database-error translation. The current handler maps every
+   `DataIntegrityViolationException` to a title-related 409. Recognize the known
+   uniqueness constraint and distinguish unexpected integrity failures.
+3. Remove reflection from the sample-data initializer test. Put that test in the
+   configuration package so it can call the package-private factory directly.
+
+### Optional operational extensions
+
+- Authentication, authorization, and rate limiting, with explicit ownership rules.
+- A development profile for the H2 console, sample data, and verbose SQL logging.
+- Caching only for a demonstrated performance need or a specific teaching exercise.
+- Durable storage, schema migrations, backup/restore checks, and operational metrics.
+- ETag/If-Match support for stale client edits and idempotency keys for request retries.
+
+### Product ideas to evaluate
+
+Projects/assignees, task history and restoration, filtering, dependencies,
+recurrence/reminders, and a Kanban interface would extend everyday usefulness.
+Potential teaching differentiators include explainable allowed actions,
+evidence-backed completion, previews of proposed bulk changes, and reproducible
+failure scenarios. These ideas need requirements and scope decisions first.
+
+Revisit global title uniqueness and the meaning of reopening a completed task
+before expanding the model. If explainable actions are selected, share policy
+code between enforcement and explanations. If notifications are selected, emit
+side effects after commit; reliable external delivery may warrant an outbox.
+Neither a policy framework nor an event/outbox system exists in the current code.

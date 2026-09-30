@@ -109,13 +109,17 @@ Learn the current Codex interaction model before the larger labs:
 **Time**: 15-20 minutes
 
 ### Lab 1: Spring Boot REST API
-Build a complete task management API with Spring Boot, including:
+Build a complete task management API with Spring Boot 4.1.1 and Java 17, including:
 - CRUD operations with validation
 - H2 database integration
 - OpenAPI documentation
 - Comprehensive test suite
 
 **Time**: 60-90 minutes
+
+The checked-in `starter/` is the completed reference application. Use the
+[Lab 1 scaffold instructions](exercises/java-spring-boot/README.md#starting-a-fresh-lab)
+to begin a fresh implementation with the same Spring Boot 4 setup.
 
 ### Lab 2: Python Code Refactoring
 Transform legacy Python code using modern best practices:
