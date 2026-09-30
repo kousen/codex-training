@@ -220,8 +220,6 @@ proposals, not implemented features or approved implementation tasks.
 2. Narrow database-error translation. The current handler maps every
    `DataIntegrityViolationException` to a title-related 409. Recognize the known
    uniqueness constraint and distinguish unexpected integrity failures.
-3. Remove reflection from the sample-data initializer test. Put that test in the
-   configuration package so it can call the package-private factory directly.
 
 ### Optional operational extensions
 

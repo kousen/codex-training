@@ -1,6 +1,5 @@
-package com.example.taskapi.unit;
+package com.example.taskapi.config;
 
-import com.example.taskapi.config.SampleDataConfiguration;
 import com.example.taskapi.dto.CreateTaskRequest;
 import com.example.taskapi.repository.TaskRepository;
 import com.example.taskapi.service.TaskService;
@@ -15,9 +14,7 @@ class SampleDataConfigurationTest {
         var repository = mock(TaskRepository.class);
         var service = mock(TaskService.class);
         var config = new SampleDataConfiguration();
-        // Invoke the package-private @Bean factory through Spring's reflection helper.
-        var runner = (org.springframework.boot.CommandLineRunner) org.springframework.test.util.ReflectionTestUtils.invokeMethod(
-            config, "sampleTasks", service, repository, CLOCK);
+        var runner = config.sampleTasks(service, repository, CLOCK);
         runner.run();
         var captor = ArgumentCaptor.forClass(CreateTaskRequest.class);
         verify(service, times(3)).create(captor.capture());
