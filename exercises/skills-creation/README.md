@@ -67,7 +67,7 @@ Review the generated SKILL.md and customize as needed.
 
 Edit `~/.agents/skills/commit-gen/SKILL.md`:
 
-```yaml
+````yaml
 ---
 name: commit-gen
 description: >
@@ -106,13 +106,13 @@ Generate conventional commit messages following project standards.
 
 <optional footer>
 ```
-```
+````
 
 ### Step 3: Add Reference Material
 
 Create `~/.agents/skills/commit-gen/references/conventions.md`:
 
-```markdown
+````markdown
 # Conventional Commits Quick Reference
 
 ## Examples
@@ -151,7 +151,7 @@ Use lowercase, typically matching:
 - Directory names (api, web, cli)
 - Feature areas (auth, payment, search)
 - Component names (button, modal, form)
-```
+````
 
 ### Step 4: Test Your Skill
 
