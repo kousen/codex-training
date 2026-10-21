@@ -98,6 +98,13 @@ npm run dev
 # Open browser to http://localhost:3030
 ```
 
+## Slides Online
+
+Every push to `main` that touches `slides.md` rebuilds the deck twice, via the workflows in [`.github/workflows/`](.github/workflows/):
+
+- **Web version** (GitHub Pages): **<https://kousen.github.io/codex-training/>**
+- **PDF**: [`codex-training-slides.pdf`](https://github.com/kousen/codex-training/releases/latest/download/codex-training-slides.pdf) from the rolling `slides-latest` release
+
 ## Exercises
 
 ### Lab 0: Planning and Steering Warm-Up
