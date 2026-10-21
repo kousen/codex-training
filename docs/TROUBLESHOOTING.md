@@ -194,7 +194,7 @@ codex
 
 ```bash
 # Launch with a specific known-good model
-codex --model gpt-6-sol
+codex --model gpt-6.1-sol
 
 # See exactly which models your account can use
 codex debug models
@@ -209,7 +209,7 @@ codex debug models
 grep model ~/.codex/config.toml
 
 # Try with explicit model
-codex --model gpt-6-sol
+codex --model gpt-6.1-sol
 
 # Use a profile with known-good settings
 # (profiles are per-file since 0.134: ~/.codex/<name>.config.toml)

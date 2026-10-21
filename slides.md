@@ -168,9 +168,10 @@ Kousen IT, Inc.
 
 <v-clicks>
 
-- <span style="color: #00D4FF">**GPT-6-Astra / GPT-6-Sol**</span> - GPT-6 frontier models for agentic coding (272K context)
+- <span style="color: #00D4FF">**GPT-6.1-Sol**</span> - Current default; GPT-6 frontier model for agentic coding (272K context)
+- <span style="color: #00D4FF">**GPT-6-Astra / GPT-6-Sol**</span> - Previous GPT-6 frontier pair, still available
 - <span style="color: #00D4FF">**GPT-6-Luna**</span> - Fast scoped work and lighter sub-agent tasks
-- <span style="color: #00D4FF">**GPT-5.6 / GPT-5.5**</span> - Previous generations, still available
+- <span style="color: #00D4FF">**GPT-5.6**</span> - Previous generation, still available
 - Codex picks your account's default model — check it with `/model`
 - Local OSS models through Ollama or LM Studio
 - Use `/model` in the TUI — or `codex debug models` for the full catalog
@@ -271,6 +272,7 @@ codex exec "generate a README"
 <v-clicks>
 
 - `Enter` - Submit prompt
+- Type while Codex is working to steer it mid-turn
 - `Ctrl+C` - Cancel current operation
 - `Ctrl+D` - Exit Codex
 - `Tab` - Autocomplete
@@ -290,10 +292,11 @@ codex exec "generate a README"
 - `/save` - Save current session
 - `/help` - Show available commands
 - `/model` - Inspect or switch active model
+- `/config` - Search and change settings live (flags the ones needing a restart)
 - `/fast` - Toggle fast/standard mode
 - `/permissions` - Manage sandbox permissions
 - `/review` - Review changes without editing
-- `/mcp` - Inspect MCP servers
+- `/mcp` - Inspect MCP servers (`/mcp login <name>` signs in without leaving the session)
 - `/skills` - Inspect available skills
 - `/plugins` - Inspect installed plugins
 - `/fork` and `/side` - Split work into separate threads where available
@@ -325,7 +328,7 @@ Review line-by-line before approving!
 Shows comprehensive session information:
 
 ```
-Current model: gpt-6-sol
+Current model: gpt-6.1-sol
 Session ID: abc123
 Token usage: 15,432 / 272,000
 Cost estimate: $0.46
@@ -506,6 +509,7 @@ graph LR
 
 - **on-request** - Approve risky actions (the interactive default)
 - **never** - No approval prompts; best for narrow, non-interactive tasks
+- **`--approve-for-me`** - Codex's automatic reviewer decides for you, inside the workspace-write sandbox
 - Config also accepts **on-failure** (failures return straight to the model)
 - `untrusted` was retired in 0.149 — configs still setting it refuse to load
 
@@ -868,7 +872,7 @@ Each profile is its own file — `~/.codex/<name>.config.toml` — with **top-le
 
 ```toml
 # ~/.codex/production.config.toml
-model = "gpt-6-sol"
+model = "gpt-6.1-sol"
 approval_policy = "on-request"
 sandbox_mode = "workspace-write"
 ```
@@ -893,6 +897,8 @@ codex --profile quick
 # Catch stale or misspelled config keys early
 codex --strict-config
 ```
+
+Inside a session, `/config` searches every setting and applies supported changes immediately.
 
 ---
 
@@ -1340,13 +1346,13 @@ model_reasoning_effort = "low"
 
 ```toml
 # ~/.codex/standard.config.toml
-model = "gpt-6-sol"
+model = "gpt-6.1-sol"
 model_reasoning_effort = "medium"
 ```
 
 ```toml
 # ~/.codex/thorough.config.toml
-model = "gpt-6-sol"
+model = "gpt-6.1-sol"
 model_reasoning_effort = "high"
 ```
 
@@ -1372,7 +1378,7 @@ approval_policy = "on-request"
 # Switch Models
 
 ```bash
-codex --model gpt-6-sol
+codex --model gpt-6.1-sol
 codex --model gpt-6-luna
 codex --profile thorough
 
@@ -1461,7 +1467,7 @@ npm run build
 
 ```toml
 # ~/.codex/config.toml
-model = "gpt-6-sol"
+model = "gpt-6.1-sol"
 model_provider = "openai"
 approval_policy = "on-request"
 sandbox_mode = "workspace-write"
@@ -1944,7 +1950,7 @@ model = "gpt-6-luna"    # Fast scoped work
 
 ```toml
 # ~/.codex/complex.config.toml
-model = "gpt-6-sol"     # Complex reasoning
+model = "gpt-6.1-sol"     # Complex reasoning
 ```
 
 ---
@@ -2053,7 +2059,7 @@ RUST_LOG=trace codex
 # In the TUI, use /model to inspect or switch models
 
 # Pick an explicit model from your catalog (codex debug models)
-codex --model gpt-6-sol
+codex --model gpt-6.1-sol
 
 # Verify API connectivity
 curl -I https://api.openai.com/v1/models
@@ -2293,7 +2299,7 @@ tool_timeout_sec = 60
 Use high reasoning for complex, long-running tasks:
 
 ```bash
-codex -m gpt-6-sol -c model_reasoning_effort='high'
+codex -m gpt-6.1-sol -c model_reasoning_effort='high'
 ```
 
 Or configure in TOML:
@@ -2439,7 +2445,7 @@ Standalone desktop application for visual Codex workflows
 | **Multi-project** | Terminal tabs | Visual thread list |
 | **Diff review** | Basic | Inline with comments |
 | **Computer use** | Limited | Built-in app/browser control |
-| **Worktrees** | `--worktree` flag | First-class workflow |
+| **Worktrees** | `--worktree` flag or in-session tools | First-class workflow |
 | **Remote/SSH** | Supported | Not supported |
 | **Speed** | Faster | Slightly heavier |
 
@@ -2481,6 +2487,7 @@ codex doctor                  # Diagnose install, config, auth, runtime
 codex --profile production            # Use profile (~/.codex/production.config.toml)
 codex --sandbox read-only             # Set sandbox
 codex --ask-for-approval on-request   # Set approval (on-request | never)
+codex --approve-for-me                # Automatic review approves on your behalf
 codex --strict-config                 # Fail fast on stale/unknown config keys
 ```
 
@@ -2490,7 +2497,7 @@ codex --strict-config                 # Fail fast on stale/unknown config keys
 
 ```bash
 codex mcp list                 # List MCP servers
-codex mcp login server-name    # OAuth login for supported MCP servers
+codex mcp login server-name    # OAuth login (or /mcp login <name> in a session)
 codex cloud exec "prompt"      # Launch a cloud task
 codex cloud diff               # Review cloud task changes
 codex cloud apply              # Apply cloud task changes locally

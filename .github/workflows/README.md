@@ -12,7 +12,7 @@ Automated code review on pull requests using Codex.
 - Triggers on PR open/update
 - Reviews only changed code files
 - Posts review as PR comment
-- Uses cost-effective mini model
+- Uses gpt-6-luna, the fast, low-cost model
 
 **Setup:**
 
@@ -34,7 +34,7 @@ paths:
   # Add your extensions
 
 # Use different model
---model gpt-6-sol    # More thorough
+--model gpt-6.1-sol    # More thorough
 --model gpt-6-luna   # Faster, cheaper
 ```
 
