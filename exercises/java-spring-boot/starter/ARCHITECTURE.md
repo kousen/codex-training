@@ -3,20 +3,14 @@
 This application is a single Java 17 / Spring Boot 3.2 REST service. Clients send
 JSON over HTTP, the service applies task rules, and Spring Data JPA stores tasks
 in an in-memory H2 database. Swagger UI provides an interactive API client.
-There is no separate frontend or authentication layer.
+There is no separate frontend or authentication layer. This is a local training
+application. Dependency versions are defined in [pom.xml](pom.xml); the stack uses
+Spring Data JPA, Hibernate, Jakarta Bean Validation, and SpringDoc OpenAPI.
+For quick-start commands and examples, see [README.md](README.md).
 
-## Run and explore
+## API workflow
 
-From `starter/`, with Java 17 selected:
-
-```bash
-./mvnw spring-boot:run
-```
-
-On Windows use `mvnw.cmd`. The wrapper downloads Maven on first use.
-Open [Swagger UI](http://localhost:8080/swagger-ui.html), expand an operation,
-select **Try it out**, enter its parameters or JSON body, and select **Execute**.
-The machine-readable OpenAPI description is at `/api-docs`.
+Swagger UI and HTTP clients follow the same request flow:
 
 ```mermaid
 flowchart TD
@@ -29,26 +23,8 @@ flowchart TD
     Search --> Delete[DELETE the task when it is not IN_PROGRESS]
 ```
 
-For example, create a task using the minimum request:
-
-```bash
-curl -i http://localhost:8080/api/v1/tasks \
-  -H 'Content-Type: application/json' \
-  -d '{"title":"Architecture demo"}'
-```
-
-A successful creation returns **201 Created**, a `Location` header such as
-`/api/v1/tasks/4`, and a JSON task with its generated ID, default status `TODO`,
-default priority `MEDIUM`, and timestamps. Use the actual returned ID below:
-
-```bash
-curl http://localhost:8080/api/v1/tasks/4
-curl -X PUT http://localhost:8080/api/v1/tasks/4 \
-  -H 'Content-Type: application/json' \
-  -d '{"title":"Architecture demo","status":"DONE"}'
-curl 'http://localhost:8080/api/v1/tasks/search?q=demo&page=0&size=20'
-curl -i -X DELETE http://localhost:8080/api/v1/tasks/4
-```
+The API is available only at `/api/v1/tasks`; there is no unversioned alias.
+Requests and responses use JSON, with ISO 8601 dates and timestamps.
 
 PUT always requires `title`. Omitted or null `status` and `priority` retain their
 current values. Omitted or null `description` and `dueDate` clear those fields.
@@ -62,11 +38,11 @@ current values. Omitted or null `description` and `dueDate` clear those fields.
 | Update | `PUT /api/v1/tasks/{id}` | 200, `TaskResponse` |
 | Delete | `DELETE /api/v1/tasks/{id}` | 204, no body |
 
-Creation returns the
-`/api/v1/tasks/{id}` Location. Lists and searches are sorted by ID, use zero-based
-pages, and accept page sizes 1–100 (default 20). A `TaskPage` contains `content`,
+Creation returns the `/api/v1/tasks/{id}` Location. Lists and searches are sorted
+by ID, use zero-based pages, and accept page sizes 1–100 (default 20). A `TaskPage` contains `content`,
 `page`, `size`, `totalElements`, and `totalPages`. Search trims `q` and matches a
-case-insensitive literal substring in either title or description.
+case-insensitive literal substring in either title or description. `q` must be
+nonblank and at most 500 characters before trimming.
 
 ## Components and boundaries
 
@@ -133,10 +109,11 @@ sequenceDiagram
 ```
 
 This diagram shows the successful path. Validation failures return **400**,
-missing tasks return **404**, and business conflicts return **409**. The global
-exception handler returns Problem Details JSON, adding an `errors` array for
-request-body validation failures. Recognized database title-uniqueness failures
-also become 409, covering duplicate inserts that race past the service check.
+missing tasks return **404**, and business conflicts return **409**. Errors use
+Problem Details JSON. Request-body validation currently
+returns a generic detail without field-level errors; see
+[known limitations](#known-limitations-and-review-follow-ups). Recognized database
+title-uniqueness failures also become 409, covering duplicate inserts that race past the service check.
 Unexpected errors are logged and return a generic **500** response.
 
 ## Task data and lifecycle
@@ -145,8 +122,10 @@ A `Task` has a generated `Long` ID, a required unique title (maximum 100
 characters), optional description (maximum 500), status, priority, optional
 `LocalDate` due date, and `Instant` creation/update timestamps. Titles are trimmed
 before storage and uniqueness is case-sensitive. Priority is `LOW`, `MEDIUM`,
-or `HIGH`. JPA callbacks set timestamps on insertion and update `updatedAt`
-when persisted fields change.
+or `HIGH`, defaulting to `MEDIUM` on creation. Bean Validation measures the raw
+title length before trimming; a database unique constraint also enforces title
+uniqueness. JPA callbacks set timestamps on insertion and update `updatedAt`
+when persisted fields change. An identical update does not advance the timestamp.
 
 ```mermaid
 stateDiagram-v2
@@ -183,7 +162,8 @@ H2 runs inside the application process at `jdbc:h2:mem:taskdb`. Hibernate uses
 `create-drop`, and `data.sql` runs after schema creation. **Tasks are lost when
 the process stops**, and the three sample tasks are restored on the next start.
 The H2 console is at `/h2-console` (user `sa`, empty password), with remote console
-access disabled. This configuration is for local training.
+access disabled. Configuration lives in `src/main/resources/application.properties`;
+there is no `application.yml` or `schema.sql`. This configuration is for local training.
 
 Run the checks without starting a standalone server:
 
@@ -191,7 +171,26 @@ Run the checks without starting a standalone server:
 ./mvnw clean verify
 ```
 
-Tests under `src/test/java/com/example/taskapi/` cover service rules with Mockito,
-HTTP behavior with full-context MockMvc, JPA repository behavior, and exception
-translation. JaCoCo enforces an 80% line coverage gate, excluding the application
-launcher. Its report is at `target/site/jacoco/index.html`.
+Tests under `src/test/java/com/example/taskapi/` use JUnit 5 and AssertJ, and cover
+service rules with Mockito, HTTP behavior with `@SpringBootTest` and MockMvc,
+repository behavior with `@DataJpaTest`, and exception translation. Shared fixtures
+live in `TaskFixtures.java`; tests are organized into `unit/` and `integration/`.
+JaCoCo enforces an 80% aggregate application line coverage gate, excluding the
+launcher. This is not a per-class or unit-test-only coverage guarantee.
+Its report is at `target/site/jacoco/index.html`.
+
+## Known limitations and review follow-ups
+
+- Boot's enabled Problem Details advice takes precedence over custom request-body
+  validation handling, so the custom field-level `errors` array is missing from
+  HTTP responses. A fix needs response-body assertions and must preserve framework
+  404, 405, and 415 handling.
+- Task has no optimistic version field. Overlapping updates/deletes can overwrite
+  changes or bypass status guards; transactions alone do not prevent this.
+- Extreme page/size combinations can exceed JPA's integer offset and return 500.
+- Timestamp precision differences across JVM/platform and H2 storage were flagged
+  by review but have not been verified on Linux.
+- The API is unauthenticated and is not explicitly bound to loopback. H2 console
+  remote access is disabled, but that does not restrict the REST API listener.
+- Caching, rate limiting, authentication/authorization, and production deployment
+  configuration are outside the current local exercise scope.
