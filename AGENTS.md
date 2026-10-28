@@ -52,7 +52,7 @@ The Dependabot alerts for this repo are **intentional** - they exist in the exer
 ## When Modifying
 
 1. **Slides**: Keep model names current, verify installation commands
-2. **Exercises**: Each has its own AGENTS.md - update if requirements change
+2. **Exercises**: Each has its own AGENTS.md - update it when requirements or implementation change; keep file paths, tooling, API conventions, and known limitations accurate
 3. **Config examples**: Must use current TOML syntax and model names
 4. **Exports**: Run `slidev export` after slide changes
 
