@@ -13,12 +13,12 @@ Build a Spring Boot application that includes:
    - Priority enum: LOW, MEDIUM, HIGH
 
 2. **REST Endpoints**
-   - GET /api/tasks - List all tasks (with pagination)
-   - GET /api/tasks/{id} - Get single task
-   - POST /api/tasks - Create new task
-   - PUT /api/tasks/{id} - Update task
-   - DELETE /api/tasks/{id} - Delete task
-   - GET /api/tasks/search - Search by title or description
+   - GET /api/v1/tasks - List all tasks (with pagination)
+   - GET /api/v1/tasks/{id} - Get single task
+   - POST /api/v1/tasks - Create new task
+   - PUT /api/v1/tasks/{id} - Update task
+   - DELETE /api/v1/tasks/{id} - Delete task
+   - GET /api/v1/tasks/search - Search by title or description
 
 3. **Data Layer**
    - H2 in-memory database

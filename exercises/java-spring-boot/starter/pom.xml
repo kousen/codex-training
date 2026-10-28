@@ -58,6 +58,21 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
+                <executions>
+                    <execution><goals><goal>prepare-agent</goal></goals></execution>
+                    <execution><id>report</id><phase>verify</phase><goals><goal>report</goal><goal>check</goal></goals></execution>
+                </executions>
+                <configuration>
+                    <excludes><exclude>**/TaskApiApplication.class</exclude></excludes>
+                    <rules><rule><element>BUNDLE</element><limits><limit>
+                        <counter>LINE</counter><value>COVEREDRATIO</value><minimum>0.80</minimum>
+                    </limit></limits></rule></rules>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
