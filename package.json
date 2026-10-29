@@ -39,5 +39,9 @@
     "assistant",
     "terminal",
     "development"
-  ]
+  ],
+  "overrides": {
+    "dompurify": "^3.4.17",
+    "@hono/node-server": "^2.1.3"
+  }
 }
