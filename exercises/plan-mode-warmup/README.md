@@ -137,9 +137,10 @@ For unattended automation, prefer a narrow task with conservative permissions:
 
 ```bash
 codex exec "Review the uncommitted diff for bugs; do not edit files" \
-  --sandbox read-only \
-  --ask-for-approval never
+  --sandbox read-only
 ```
+
+`codex exec` never prompts for approval, so the sandbox is the control.
 
 ## Success Criteria
 

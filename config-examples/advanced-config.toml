@@ -4,13 +4,15 @@
 # Project-scoped config can also live in .codex/config.toml for trusted projects.
 
 # Model configuration
-# gpt-6.1-sol is the current default GPT-6 frontier model (gpt-6-astra and
-# gpt-6-sol are the previous pair; gpt-6-luna is fast; gpt-5.6-* still available).
-model = "gpt-6.1-sol"
+# gpt-6.2-sol is the current default (gpt-6.2-astra is the most capable,
+# gpt-6.1-terra targets visual work and computer use, gpt-6-luna is fast).
+# gpt-6.1-sol and gpt-6-astra/sol are previous models; gpt-5.6-sol and
+# gpt-5.6-terra retire December 23, 2026.
+model = "gpt-6.2-sol"
 model_provider = "openai"
 model_reasoning_effort = "medium"  # low, medium, high, xhigh, max, ultra ("minimal" is legacy)
 model_verbosity = "medium"         # low, medium, high
-service_tier = "flex"              # flex or fast
+# service_tier = "fast"            # same as /fast; omit for standard speed ("flex" is rejected)
 
 # Security and sandbox settings
 approval_policy = "on-request"     # on-request, never ("untrusted" was retired in 0.149)
@@ -36,7 +38,6 @@ writable_roots = []                # Add extra writable paths only when needed
 # unknown names fail silently, even under --strict-config)
 [features]
 hooks = true        # stable, on by default — shown here for visibility
-multi_agent = true
 fast_mode = true
 
 # Shell environment policy
@@ -76,8 +77,9 @@ enabled = true
 # startup_timeout_sec = 20
 # tool_timeout_sec = 60
 
-# Sub-agent limits
+# Sub-agents (on by default; `features.multi_agent` is deprecated — use `enabled` here)
 [agents]
+enabled = true
 max_threads = 6
 max_depth = 2
 

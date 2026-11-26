@@ -79,7 +79,6 @@ jobs:
           ${{ steps.changed.outputs.files }}" \
             --model gpt-6-luna \
             --sandbox read-only \
-            --ask-for-approval never \
             > /tmp/review-output.md 2>&1 || true
 
       - name: Post Review Comment

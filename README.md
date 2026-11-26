@@ -221,7 +221,7 @@ codex update                   # Update the CLI
 # Configuration
 codex --profile development    # Use specific profile
 codex --sandbox read-only      # Set sandbox mode
-codex --model gpt-6.1-sol      # Pin a model (/model or codex debug models lists your catalog)
+codex --model gpt-6.2-sol      # Pin a model (/model or codex debug models lists your catalog)
 codex --strict-config          # Fail fast on stale/unknown config keys
 codex --search "latest docs"   # Enable live web search for that run
 
@@ -230,8 +230,8 @@ codex mcp list                 # List configured MCP servers
 codex mcp login server-name    # OAuth login for supported MCP servers
 codex doctor                   # Diagnose install, config, auth, and runtime health
 codex cloud exec "prompt"      # Launch a cloud task
-codex cloud diff               # Inspect cloud task changes
-codex cloud apply              # Apply cloud task changes locally
+codex cloud diff <task-id>     # Inspect cloud task changes
+codex cloud apply <task-id>    # Apply cloud task changes locally
 codex login --device-auth      # Device-auth flow for remote/headless environments
 codex review --uncommitted     # Review local changes
 codex review --base main       # Review your branch against main

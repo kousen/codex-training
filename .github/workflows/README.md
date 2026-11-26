@@ -34,7 +34,7 @@ paths:
   # Add your extensions
 
 # Use different model
---model gpt-6.1-sol    # More thorough
+--model gpt-6.2-sol  # More thorough
 --model gpt-6-luna   # Faster, cheaper
 ```
 
@@ -42,5 +42,5 @@ paths:
 
 - Never commit API keys to the repository
 - Use GitHub Secrets for all credentials
-- Prefer `--sandbox read-only --ask-for-approval never` for review-only CI tasks
+- Prefer `--sandbox read-only` for review-only CI tasks (`codex exec` never prompts for approval)
 - Review generated comments before merging

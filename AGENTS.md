@@ -7,7 +7,7 @@ This repository contains training materials for a 5-hour hands-on workshop on Op
 - **Purpose**: Professional training course for developers learning Codex CLI
 - **Audience**: Developers with command-line experience, basic programming knowledge
 - **Format**: Slidev presentation + hands-on exercises
-- **Current Codex Version**: v0.163+ (October 2026) — releases ship ~weekly, so prefer "latest" over pinning a patch
+- **Current Codex Version**: v0.172+ (November 2026) — releases ship ~weekly, so prefer "latest" over pinning a patch
 
 ## Key Files
 
@@ -33,11 +33,12 @@ This repository contains training materials for a 5-hour hands-on workshop on Op
 
 ## Important Notes
 
-### Model Names (October 2026)
-- `gpt-6.1-sol` - Current default GPT-6 frontier model (confirm per account with `/model`)
-- `gpt-6-astra`, `gpt-6-sol` - Previous GPT-6 frontier pair, still available
+### Model Names (November 2026)
+- `gpt-6.2-sol` - Current default model, 500K context (confirm per account with `/model`)
+- `gpt-6.2-astra` - Most capable model; `gpt-6.1-terra` - visual tasks and computer use
 - `gpt-6-luna` - Fast, low-cost option for light tasks and sub-agents
-- `gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna` - Previous generation, still available
+- `gpt-6.1-sol`, `gpt-6-astra`, `gpt-6-sol` - Previous models, still available
+- `gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna` - Legacy; Sol and Terra retire December 23, 2026
 
 (Retired since the course was written: `gpt-5.5`, `gpt-5.4`, `gpt-5.4-mini`, `gpt-5.3-codex-spark`, `gpt-5.3-codex`, `gpt-5.2-codex`, `gpt-5.1-codex-max`, `codex-mini-latest`.)
 

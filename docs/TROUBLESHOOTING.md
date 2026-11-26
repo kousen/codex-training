@@ -194,7 +194,7 @@ codex
 
 ```bash
 # Launch with a specific known-good model
-codex --model gpt-6.1-sol
+codex --model gpt-6.2-sol
 
 # See exactly which models your account can use
 codex debug models
@@ -209,7 +209,7 @@ codex debug models
 grep model ~/.codex/config.toml
 
 # Try with explicit model
-codex --model gpt-6.1-sol
+codex --model gpt-6.2-sol
 
 # Use a profile with known-good settings
 # (profiles are per-file since 0.134: ~/.codex/<name>.config.toml)
@@ -351,7 +351,7 @@ codex
 | Symptom | Likely Cause | Quick Fix |
 |---------|--------------|-----------|
 | "command not found" | Not installed | `brew install --cask codex` |
-| "Authentication failed" | Bad credentials | `mv ~/.codex/auth ~/.codex/auth.backup && codex login` |
+| "Authentication failed" | Bad credentials | `codex logout && codex login` |
 | "Operation not permitted" | Sandbox restriction | Inspect permissions, or relaunch with `--sandbox danger-full-access` |
 | "MCP server failed" | Missing env var | Check `$GITHUB_TOKEN` etc. |
 | "Rate limit exceeded" | Too many requests | Wait 60s or use smaller model |
